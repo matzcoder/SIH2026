@@ -1,0 +1,83 @@
+.complaints-page {
+  padding: 25px;
+}
+
+.complaints-page .page-header {
+  margin-bottom: 25px;
+}
+
+.complaints-page .page-header h2 {
+  color: #0f172a;
+}
+
+.complaints-table {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.complaints-page table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.complaints-page thead {
+  background: #f8fafc;
+}
+
+.complaints-page th,
+.complaints-page td {
+  padding: 16px;
+  text-align: left;
+}
+
+.complaints-page th {
+  color: #475569;
+}
+
+.complaints-page tr:not(:last-child) {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* Status */
+
+.complaints-page .status {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.complaints-page .pending {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.complaints-page .in-review {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.complaints-page .resolved {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+/* Button */
+
+.complaints-page .view-btn {
+  border: none;
+  background: #2563eb;
+  color: white;
+
+  padding: 8px 14px;
+  border-radius: 8px;
+
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.complaints-page .view-btn:hover {
+  background: #1d4ed8;
+}

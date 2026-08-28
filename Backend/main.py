@@ -17,7 +17,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from config import CORS_ORIGINS, UPLOAD_DIR
+from config import CORS_ORIGINS, CORS_ORIGIN_REGEX, UPLOAD_DIR
 from database import engine, SessionLocal, Base
 from models.db_models import *  # Ensure all models are registered with Base
 from routes import auth, products, inspections, complaints, rules, analysis
@@ -62,13 +62,15 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Configure CORS for React frontend
+# Configure CORS for React frontend and ngrok remote tunnels
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=CORS_ORIGINS,
+    allow_origin_regex=CORS_ORIGIN_REGEX,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*", "ngrok-skip-browser-warning"],
+    expose_headers=["*", "Content-Disposition"],
 )
 
 # Mount uploads directory for static media & evidence files

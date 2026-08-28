@@ -1,0 +1,186 @@
+.notification {
+  width: 100%;
+  max-width: 430px;
+
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  padding: 15px 16px;
+
+  border: 1px solid;
+  border-radius: 12px;
+
+  font-family: Arial, Helvetica, sans-serif;
+
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+
+  animation: notificationSlideIn 0.25s ease;
+}
+
+/* Icon */
+
+.notification-icon {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 9px;
+}
+
+.notification-icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+/* Content */
+
+.notification-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-content strong {
+  display: block;
+
+  margin-bottom: 4px;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.notification-content p {
+  margin: 0;
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Close */
+
+.notification-close {
+  width: 28px;
+  height: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  margin: -3px -4px 0 0;
+
+  border: none;
+  border-radius: 7px;
+
+  background: transparent;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.notification-close svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Success */
+
+.notification-success {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #15803d;
+}
+
+.notification-success .notification-icon {
+  background: #dcfce7;
+}
+
+.notification-success .notification-close:hover {
+  background: #dcfce7;
+}
+
+/* Warning */
+
+.notification-warning {
+  background: #fffbeb;
+  border-color: #fde68a;
+  color: #b45309;
+}
+
+.notification-warning .notification-icon {
+  background: #fef3c7;
+}
+
+.notification-warning .notification-close:hover {
+  background: #fef3c7;
+}
+
+/* Error */
+
+.notification-error {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #b91c1c;
+}
+
+.notification-error .notification-icon {
+  background: #fee2e2;
+}
+
+.notification-error .notification-close:hover {
+  background: #fee2e2;
+}
+
+/* Info */
+
+.notification-info {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+
+.notification-info .notification-icon {
+  background: #dbeafe;
+}
+
+.notification-info .notification-close:hover {
+  background: #dbeafe;
+}
+
+/* Animation */
+
+@keyframes notificationSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 480px) {
+  .notification {
+    max-width: 100%;
+    padding: 13px;
+  }
+
+  .notification-content strong {
+    font-size: 13px;
+  }
+
+  .notification-content p {
+    font-size: 11px;
+  }
+}

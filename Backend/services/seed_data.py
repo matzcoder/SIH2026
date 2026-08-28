@@ -49,13 +49,6 @@ def seed_database(db: Session) -> None:
                 role="inspector",
                 status="active",
             ),
-            User(
-                name="Compliance User",
-                email="user@example.com",
-                password_hash=hash_password("User@123"),
-                role="user",
-                status="active",
-            ),
         ]
         db.add_all(users)
         db.commit()

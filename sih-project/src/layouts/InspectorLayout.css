@@ -1,0 +1,53 @@
+.user-layout,
+.inspector-layout,
+.authority-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f5f7fb;
+}
+
+.user-sidebar,
+.inspector-sidebar,
+.authority-sidebar {
+  width: 240px;
+  padding: 25px 18px;
+  background: #111827;
+  color: white;
+}
+
+.user-sidebar h2,
+.inspector-sidebar h2,
+.authority-sidebar h2 {
+  margin-bottom: 30px;
+}
+
+.user-sidebar nav,
+.inspector-sidebar nav,
+.authority-sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.user-sidebar a,
+.inspector-sidebar a,
+.authority-sidebar a {
+  color: #d1d5db;
+  text-decoration: none;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.user-sidebar a:hover,
+.inspector-sidebar a:hover,
+.authority-sidebar a:hover {
+  background: #374151;
+  color: white;
+}
+
+.user-main,
+.inspector-main,
+.authority-main {
+  flex: 1;
+  padding: 25px;
+}

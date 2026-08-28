@@ -1,0 +1,119 @@
+.compliance-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px 14px;
+
+  border-radius: 999px;
+  border: 1px solid transparent;
+
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+
+  white-space: nowrap;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.compliance-badge:hover {
+  transform: translateY(-1px);
+}
+
+/* Icon */
+
+.compliance-badge-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 20px;
+  height: 20px;
+
+  flex-shrink: 0;
+}
+
+.compliance-badge-icon svg {
+  display: block;
+}
+
+/* Label */
+
+.compliance-badge-label {
+  display: inline-block;
+}
+
+/* =========================
+   COMPLIANT
+   ========================= */
+
+.compliance-badge.compliant {
+  color: #15803d;
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.compliance-badge.compliant:hover {
+  background: #dcfce7;
+  border-color: #86efac;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.12);
+}
+
+/* =========================
+   VIOLATION
+   ========================= */
+
+.compliance-badge.violation {
+  color: #dc2626;
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.compliance-badge.violation:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.12);
+}
+
+/* =========================
+   NEEDS REVIEW
+   ========================= */
+
+.compliance-badge.review {
+  color: #b45309;
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+.compliance-badge.review:hover {
+  background: #fef3c7;
+  border-color: #fcd34d;
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.12);
+}
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 480px) {
+  .compliance-badge {
+    padding: 7px 11px;
+    font-size: 13px;
+  }
+
+  .compliance-badge-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .compliance-badge-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+}
