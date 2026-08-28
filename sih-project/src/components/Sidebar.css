@@ -1,0 +1,286 @@
+/* =========================================
+   SIDEBAR - LIGHT MODE
+========================================= */
+
+.sidebar {
+  width: 240px;
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  background: #ffffff;
+
+  border-right: 1px solid #e8edf3;
+
+  box-shadow: 4px 0 18px rgba(15, 23, 42, 0.04);
+
+  padding: 22px 14px;
+
+  box-sizing: border-box;
+
+  animation: sidebarSlideIn 0.45s ease-out;
+}
+
+
+/* =========================================
+   MAIN MENU
+========================================= */
+
+.sidebar-menu {
+  flex: 1;
+}
+
+.sidebar-section-title {
+  padding: 8px 12px;
+
+  margin-bottom: 8px;
+
+  color: #94a3b8;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.08em;
+}
+
+
+/* =========================================
+   SIDEBAR ITEMS
+========================================= */
+
+.sidebar-items {
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+.sidebar-item {
+  position: relative;
+
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+
+  gap: 11px;
+
+  padding: 10px 12px;
+
+  border: 1px solid transparent;
+
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: #64748b;
+
+  font-family: inherit;
+
+  font-size: 11px;
+
+  font-weight: 600;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+/* =========================================
+   ICON
+========================================= */
+
+.sidebar-item svg {
+  width: 17px;
+  height: 17px;
+
+  flex-shrink: 0;
+
+  stroke: currentColor;
+
+  stroke-width: 1.8;
+
+  transition:
+    transform 0.25s ease,
+    color 0.25s ease;
+}
+
+
+/* =========================================
+   HOVER
+========================================= */
+
+.sidebar-item:hover {
+  background: #f5f8fc;
+
+  color: #2563eb;
+
+  border-color: #e7eef8;
+
+  transform: translateX(3px);
+}
+
+.sidebar-item:hover svg {
+  transform: scale(1.08);
+}
+
+
+/* =========================================
+   ACTIVE ITEM
+========================================= */
+
+.sidebar-item.active {
+  background: #eff6ff;
+
+  color: #2563eb;
+
+  border-color: #dbeafe;
+
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+}
+
+.sidebar-item.active::before {
+  content: "";
+
+  position: absolute;
+
+  left: -14px;
+
+  top: 50%;
+
+  width: 3px;
+
+  height: 22px;
+
+  transform: translateY(-50%);
+
+  background: #2563eb;
+
+  border-radius: 0 4px 4px 0;
+
+  animation: activeBar 0.3s ease-out;
+}
+
+.sidebar-item.active svg {
+  transform: scale(1.05);
+}
+
+
+/* =========================================
+   BOTTOM SECTION
+========================================= */
+
+.sidebar-bottom {
+  margin-top: auto;
+
+  padding-top: 18px;
+
+  border-top: 1px solid #edf1f5;
+}
+
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+.sidebar-item:last-child {
+  color: #64748b;
+}
+
+.sidebar-item:last-child:hover {
+  color: #dc2626;
+
+  background: #fef2f2;
+
+  border-color: #fee2e2;
+}
+
+.sidebar-item:last-child:hover svg {
+  animation: logoutShake 0.4s ease;
+}
+
+
+/* =========================================
+   ANIMATIONS
+========================================= */
+
+@keyframes sidebarSlideIn {
+  from {
+    opacity: 0;
+
+    transform: translateX(-18px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateX(0);
+  }
+}
+
+
+@keyframes activeBar {
+  from {
+    height: 0;
+
+    opacity: 0;
+  }
+
+  to {
+    height: 22px;
+
+    opacity: 1;
+  }
+}
+
+
+@keyframes logoutShake {
+  0% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(3px);
+  }
+
+  50% {
+    transform: translateX(-2px);
+  }
+
+  75% {
+    transform: translateX(2px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 210px;
+
+    padding: 18px 10px;
+  }
+
+  .sidebar-item {
+    font-size: 10px;
+
+    padding: 9px 10px;
+  }
+}

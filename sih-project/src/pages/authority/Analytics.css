@@ -1,0 +1,99 @@
+.analytics-page {
+  padding: 25px;
+}
+
+.page-title {
+  margin-bottom: 25px;
+  color: #0f172a;
+}
+
+.stats-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(220px, 1fr));
+
+  gap: 20px;
+
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background: white;
+
+  padding: 25px;
+
+  border-radius: 15px;
+
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.stat-card h3 {
+  color: #64748b;
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+
+.stat-card p {
+  font-size: 30px;
+  font-weight: bold;
+  color: #2563eb;
+}
+
+.analytics-section {
+  display: grid;
+
+  grid-template-columns: 2fr 1fr;
+
+  gap: 20px;
+}
+
+.chart-card {
+  background: white;
+
+  padding: 25px;
+
+  border-radius: 15px;
+
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.chart-card h3 {
+  margin-bottom: 20px;
+}
+
+/* Fake Chart */
+
+.fake-chart {
+  height: 250px;
+
+  display: flex;
+
+  align-items: flex-end;
+
+  gap: 20px;
+}
+
+.bar {
+  flex: 1;
+
+  background: #2563eb;
+
+  border-radius: 8px 8px 0 0;
+}
+
+/* Violations */
+
+.violation-list {
+  list-style: none;
+}
+
+.violation-list li {
+  padding: 12px;
+
+  margin-bottom: 10px;
+
+  background: #f8fafc;
+
+  border-radius: 10px;
+}

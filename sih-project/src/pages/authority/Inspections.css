@@ -1,0 +1,124 @@
+.inspections-page {
+  padding: 25px;
+}
+
+.inspection-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 25px;
+}
+
+.inspection-header h2 {
+  color: #0f172a;
+}
+
+.new-inspection-btn {
+  border: none;
+  background: #2563eb;
+  color: white;
+
+  padding: 12px 18px;
+  border-radius: 10px;
+
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.new-inspection-btn:hover {
+  background: #1d4ed8;
+}
+
+.inspection-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+  padding: 16px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.inspection-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+}
+
+.inspection-table {
+  background: white;
+
+  border-radius: 15px;
+
+  overflow: hidden;
+
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.inspections-page table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.inspections-page thead {
+  background: #f8fafc;
+}
+
+.inspections-page th,
+.inspections-page td {
+  padding: 16px;
+  text-align: left;
+}
+
+.inspections-page th {
+  color: #64748b;
+}
+
+.inspections-page tr:not(:last-child) {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* Status */
+
+.inspections-page .status {
+  padding: 6px 12px;
+  border-radius: 20px;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.inspections-page .completed {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.inspections-page .under-review {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.inspections-page .violation-found {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* Button */
+
+.inspections-page .view-btn {
+  border: none;
+  background: #2563eb;
+  color: white;
+
+  padding: 8px 14px;
+  border-radius: 8px;
+
+  cursor: pointer;
+}
+
+.inspections-page .view-btn:hover {
+  background: #1d4ed8;
+}

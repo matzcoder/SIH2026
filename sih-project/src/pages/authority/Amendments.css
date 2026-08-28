@@ -1,0 +1,120 @@
+.amendments-page {
+  padding: 25px;
+}
+
+.amendments-page .page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 25px;
+}
+
+.amendments-page .page-header h2 {
+  color: #0f172a;
+}
+
+.add-btn {
+  border: none;
+  background: #2563eb;
+  color: white;
+
+  padding: 12px 18px;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  font-weight: 600;
+}
+
+.add-btn:hover {
+  background: #1d4ed8;
+}
+
+.amendment-form {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr) auto;
+  gap: 10px;
+  margin-bottom: 25px;
+  padding: 16px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.amendment-form input {
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+}
+
+.amendment-form-error {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #b91c1c;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.cancel-amendment-btn {
+  padding: 12px 18px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: white;
+  color: #475569;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.table-container {
+  background: white;
+
+  border-radius: 15px;
+
+  overflow: hidden;
+
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.amendments-page table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.amendments-page thead {
+  background: #f8fafc;
+}
+
+.amendments-page th,
+.amendments-page td {
+  padding: 16px;
+  text-align: left;
+}
+
+.amendments-page th {
+  color: #475569;
+}
+
+.amendments-page tr:not(:last-child) {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.amendments-page .status {
+  padding: 6px 12px;
+  border-radius: 20px;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.amendments-page .approved {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.amendments-page .pending {
+  background: #fef3c7;
+  color: #b45309;
+}
