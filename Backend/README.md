@@ -69,7 +69,6 @@ On initial boot, the SQLite database is automatically seeded with demo accounts:
 | :--- | :--- | :--- | :--- |
 | `admin@example.com` | `Admin@123` | `authority` | Regulatory Authority User |
 | `inspector@example.com` | `Inspector@123` | `inspector` | Field Inspector User |
-| `user@example.com` | `User@123` | `user` | Consumer / Public User |
 
 ---
 

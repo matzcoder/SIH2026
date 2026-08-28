@@ -1,0 +1,15 @@
+version: "2"
+authtoken_from_env: true
+
+tunnels:
+  backend:
+    proto: http
+    addr: 5000
+    inspect: true
+    host_header: "localhost:5000"
+
+  frontend:
+    proto: http
+    addr: 3000
+    inspect: true
+    host_header: "rewrite"
