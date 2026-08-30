@@ -1,38 +1,211 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../../services/api";
 import "./InspectionDetails.css";
 
-function InspectionDetails() {
-  const navigate = useNavigate();
-  const [checks, setChecks] = useState({
+const RULE_DEFINITIONS = {
+  mrp: {
+    title: "Maximum Retail Price (MRP)",
+    description: "MRP declaration was missing, unreadable, or not inclusive of all taxes.",
+    ruleRef: "LMR-RULE-001",
+  },
+  quantity: {
+    title: "Net Quantity Declaration",
+    description: "Net quantity was missing or not declared using standard SI units.",
+    ruleRef: "LMR-RULE-002",
+  },
+  manufacturer: {
+    title: "Manufacturer / Packer Details",
+    description: "Complete name and postal address of manufacturer/packer was missing.",
+    ruleRef: "LMR-RULE-003",
+  },
+  packingDate: {
+    title: "Date of Manufacturing / Packing",
+    description: "Required date information was not clearly visible on the package.",
+    ruleRef: "PACK-DATE-001",
+  },
+  consumerCare: {
+    title: "Consumer Care Details",
+    description: "Helpline phone number or email for consumer grievances was missing.",
+    ruleRef: "LMR-RULE-004",
+  },
+  countryOrigin: {
+    title: "Country of Origin",
+    description: "Country of origin declaration was not prominently displayed.",
+    ruleRef: "LMR-RULE-005",
+  },
+  fssaiLogo: {
+    title: "FSSAI Graphic Logo",
+    description: "FSSAI graphic logo visual symbol mark was not detected on packaging.",
+    ruleRef: "FSSAI-RULE-001",
+  },
+};
+
+const DEFAULT_SCAN_DATA = {
+  name: "NutriCrunch Wheat Biscuits",
+  brand: "ABC Foods",
+  category: "Packaged Food",
+  status: "compliant",
+  score: 100,
+  barcode: "8901234567890",
+  extracted_data: {
+    mrp: "Rs. 40.00",
+    net_weight: "200 g",
+    unit_sale_price: "Rs. 0.20 per g",
+    calculated_unit_sale_price: "Rs. 0.20 per g",
+    mfg_date: "08/2026",
+    expiry_date: "Best Before 6 Months",
+    manufacturer_address: "Found",
+    consumer_care: "1800-123-4567 / support@abcfoods.com",
+    country_of_origin: "India",
+    fssai_logo: "Detected",
+  },
+  checks: {
     mrp: true,
     quantity: true,
     manufacturer: true,
-    packingDate: false,
+    packingDate: true,
     consumerCare: true,
     countryOrigin: true,
+    fssaiLogo: true,
+  },
+  compliance_report: [
+    { rule_id: "LMR_RULE_01", rule: "Maximum Retail Price (MRP)", passed: true, severity: "CRITICAL", message: "MRP is clearly printed on the package." },
+    { rule_id: "LMR_RULE_02", rule: "Net Quantity Declaration", passed: true, severity: "CRITICAL", message: "Net quantity is declared in standard units." },
+    { rule_id: "LMR_RULE_03", rule: "Unit Sale Price (USP)", passed: true, severity: "HIGH", message: "Declared USP matches calculated reference." },
+    { rule_id: "LMR_RULE_04", rule: "Consumer Care Details", passed: true, severity: "MEDIUM", message: "Consumer care helpline/email found." },
+    { rule_id: "LMR_RULE_05", rule: "Manufacturer Details", passed: true, severity: "HIGH", message: "Manufacturer name and address found." },
+    { rule_id: "LMR_RULE_06", rule: "Manufacturing Date", passed: true, severity: "MEDIUM", message: "Manufacturing date declared." },
+    { rule_id: "LMR_RULE_07", rule: "Country of Origin", passed: true, severity: "HIGH", message: "Country of origin declared." },
+    { rule_id: "FSSAI_RULE_01", rule: "FSSAI Graphic Logo Presence", passed: true, severity: "HIGH", message: "FSSAI Graphic Logo is clearly visible on package wrapper." },
+  ],
+};
+
+function InspectionDetails() {
+  const navigate = useNavigate();
+
+  const [scanData, setScanData] = useState(() => {
+    try {
+      const saved = localStorage.getItem("lastScanResult");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.extracted_data && parsed.extracted_data.fssai_logo !== undefined) {
+          return parsed;
+        }
+      }
+      return DEFAULT_SCAN_DATA;
+    } catch (e) {
+      return DEFAULT_SCAN_DATA;
+    }
   });
-  const [observation, setObservation] = useState("");
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const [checks, setChecks] = useState(() => {
+    try {
+      const saved = localStorage.getItem("lastScanResult");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.checks && parsed.checks.fssaiLogo !== undefined) return parsed.checks;
+      }
+      const savedRev = localStorage.getItem("inspectionReview");
+      if (savedRev) {
+        const parsed = JSON.parse(savedRev);
+        if (parsed && parsed.checks && parsed.checks.fssaiLogo !== undefined) return parsed.checks;
+      }
+    } catch (e) {}
+    return DEFAULT_SCAN_DATA.checks;
+  });
+
+  const [observation, setObservation] = useState(() => {
+    try {
+      const saved = localStorage.getItem("inspectionReview");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.observation) return parsed.observation;
+      }
+    } catch (e) {}
+    return "";
+  });
+
   const [saved, setSaved] = useState(false);
 
-  const toggleCheck = (key) => {
-    setChecks({
-      ...checks,
-      [key]: !checks[key],
-    });
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await API.post("/products/scan", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      const data = res.data;
+      setScanData(data);
+      
+      const ruleMap = {};
+      if (data.compliance_report) {
+        data.compliance_report.forEach((r) => {
+          ruleMap[r.rule_id] = r.passed;
+        });
+      }
+
+      const newChecks = {
+        mrp: data.checks?.mrp ?? ruleMap["LMR_RULE_01"] ?? false,
+        quantity: data.checks?.quantity ?? ruleMap["LMR_RULE_02"] ?? false,
+        manufacturer: data.checks?.manufacturer ?? ruleMap["LMR_RULE_05"] ?? false,
+        packingDate: data.checks?.packingDate ?? ruleMap["LMR_RULE_06"] ?? false,
+        consumerCare: data.checks?.consumerCare ?? ruleMap["LMR_RULE_04"] ?? false,
+        countryOrigin: data.checks?.countryOrigin ?? ruleMap["LMR_RULE_07"] ?? false,
+        fssaiLogo: data.checks?.fssaiLogo ?? ruleMap["FSSAI_RULE_01"] ?? (data.extracted_data?.fssai_logo === "Detected"),
+      };
+
+      setChecks(newChecks);
+      localStorage.setItem("lastScanResult", JSON.stringify({ ...data, checks: newChecks }));
+      localStorage.setItem(
+        "inspectionReview",
+        JSON.stringify({
+          checks: newChecks,
+          score: data.score,
+        })
+      );
+    } catch (err) {
+      console.error("AI OCR Scan error:", err);
+      setError("Failed to run EasyOCR engine. Please verify backend service.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const saveInspection = () => {
-    localStorage.setItem(
-      "inspectionReview",
-      JSON.stringify({ inspectionId: "INS-1029", checks, observation, score })
-    );
-    setSaved(true);
+  const toggleCheck = (key) => {
+    setChecks((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+    setSaved(false);
   };
 
   const passedChecks = Object.values(checks).filter(Boolean).length;
   const totalChecks = Object.values(checks).length;
-  const score = Math.round((passedChecks / totalChecks) * 100);
+  const score = scanData?.score !== undefined ? Math.round(scanData.score) : Math.round((passedChecks / totalChecks) * 100);
+  const failedRules = Object.keys(checks).filter((key) => !checks[key]);
+
+  const saveInspection = () => {
+    localStorage.setItem(
+      "inspectionReview",
+      JSON.stringify({ inspectionId: "INS-1029", checks, observation, score, passedChecks, failedCount: failedRules.length })
+    );
+    setSaved(true);
+  };
+
+  const isCompliant = scanData?.status === "compliant" || failedRules.length === 0;
+  const ext = scanData?.extracted_data;
 
   return (
     <div className="inspection-details-page">
@@ -49,7 +222,7 @@ function InspectionDetails() {
           <h1>Inspection Details</h1>
 
           <p>
-            Verify package declarations and determine compliance.
+            Upload a package image to convert visual declarations into digital data via AI OCR.
           </p>
         </div>
 
@@ -60,66 +233,166 @@ function InspectionDetails() {
 
       </div>
 
-      {/* PRODUCT INFORMATION */}
+      {/* UPLOAD & PRODUCT INFORMATION */}
 
       <div className="details-card">
 
         <div className="details-card-title">
           <div>
-            <h2>Product Information</h2>
-            <p>Details captured during product inspection.</p>
+            <h2>Package Image & Product Information</h2>
+            <p>Upload a label photo to extract digital details using EasyOCR + Legal Metrology Rules.</p>
           </div>
 
-          <span className="inspection-status">
-            In Progress
-          </span>
+          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            <label style={{
+              backgroundColor: "#2563eb",
+              color: "#ffffff",
+              padding: "8px 16px",
+              borderRadius: "6px",
+              fontWeight: 600,
+              cursor: "pointer",
+              fontSize: "14px",
+            }}>
+              <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: "none" }} />
+              {loading ? "AI OCR Scanning..." : "Upload Label Image"}
+            </label>
+
+            <span className={`inspection-status ${isCompliant ? "passed" : "failed"}`} style={{
+              padding: "6px 14px",
+              borderRadius: "20px",
+              fontWeight: 700,
+              backgroundColor: isCompliant ? "#dcfce7" : "#fee2e2",
+              color: isCompliant ? "#15803d" : "#b91c1c",
+            }}>
+              {isCompliant ? "Compliant" : "Non-Compliant"}
+            </span>
+          </div>
         </div>
 
-        <div className="product-details-grid">
+        {error && <p style={{ color: "#dc2626", fontWeight: 600, marginTop: "8px" }}>{error}</p>}
+
+        <div className="product-details-grid" style={{ marginTop: "16px" }}>
 
           <div>
             <span>Product Name</span>
-            <strong>ABC Biscuits</strong>
+            <strong>{scanData?.name || ext?.name || "Scanned Commodity"}</strong>
           </div>
 
           <div>
             <span>Brand</span>
-            <strong>ABC Foods</strong>
+            <strong>{scanData?.brand || "Packaged Brand"}</strong>
           </div>
 
           <div>
             <span>Category</span>
-            <strong>Packaged Food</strong>
+            <strong>{scanData?.category || "Packaged Food"}</strong>
           </div>
 
           <div>
-            <span>Batch Number</span>
-            <strong>ABX2026-08</strong>
+            <span>Barcode</span>
+            <strong>{scanData?.barcode || "8901234567890"}</strong>
           </div>
 
           <div>
-            <span>MRP</span>
-            <strong>₹50.00</strong>
+            <span>Maximum Retail Price (MRP)</span>
+            <strong>{ext?.mrp || scanData?.mrp || "Not Found"}</strong>
           </div>
 
           <div>
-            <span>Net Quantity</span>
-            <strong>100 g</strong>
+            <span>Net Quantity / Volume</span>
+            <strong>{ext?.net_weight || scanData?.netQuantity || "Not Found"}</strong>
           </div>
 
           <div>
-            <span>Manufacturer</span>
-            <strong>ABC Foods Pvt Ltd</strong>
+            <span>Declared Unit Sale Price (USP)</span>
+            <strong>{ext?.unit_sale_price || "Not Found"}</strong>
           </div>
 
           <div>
-            <span>Inspection Location</span>
-            <strong>Chennai</strong>
+            <span>Calculated Reference USP</span>
+            <strong>{ext?.calculated_unit_sale_price || "N/A"}</strong>
           </div>
 
+          <div>
+            <span>Date of Mfg / Packing</span>
+            <strong>{ext?.mfg_date || "Not Found"}</strong>
+          </div>
+
+          <div>
+            <span>Date of Expiry / Best Before</span>
+            <strong>{ext?.expiry_date || "Not Found"}</strong>
+          </div>
+
+          <div>
+            <span>Manufacturer & Address</span>
+            <strong>{ext?.manufacturer_address || scanData?.manufacturer || "Not Found"}</strong>
+          </div>
+
+          <div>
+            <span>Consumer Care Helpline</span>
+            <strong>{ext?.consumer_care || "Not Found"}</strong>
+          </div>
+
+          <div>
+            <span>Country of Origin</span>
+            <strong>{ext?.country_of_origin || "Not Found"}</strong>
+          </div>
+
+          <div>
+            <span>FSSAI Graphic Logo</span>
+            <strong style={{ color: (ext?.fssai_logo && ext.fssai_logo !== "Not Found" && ext.fssai_logo !== "Not Detected") || checks.fssaiLogo ? "#16a34a" : "#dc2626" }}>
+              {(ext?.fssai_logo && ext.fssai_logo !== "Not Found" && ext.fssai_logo !== "Not Detected") || checks.fssaiLogo ? (ext?.fssai_logo && ext.fssai_logo !== "Not Found" ? ext.fssai_logo : "Detected") : "Not Detected"}
+            </strong>
+          </div>
         </div>
 
       </div>
+
+      {/* AI COMPLIANCE REPORT BREAKDOWN */}
+      {scanData?.compliance_report && scanData.compliance_report.length > 0 && (
+        <div className="details-card" style={{ marginTop: "24px" }}>
+          <div className="details-card-title">
+            <div>
+              <h2>AI Rule Compliance Findings</h2>
+              <p>Automated Legal Metrology Act & Rules compliance audit.</p>
+            </div>
+            <span style={{ fontWeight: 700, fontSize: "18px", color: isCompliant ? "#16a34a" : "#dc2626" }}>
+              Overall Score: {Math.round(scanData.score)}%
+            </span>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "16px" }}>
+            {scanData.compliance_report.map((rule, idx) => (
+              <div key={idx} style={{
+                padding: "14px 18px",
+                borderRadius: "8px",
+                border: `1px solid ${rule.passed ? "#bbf7d0" : "#fca5a5"}`,
+                backgroundColor: rule.passed ? "#f0fdf4" : "#fef2f2",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}>
+                <div>
+                  <strong style={{ color: rule.passed ? "#166534" : "#991b1b", fontSize: "15px" }}>
+                    [{rule.rule_id}] {rule.rule}
+                  </strong>
+                  <p style={{ margin: "4px 0 0 0", color: "#374151", fontSize: "14px" }}>{rule.message}</p>
+                </div>
+                <span style={{
+                  padding: "4px 12px",
+                  borderRadius: "12px",
+                  fontWeight: 700,
+                  fontSize: "13px",
+                  backgroundColor: rule.passed ? "#22c55e" : "#ef4444",
+                  color: "#ffffff",
+                }}>
+                  {rule.passed ? "PASS" : "FAIL"}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* COMPLIANCE CHECK */}
 
@@ -138,7 +411,7 @@ function InspectionDetails() {
             </div>
 
             <span className="rule-badge">
-              6 Rules
+              7 Rules
             </span>
 
           </div>
@@ -319,6 +592,35 @@ function InspectionDetails() {
 
             </div>
 
+            {/* FSSAI LOGO */}
+
+            <div className="compliance-item">
+
+              <div className="compliance-icon">
+                F
+              </div>
+
+              <div className="compliance-info">
+
+                <strong>FSSAI Graphic Logo</strong>
+
+                <span>
+                  FSSAI graphic logo symbol badge must be clearly displayed on food packaging.
+                </span>
+
+              </div>
+
+              <button
+                className={`check-button ${
+                  checks.fssaiLogo ? "passed" : "failed"
+                }`}
+                onClick={() => toggleCheck("fssaiLogo")}
+              >
+                {checks.fssaiLogo ? "Pass" : "Fail"}
+              </button>
+
+            </div>
+
           </div>
 
         </div>
@@ -395,40 +697,46 @@ function InspectionDetails() {
           </div>
 
           <span className="violation-count">
-            {totalChecks - passedChecks} Violation(s)
+            {failedRules.length} Violation(s)
           </span>
 
         </div>
 
-        {totalChecks - passedChecks > 0 ? (
+        {failedRules.length > 0 ? (
 
-          <div className="violation-box">
+          <div className="violations-list" style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {failedRules.map((ruleKey) => {
+              const rule = RULE_DEFINITIONS[ruleKey];
+              return (
+                <div key={ruleKey} className="violation-box">
 
-            <div className="violation-icon">
-              !
-            </div>
+                  <div className="violation-icon">
+                    !
+                  </div>
 
-            <div>
-              <strong>
-                Date of Manufacturing / Packing
-              </strong>
+                  <div>
+                    <strong>
+                      {rule.title}
+                    </strong>
 
-              <p>
-                Required date information was not clearly visible
-                on the package.
-              </p>
+                    <p>
+                      {rule.description}
+                    </p>
 
-              <span>
-                Rule Reference: PACK-DATE-001
-              </span>
-            </div>
+                    <span>
+                      Rule Reference: {rule.ruleRef}
+                    </span>
+                  </div>
 
+                </div>
+              );
+            })}
           </div>
 
         ) : (
 
           <div className="no-violation">
-            No violations detected.
+            No violations detected. All statutory checks passed.
           </div>
 
         )}

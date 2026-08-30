@@ -61,7 +61,7 @@ async def scan_product(
         preprocessed = None
 
     try:
-        ocr_chunks = vision.run_ocr(preprocessed) if preprocessed is not None else []
+        ocr_chunks = vision.run_ocr(preprocessed, filename=upload.filename) if preprocessed is not None else []
     except Exception as exc:
         logger.warning(f"OCR warning: {exc}")
         ocr_chunks = []
@@ -142,7 +142,16 @@ async def scan_product(
         type="success" if comp_status == "compliant" else "error",
     )
     db.add(activity)
-    db.commit()
+    rule_map = {r.rule_id: r.passed for r in compliance_report_list}
+    checks_dict = {
+        "mrp": rule_map.get("LMR_RULE_01", False),
+        "quantity": rule_map.get("LMR_RULE_02", False),
+        "manufacturer": rule_map.get("LMR_RULE_05", False),
+        "packingDate": rule_map.get("LMR_RULE_06", False),
+        "consumerCare": rule_map.get("LMR_RULE_04", False),
+        "countryOrigin": rule_map.get("LMR_RULE_07", False),
+        "fssaiLogo": rule_map.get("FSSAI_RULE_01", False),
+    }
 
     return {
         "id": product.id,
@@ -158,14 +167,7 @@ async def scan_product(
         "extracted_data": extracted_dict,
         "bounding_boxes": boxes_dict,
         "compliance_report": report_dict,
-        "checks": {
-            "mrp": extracted_dict.get("mrp") is not None,
-            "quantity": extracted_dict.get("net_weight") is not None,
-            "manufacturer": extracted_dict.get("manufacturer_address") == "Found",
-            "packingDate": extracted_dict.get("mfg_date") is not None,
-            "consumerCare": extracted_dict.get("consumer_care") is not None,
-            "countryOrigin": True,
-        },
+        "checks": checks_dict,
     }
 
 
