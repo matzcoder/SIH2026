@@ -1,28 +1,70 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../../services/api";
 import "./ScanProduct.css";
 
 function ScanProduct() {
   const navigate = useNavigate();
   const [scanMode, setScanMode] = useState("qr");
   const [scanned, setScanned] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [scanResult, setScanResult] = useState(() => {
+    try {
+      const saved = localStorage.getItem("lastScanResult");
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      return null;
+    }
+  });
+
   const [manualProduct, setManualProduct] = useState({
     productName: "",
     brand: "",
-    category: "",
+    category: "Packaged Food",
     batchNumber: "",
     netQuantity: "",
     mrp: "",
     manufacturer: "",
   });
 
-  const handleScan = () => {
-    // Demo simulation
-    setScanned(true);
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await API.post("/products/scan", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      const data = res.data;
+      setScanResult(data);
+      localStorage.setItem("lastScanResult", JSON.stringify(data));
+      localStorage.setItem(
+        "inspectionReview",
+        JSON.stringify({
+          checks: data.checks,
+          score: data.score,
+        })
+      );
+      setScanned(true);
+    } catch (err) {
+      console.error("AI Scan failed:", err);
+      setError("Failed to run AI OCR scanner. Please check backend status.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleReset = () => {
     setScanned(false);
+    setError("");
   };
 
   const updateManualProduct = (event) => {
@@ -37,6 +79,28 @@ function ScanProduct() {
     if (!manualProduct.productName.trim() || !manualProduct.category) {
       return;
     }
+    const simulatedScan = {
+      name: manualProduct.productName,
+      brand: manualProduct.brand || "Manual Brand",
+      category: manualProduct.category,
+      barcode: "MANUAL-" + Date.now().toString().slice(-6),
+      score: 100.0,
+      status: "compliant",
+      extracted_data: {
+        mrp: manualProduct.mrp,
+        net_weight: manualProduct.netQuantity,
+        manufacturer_address: manualProduct.manufacturer,
+      },
+      checks: {
+        mrp: !!manualProduct.mrp,
+        quantity: !!manualProduct.netQuantity,
+        manufacturer: !!manualProduct.manufacturer,
+        packingDate: true,
+        consumerCare: true,
+        countryOrigin: true,
+      },
+    };
+    localStorage.setItem("lastScanResult", JSON.stringify(simulatedScan));
     localStorage.setItem("inspectionProduct", JSON.stringify(manualProduct));
     navigate("/inspector/evidence");
   };
@@ -55,7 +119,7 @@ function ScanProduct() {
           <h1>Scan Product</h1>
 
           <p>
-            Scan or enter packaged commodity details to begin an inspection.
+            Scan or upload packaged commodity images for live Legal Metrology AI OCR compliance checking.
           </p>
         </div>
 
@@ -72,15 +136,15 @@ function ScanProduct() {
 
           <div className="scan-card-header">
             <div>
-              <h2>Product Scanner</h2>
+              <h2>AI Package Scanner</h2>
 
               <p>
-                Scan the product barcode or QR code.
+                Upload package label image or enter details manually.
               </p>
             </div>
 
             <div className="scanner-status">
-              Ready
+              {loading ? "Processing AI OCR..." : "Ready"}
             </div>
           </div>
 
@@ -92,7 +156,7 @@ function ScanProduct() {
               className={scanMode === "qr" ? "active" : ""}
               onClick={() => setScanMode("qr")}
             >
-              QR / Barcode
+              AI Label Scanner
             </button>
 
             <button
@@ -110,7 +174,7 @@ function ScanProduct() {
 
               {!scanned ? (
                 <>
-                  <div className="scanner-frame">
+                  <div className="scanner-frame" style={{ position: "relative", cursor: "pointer" }}>
 
                     <div className="corner top-left"></div>
                     <div className="corner top-right"></div>
@@ -119,58 +183,64 @@ function ScanProduct() {
 
                     <div className="scanner-line"></div>
 
-                    <div className="scanner-placeholder">
-                      QR
-                    </div>
+                    <label style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", width: "100%", height: "100%", cursor: "pointer" }}>
+                      <input type="file" accept="image/*" onChange={handleFileUpload} style={{ display: "none" }} />
+                      <div className="scanner-placeholder" style={{ fontSize: "16px" }}>
+                        {loading ? "AI OCR Analysing..." : "Click or Drag Image Here"}
+                      </div>
+                    </label>
 
                   </div>
 
-                  <h3>Scan Product Code</h3>
+                  <h3>Upload Package Label Image</h3>
 
                   <p>
-                    Position the package QR code or barcode
-                    inside the scanning area.
+                    Select an image file to trigger full Legal Metrology Rule compliance evaluation.
                   </p>
 
-                  <button
-                    className="start-scan-btn"
-                    onClick={handleScan}
-                  >
-                    Start Scanner
-                  </button>
+                  <label className="start-scan-btn" style={{ display: "inline-block", textAlign: "center", cursor: "pointer" }}>
+                    <input type="file" accept="image/*" onChange={handleFileUpload} style={{ display: "none" }} />
+                    {loading ? "Analyzing..." : "Choose Image for AI Scan"}
+                  </label>
+
+                  {error && <p style={{ color: "#dc2626", marginTop: "12px", fontWeight: 600 }}>{error}</p>}
                 </>
               ) : (
 
                 <div className="scan-success">
 
-                  <div className="success-icon">
-                    ✓
+                  <div className="success-icon" style={{ backgroundColor: scanResult?.status === "compliant" ? "#22c55e" : "#ef4444" }}>
+                    {scanResult?.status === "compliant" ? "✓" : "!"}
                   </div>
 
-                  <h3>Product Detected</h3>
+                  <h3>{scanResult?.status === "compliant" ? "Compliant Product Detected" : "Non-Compliant Product Detected"}</h3>
 
                   <p>
-                    Product information was successfully captured.
+                    Score: <strong>{scanResult?.score}%</strong> | Status: <strong>{scanResult?.status?.toUpperCase()}</strong>
                   </p>
 
-                  <div className="detected-code">
-                    <span>Product Code</span>
-                    <strong>8901234567890</strong>
+                  <div className="detected-code" style={{ textAlign: "left", display: "flex", flexDirection: "column", gap: "6px" }}>
+                    <div><span>Product Name:</span> <strong>{scanResult?.name}</strong></div>
+                    <div><span>Brand:</span> <strong>{scanResult?.brand}</strong></div>
+                    <div><span>MRP:</span> <strong>{scanResult?.extracted_data?.mrp || "Not Found"}</strong></div>
+                    <div><span>Net Qty:</span> <strong>{scanResult?.extracted_data?.net_weight || "Not Found"}</strong></div>
                   </div>
 
-                  <button
-                    className="rescan-btn"
-                    onClick={handleReset}
-                  >
-                    Scan Another Product
-                  </button>
+                  <div style={{ display: "flex", gap: "10px", marginTop: "16px" }}>
+                    <button
+                      className="rescan-btn"
+                      onClick={handleReset}
+                    >
+                      Scan Another
+                    </button>
 
-                  <button
-                    className="start-scan-btn"
-                    onClick={() => navigate("/inspector/evidence")}
-                  >
-                    Continue Inspection
-                  </button>
+                    <button
+                      className="start-scan-btn"
+                      onClick={() => navigate("/inspector/inspection-details/INS-1029")}
+                    >
+                      View Details
+                    </button>
+                  </div>
 
                 </div>
 

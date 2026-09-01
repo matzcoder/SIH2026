@@ -2,21 +2,105 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./Reports.css";
 
+const RULE_DEFINITIONS = {
+  mrp: {
+    label: "Maximum Retail Price",
+    obsPass: "Clearly declared",
+    obsFail: "Missing or unreadable",
+    title: "MRP Declaration",
+    description: "The printed MRP on the package wrapper was missing, unreadable, or incorrect.",
+    ruleRef: "LMR-RULE-001",
+  },
+  quantity: {
+    label: "Net Quantity",
+    obsPass: "100 g declared",
+    obsFail: "Missing or non-SI units",
+    title: "Net Quantity Declaration",
+    description: "Net quantity was missing or not declared using mandatory standard units.",
+    ruleRef: "LMR-RULE-002",
+  },
+  manufacturer: {
+    label: "Manufacturer Details",
+    obsPass: "Details available",
+    obsFail: "Missing name/address",
+    title: "Manufacturer / Packer Details",
+    description: "Complete name and postal address of manufacturer/packer was not declared.",
+    ruleRef: "LMR-RULE-003",
+  },
+  packingDate: {
+    label: "Packing Date",
+    obsPass: "Visible & readable",
+    obsFail: "Not clearly visible",
+    title: "Packing Date Declaration",
+    description: "The manufacturing / packing date was not clearly visible on the package.",
+    ruleRef: "PACK-DATE-001",
+  },
+  consumerCare: {
+    label: "Consumer Care Details",
+    obsPass: "Available",
+    obsFail: "Missing contact info",
+    title: "Consumer Care Contact",
+    description: "Consumer helpline contact details (phone/email) were not available.",
+    ruleRef: "LMR-RULE-004",
+  },
+  countryOrigin: {
+    label: "Country of Origin",
+    obsPass: "Declared",
+    obsFail: "Missing declaration",
+    title: "Country of Origin",
+    description: "Country of origin declaration was missing from the retail package.",
+    ruleRef: "LMR-RULE-005",
+  },
+};
+
 function Reports() {
   const navigate = useNavigate();
   const [reportStatus, setReportStatus] = React.useState("Draft Report");
   const [actionMessage, setActionMessage] = React.useState("");
+
+  const savedScan = React.useMemo(() => {
+    try {
+      const data = localStorage.getItem("lastScanResult");
+      return data ? JSON.parse(data) : null;
+    } catch (e) {
+      return null;
+    }
+  }, []);
+
+  const savedReview = React.useMemo(() => {
+    try {
+      const data = localStorage.getItem("inspectionReview");
+      return data ? JSON.parse(data) : null;
+    } catch (e) {
+      return null;
+    }
+  }, []);
+
+  const checks = savedScan?.checks || savedReview?.checks || {
+    mrp: false,
+    quantity: false,
+    manufacturer: false,
+    packingDate: false,
+    consumerCare: false,
+    countryOrigin: false,
+  };
+
+  const passedCount = Object.values(checks).filter(Boolean).length;
+  const failedCount = Object.values(checks).length - passedCount;
+  const score = savedScan?.score !== undefined ? Math.round(savedScan.score) : Math.round((passedCount / Object.values(checks).length) * 100);
+  const failedRules = Object.keys(checks).filter((key) => !checks[key]);
+
   const report = {
     id: "INS-1029",
-    product: "ABC Biscuits",
-    brand: "ABC Foods",
-    category: "Packaged Food",
+    product: savedScan?.name || savedScan?.extracted_data?.name || "Scanned Product",
+    brand: savedScan?.brand || "Packaged Brand",
+    category: savedScan?.category || "Packaged Food",
     location: "Chennai",
     date: "25 Aug 2026",
     inspector: "Field Officer",
-    score: 83,
-    passed: 5,
-    failed: 1,
+    score: score,
+    passed: passedCount,
+    failed: failedCount,
     evidence: 6,
   };
 
@@ -31,7 +115,7 @@ function Reports() {
     `Compliance Score: ${report.score}%`,
     `Rules Passed: ${report.passed}`,
     `Violations: ${report.failed}`,
-    "Decision: Corrective Action Required",
+    `Decision: ${score === 100 ? "Fully Compliant" : "Corrective Action Required"}`,
   ].join("\n");
 
   const saveDraft = () => {
@@ -157,7 +241,7 @@ function Reports() {
             <span>Result</span>
 
             <strong>
-              Conditional Compliance
+              {score === 100 ? "Fully Compliant" : "Conditional Compliance"}
             </strong>
           </div>
 
@@ -219,41 +303,17 @@ function Reports() {
               <span>Result</span>
             </div>
 
-            <div className="verification-row">
-              <span>Maximum Retail Price</span>
-              <span>Clearly declared</span>
-              <b className="pass">PASS</b>
-            </div>
-
-            <div className="verification-row">
-              <span>Net Quantity</span>
-              <span>100 g declared</span>
-              <b className="pass">PASS</b>
-            </div>
-
-            <div className="verification-row">
-              <span>Manufacturer Details</span>
-              <span>Details available</span>
-              <b className="pass">PASS</b>
-            </div>
-
-            <div className="verification-row">
-              <span>Packing Date</span>
-              <span>Not clearly visible</span>
-              <b className="fail">FAIL</b>
-            </div>
-
-            <div className="verification-row">
-              <span>Consumer Care Details</span>
-              <span>Available</span>
-              <b className="pass">PASS</b>
-            </div>
-
-            <div className="verification-row">
-              <span>Country of Origin</span>
-              <span>Declared</span>
-              <b className="pass">PASS</b>
-            </div>
+            {Object.keys(RULE_DEFINITIONS).map((ruleKey) => {
+              const rule = RULE_DEFINITIONS[ruleKey];
+              const isPassed = checks[ruleKey];
+              return (
+                <div key={ruleKey} className="verification-row">
+                  <span>{rule.label}</span>
+                  <span>{isPassed ? rule.obsPass : rule.obsFail}</span>
+                  <b className={isPassed ? "pass" : "fail"}>{isPassed ? "PASS" : "FAIL"}</b>
+                </div>
+              );
+            })}
 
           </div>
 
@@ -265,30 +325,27 @@ function Reports() {
 
           <h3>3. Violations Detected</h3>
 
-          <div className="report-violation">
-
-            <div className="report-warning-icon">
-              !
+          {failedRules.length > 0 ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              {failedRules.map((ruleKey) => {
+                const rule = RULE_DEFINITIONS[ruleKey];
+                return (
+                  <div key={ruleKey} className="report-violation">
+                    <div className="report-warning-icon">!</div>
+                    <div>
+                      <strong>{rule.title}</strong>
+                      <p>{rule.description}</p>
+                      <span>Rule Reference: {rule.ruleRef}</span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-
-            <div>
-
-              <strong>
-                Packing Date Declaration
-              </strong>
-
-              <p>
-                The manufacturing / packing date was not
-                clearly visible on the package.
-              </p>
-
-              <span>
-                Rule Reference: PACK-DATE-001
-              </span>
-
+          ) : (
+            <div className="no-violation-box" style={{ padding: "16px", backgroundColor: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: "8px", color: "#166534", fontWeight: 600 }}>
+              No violations detected. Package fully complies with Legal Metrology statutory requirements.
             </div>
-
-          </div>
+          )}
 
         </div>
 

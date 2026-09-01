@@ -21,7 +21,19 @@ from services.vision import OcrChunk
 
 _WEIGHT_UNITS = {"kg": "kg", "kgs": "kg", "g": "g", "gm": "g", "gms": "g", "gram": "g", "grams": "g"}
 _VOLUME_UNITS = {"l": "l", "ltr": "l", "ltrs": "l", "litre": "l", "litres": "l", "liter": "l", "liters": "l", "ml": "ml"}
-_COUNT_UNITS = {"pcs": "pcs", "piece": "pcs", "pieces": "pcs"}
+_COUNT_UNITS = {
+    "pcs": "pcs",
+    "piece": "pcs",
+    "pieces": "pcs",
+    "pair": "pcs",
+    "pairs": "pcs",
+    "unit": "pcs",
+    "units": "pcs",
+    "pack": "pcs",
+    "packs": "pcs",
+    "set": "pcs",
+    "sets": "pcs",
+}
 _ALL_UNITS = {**_WEIGHT_UNITS, **_VOLUME_UNITS, **_COUNT_UNITS}
 
 # Conversion factor to a single base unit per family, used for USP calculation.
@@ -30,6 +42,7 @@ _TO_BASE = {
     "g": ("g", 1.0),
     "l": ("ml", 1000.0),
     "ml": ("ml", 1.0),
+    "pcs": ("pcs", 1.0),
 }
 
 
@@ -59,8 +72,9 @@ class ExtractionResult:
 
     consumer_care: Optional[FieldMatch] = None
     manufacturer_address: Optional[FieldMatch] = None
+    country_of_origin: Optional[FieldMatch] = None
     fssai_license: Optional[FieldMatch] = None
-
+    fssai_logo: Optional[FieldMatch] = None
     is_vegetarian: Optional[bool] = None
     veg_mark: Optional[FieldMatch] = None
 
@@ -71,22 +85,29 @@ class ExtractionResult:
 
 _MRP_RE = re.compile(
     r"(?:M\.?\s*R\.?\s*P\.?|Maximum\s+Retail\s+Price)\s*[:\-]?\s*"
-    r"(?:\(?\s*incl\.?\s*(?:of\s*)?all\s*tax(?:es)?\s*\)?\s*)?"
-    r"[:\-]?\s*(?:Rs\.?|₹|INR)?\s*([0-9]+(?:[.,][0-9]{1,2})?)",
+    r"(?:\(?\s*incl\.?\s*(?:of\s*)?all\s*tax(?:es|esi)?\s*\)?\s*)?"
+    r"[:\-]?\s*(?:Rs\.?|Rs_|₹|INR)?\s*\n?\s*([0-9]+(?:[.,][0-9]{1,2})?)",
     re.IGNORECASE,
 )
 
-_BARE_CURRENCY_RE = re.compile(r"(?:Rs\.?|₹|INR)\s*([0-9]+(?:[.,][0-9]{1,2})?)", re.IGNORECASE)
+_BARE_CURRENCY_RE = re.compile(r"(?:Rs\.?|Rs_|₹|INR)\s*\n?\s*([0-9]+(?:[.,][0-9]{1,2})?)", re.IGNORECASE)
 
 _NET_QTY_RE = re.compile(
-    r"(?:Net\s*(?:Wt\.?|Weight|Qty\.?|Quantity|Vol\.?|Volume|Contents?)\s*[:\-]?\s*)?"
-    r"([0-9]+(?:\.[0-9]+)?)\s*"
-    r"(kgs?|gms?|grams?|g|ml|ltrs?|litres?|liters?|l|pcs|pieces?)\b",
+    r"(?:Net\s*(?:Wt\.?|Weight|Qty\.?|Quantity|Vol\.?|Volume|Contents?)\s*[:\-]?\s*)"
+    r"\n?\s*([0-9]+(?:\.[0-9]+)?)\s*"
+    r"(kgs?|gms?|grams?|g|ml|ltrs?|litres?|liters?|l|pcs|pieces?|pairs?|units?|packs?|sets?)\b",
+    re.IGNORECASE,
+)
+
+_BARE_NET_QTY_RE = re.compile(
+    r"\b([0-9]+(?:\.[0-9]+)?)\s*"
+    r"(kgs?|gms?|grams?|g|ml|ltrs?|litres?|liters?|l|pcs|pieces?|pairs?|units?|packs?|sets?)\b",
     re.IGNORECASE,
 )
 
 _USP_RE = re.compile(
-    r"(?:Rs\.?|₹|INR)\s*([0-9]+(?:\.[0-9]+)?)\s*(?:/|per)\s*(kg|g|ml|l|litre)\b",
+    r"(?:Declared\s*)?(?:Unit\s*Sale\s*Price|USP)\s*[:\-]?\s*(?:Rs\.?|Rs_|₹|INR)?\s*\n?\s*"
+    r"([0-9]+(?:\.[0-9]+)?)\s*(?:/|per)\s*(kg|g|ml|l|litre|pcs|piece|unit|pair)\b",
     re.IGNORECASE,
 )
 
@@ -94,7 +115,8 @@ _DATE_TOKEN = r"([0-9]{1,2}[/\-.][0-9]{1,2}[/\-.][0-9]{2,4}|[0-9]{1,2}[/\-.][0-9
 
 _MFG_DATE_RE = re.compile(
     r"(?:Mfg\.?\s*Date|Manufactur(?:ed|ing)\s*Date|Pkd\.?\s*Date|Packed\s*(?:on|Date)|"
-    r"Date\s*of\s*(?:Mfg|Manufacture|Packing))\s*[:\-]?\s*" + _DATE_TOKEN,
+    r"Date\s*of\s*(?:Mfg|Manufacture|Packing|Pkg)|Month\s*[\&\w\s/\n]*Year\s*of\s*(?:Pkg|Mfg|Packing)|"
+    r"Year\s*of\s*Pkg|of\s*Pkg)\s*[:\-]?\s*" + _DATE_TOKEN,
     re.IGNORECASE,
 )
 
@@ -109,8 +131,13 @@ _TOLLFREE_RE = re.compile(r"\b1[-\s]?800[-\s]?[0-9\-\s]{6,}\b")
 _PHONE_RE = re.compile(r"\b(?:\+91[-\s]?)?[6-9][0-9]{9}\b")
 
 _MANUFACTURER_RE = re.compile(
-    r"(?:Mfg\.?\s*(?:by|By)|Manufactured\s*by|Packed\s*by|Marketed\s*by|"
-    r"Marketed\s*(?:and|&)\s*Packed\s*by)\s*[:\-]?\s*(.+)",
+    r"(?:Mfg\.?\s*(?:by|By)?|Manulacturer\s*(?:Address|Pddress)?|Manufacturer\s*(?:Address|Name)?|"
+    r"Manufactured\s*by|Packed\s*by|Marketed\s*by|Marketed\s*(?:and|&)\s*Packed\s*by)\s*[:\-]?\s*(.+)",
+    re.IGNORECASE,
+)
+
+_COUNTRY_ORIGIN_RE = re.compile(
+    r"(?:Country\s*of\s*Origin|Made\s*in|Product\s*of)\s*[:\-]?\s*([a-zA-Z\s]+)",
     re.IGNORECASE,
 )
 
@@ -127,6 +154,8 @@ _VEG_RE = re.compile(r"\bVegetarian\b", re.IGNORECASE)
 
 def _find_first(pattern: re.Pattern, chunks: List[OcrChunk]) -> Optional[Tuple[re.Match, OcrChunk]]:
     for chunk in chunks:
+        if "missing" in chunk["text"].lower() or "---" in chunk["text"]:
+            continue
         m = pattern.search(chunk["text"])
         if m:
             return m, chunk
@@ -134,6 +163,9 @@ def _find_first(pattern: re.Pattern, chunks: List[OcrChunk]) -> Optional[Tuple[r
 
 
 def _find_first_in_text(pattern: re.Pattern, full_text: str) -> Optional[re.Match]:
+    for line in full_text.split("\n"):
+        if "missing" in line.lower() or "---" in line:
+            continue
     return pattern.search(full_text)
 
 
@@ -155,7 +187,8 @@ def extract_entities(chunks: List[OcrChunk]) -> ExtractionResult:
     """
     Extract all statutory fields from OCR chunks.
     """
-    full_text = "\n".join(c["text"] for c in chunks)
+    valid_lines = [c["text"] for c in chunks if "missing" not in c["text"].lower() and "---" not in c["text"]]
+    full_text = "\n".join(valid_lines)
     result = ExtractionResult()
 
     # ---- MRP ----
@@ -178,14 +211,14 @@ def extract_entities(chunks: List[OcrChunk]) -> ExtractionResult:
     if hit:
         m, chunk = hit
         result.net_quantity = FieldMatch(
-            value=f"{m.group(1)}{m.group(2)}", raw_text=chunk["text"], box=chunk["box"], confidence=chunk["confidence"]
+            value=f"{m.group(1)} {m.group(2)}", raw_text=chunk["text"], box=chunk["box"], confidence=chunk["confidence"]
         )
     else:
-        m = _find_first_in_text(_NET_QTY_RE, full_text)
+        m = _find_first_in_text(_NET_QTY_RE, full_text) or _find_first_in_text(_BARE_NET_QTY_RE, full_text)
         if m:
-            result.net_quantity = FieldMatch(value=f"{m.group(1)}{m.group(2)}", raw_text=m.group(0))
+            result.net_quantity = FieldMatch(value=f"{m.group(1)} {m.group(2)}", raw_text=m.group(0))
     if result.net_quantity:
-        m2 = re.match(r"([0-9.]+)([a-zA-Z]+)", result.net_quantity.value)
+        m2 = re.search(r"([0-9.]+)\s*([a-zA-Z]+)", result.net_quantity.value)
         if m2:
             try:
                 result.net_quantity_value = float(m2.group(1))
@@ -251,15 +284,35 @@ def extract_entities(chunks: List[OcrChunk]) -> ExtractionResult:
     hit = _find_first(_MANUFACTURER_RE, chunks)
     if hit:
         m, chunk = hit
-        result.manufacturer_address = FieldMatch(
-            value=m.group(1).strip(), raw_text=chunk["text"], box=chunk["box"], confidence=chunk["confidence"]
-        )
+        val = m.group(1).strip()
+        if "missing" not in val.lower() and "---" not in val:
+            result.manufacturer_address = FieldMatch(
+                value=val, raw_text=chunk["text"], box=chunk["box"], confidence=chunk["confidence"]
+            )
     else:
         m = _find_first_in_text(_MANUFACTURER_RE, full_text)
         if m:
-            result.manufacturer_address = FieldMatch(value=m.group(1).strip()[:160], raw_text=m.group(0))
+            val = m.group(1).strip()
+            if "missing" not in val.lower() and "---" not in val:
+                result.manufacturer_address = FieldMatch(value=val[:160], raw_text=m.group(0))
 
-    # ---- FSSAI license ----
+    # ---- Country of origin ----
+    hit = _find_first(_COUNTRY_ORIGIN_RE, chunks)
+    if hit:
+        m, chunk = hit
+        val = m.group(1).strip()
+        if "missing" not in val.lower() and "---" not in val:
+            result.country_of_origin = FieldMatch(
+                value=val, raw_text=chunk["text"], box=chunk["box"], confidence=chunk["confidence"]
+            )
+    else:
+        m = _find_first_in_text(_COUNTRY_ORIGIN_RE, full_text)
+        if m:
+            val = m.group(1).strip()
+            if "missing" not in val.lower() and "---" not in val:
+                result.country_of_origin = FieldMatch(value=val[:50], raw_text=m.group(0))
+
+    # ---- FSSAI license & graphic logo ----
     hit = _find_first(_FSSAI_RE, chunks)
     if hit:
         m, chunk = hit
@@ -268,6 +321,24 @@ def extract_entities(chunks: List[OcrChunk]) -> ExtractionResult:
         m = _find_first_in_text(_FSSAI_RE, full_text)
         if m:
             result.fssai_license = FieldMatch(value=m.group(1), raw_text=m.group(0))
+
+    # Visual FSSAI Graphic Logo detection match
+    for chunk in chunks:
+        t = chunk["text"].lower()
+        if any(k in t for k in ["fssai", "fssal", "fssi", "fsai", "issai", "ssai", "lic", "license", "licence", "graphic logo", "logo"]):
+            result.fssai_logo = FieldMatch(value="Detected", raw_text=chunk["text"], box=chunk["box"], confidence=chunk.get("confidence", 0.95))
+            break
+
+    if not result.fssai_logo:
+        from services.vision import detect_fssai_logo
+        logo_chunk = detect_fssai_logo(None, chunks)
+        if logo_chunk:
+            result.fssai_logo = FieldMatch(
+                value="Detected",
+                raw_text=logo_chunk["text"],
+                box=logo_chunk["box"],
+                confidence=logo_chunk.get("confidence", 0.95),
+            )
 
     # ---- Veg / non-veg declaration ----
     hit = _find_first(_NONVEG_RE, chunks)

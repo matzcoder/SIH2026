@@ -37,8 +37,10 @@ class ExtractedData(BaseModel):
     mfg_date: Optional[str] = Field(default=None, description="Date of manufacture / packing")
     expiry_date: Optional[str] = Field(default=None, description="Expiry / best-before date")
     fssai_license: Optional[str] = Field(default=None, description="14-digit FSSAI license number, if present")
+    fssai_logo: Optional[str] = Field(default=None, description="Visual FSSAI Graphic Logo marker ('Detected' / 'Not Detected')")
     consumer_care: Optional[str] = Field(default=None, description="Consumer care email / phone")
     manufacturer_address: Optional[str] = Field(default=None, description="'Found' / 'Not Found' marker")
+    country_of_origin: Optional[str] = Field(default=None, description="Declared country of origin, e.g. 'India'")
     is_vegetarian: Optional[bool] = Field(
         default=None, description="True = veg mark detected, False = non-veg mark detected, None = undetermined"
     )

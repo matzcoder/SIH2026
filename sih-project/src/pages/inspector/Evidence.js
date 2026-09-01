@@ -1,32 +1,90 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../../services/api";
 import "./Evidence.css";
 
 function Evidence() {
   const navigate = useNavigate();
   const [files, setFiles] = useState([]);
-  const [checklist, setChecklist] = useState({
-    mrp: false,
-    quantity: false,
-    manufacturer: false,
-    packingDate: false,
-    consumerCare: false,
-    countryOrigin: false,
+  const [ocrLoading, setOcrLoading] = useState(false);
+  const [ocrError, setOcrError] = useState("");
+  const [scanResult, setScanResult] = useState(() => {
+    try {
+      const saved = localStorage.getItem("lastScanResult");
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      return null;
+    }
+  });
+
+  const [checklist, setChecklist] = useState(() => {
+    try {
+      const saved = localStorage.getItem("lastScanResult");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.checks) return parsed.checks;
+      }
+    } catch (e) {}
+    return {
+      mrp: false,
+      quantity: false,
+      manufacturer: false,
+      packingDate: false,
+      consumerCare: false,
+      countryOrigin: false,
+    };
   });
   const [remarks, setRemarks] = useState("");
   const [saved, setSaved] = useState(false);
 
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const selectedFiles = Array.from(event.target.files);
+    if (!selectedFiles.length) return;
 
     const newFiles = selectedFiles.map((file) => ({
       name: file.name,
       type: file.type,
       size: (file.size / 1024).toFixed(1) + " KB",
       url: URL.createObjectURL(file),
+      fileObj: file,
     }));
 
     setFiles((previous) => [...previous, ...newFiles]);
+
+    // Send the first image to AI OCR engine to extract digital details
+    const imageFile = selectedFiles.find((f) => f.type.startsWith("image/"));
+    if (imageFile) {
+      setOcrLoading(true);
+      setOcrError("");
+
+      try {
+        const formData = new FormData();
+        formData.append("file", imageFile);
+
+        const res = await API.post("/products/scan", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        const data = res.data;
+        setScanResult(data);
+        if (data.checks) {
+          setChecklist(data.checks);
+        }
+        localStorage.setItem("lastScanResult", JSON.stringify(data));
+        localStorage.setItem(
+          "inspectionReview",
+          JSON.stringify({
+            checks: data.checks,
+            score: data.score,
+          })
+        );
+      } catch (err) {
+        console.error("AI OCR Scanning error:", err);
+        setOcrError("Failed to extract digital details via AI OCR.");
+      } finally {
+        setOcrLoading(false);
+      }
+    }
   };
 
   const removeFile = (index) => {
@@ -80,7 +138,7 @@ function Evidence() {
 
         <div>
           <span>Product</span>
-          <strong>ABC Biscuits</strong>
+          <strong>{scanResult?.name || scanResult?.extracted_data?.name || "Scanned Commodity"}</strong>
         </div>
 
         <div>
@@ -99,6 +157,37 @@ function Evidence() {
         </div>
 
       </div>
+
+      {/* Extracted Digital Details Card */}
+      {scanResult && (
+        <div className="evidence-card" style={{ border: "2px solid #2563eb", backgroundColor: "#f8fafc" }}>
+          <div className="section-heading">
+            <div>
+              <h2 style={{ color: "#1e40af" }}>Extracted Digital Details (AI OCR)</h2>
+              <p>Visual declarations automatically converted into structured digital data.</p>
+            </div>
+            <span style={{
+              padding: "4px 12px",
+              borderRadius: "12px",
+              fontWeight: 700,
+              backgroundColor: scanResult.status === "compliant" ? "#dcfce7" : "#fee2e2",
+              color: scanResult.status === "compliant" ? "#15803d" : "#b91c1c",
+            }}>
+              {scanResult.status === "compliant" ? "COMPLIANT" : "NON-COMPLIANT"} ({Math.round(scanResult.score)}%)
+            </span>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "14px", marginTop: "12px" }}>
+            <div><span style={{ fontSize: "12px", color: "#64748b" }}>MRP:</span><br /><strong style={{ fontSize: "15px", color: "#0f172a" }}>{scanResult.extracted_data?.mrp || "Not Found"}</strong></div>
+            <div><span style={{ fontSize: "12px", color: "#64748b" }}>Net Quantity:</span><br /><strong style={{ fontSize: "15px", color: "#0f172a" }}>{scanResult.extracted_data?.net_weight || "Not Found"}</strong></div>
+            <div><span style={{ fontSize: "12px", color: "#64748b" }}>Declared USP:</span><br /><strong style={{ fontSize: "15px", color: "#0f172a" }}>{scanResult.extracted_data?.unit_sale_price || "Not Found"}</strong></div>
+            <div><span style={{ fontSize: "12px", color: "#64748b" }}>Mfg / Expiry Date:</span><br /><strong style={{ fontSize: "15px", color: "#0f172a" }}>{scanResult.extracted_data?.mfg_date || scanResult.extracted_data?.expiry_date || "Not Found"}</strong></div>
+            <div><span style={{ fontSize: "12px", color: "#64748b" }}>Manufacturer Address:</span><br /><strong style={{ fontSize: "15px", color: "#0f172a" }}>{scanResult.extracted_data?.manufacturer_address || "Not Found"}</strong></div>
+            <div><span style={{ fontSize: "12px", color: "#64748b" }}>Consumer Care:</span><br /><strong style={{ fontSize: "15px", color: "#0f172a" }}>{scanResult.extracted_data?.consumer_care || "Not Found"}</strong></div>
+            <div><span style={{ fontSize: "12px", color: "#64748b" }}>Country of Origin:</span><br /><strong style={{ fontSize: "15px", color: "#0f172a" }}>{scanResult.extracted_data?.country_of_origin || "Not Found"}</strong></div>
+          </div>
+        </div>
+      )}
 
       {/* Upload Section */}
 
@@ -128,11 +217,11 @@ function Evidence() {
           </div>
 
           <h3>
-            Upload Evidence
+            {ocrLoading ? "Extracting Digital Details via AI OCR..." : "Upload Evidence & AI Scan"}
           </h3>
 
           <p>
-            Click here to select images or PDF documents
+            Click here to select images or PDF documents for live OCR extraction
           </p>
 
           <span>
@@ -140,6 +229,8 @@ function Evidence() {
           </span>
 
         </label>
+
+        {ocrError && <p style={{ color: "#dc2626", fontWeight: 600, marginTop: "12px" }}>{ocrError}</p>}
 
       </div>
 
