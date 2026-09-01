@@ -62,6 +62,11 @@ async def analyze_package(file: UploadFile = File(...)) -> AnalysisResponse:
         barcodes = []
 
     if not ocr_chunks:
+        if not vision.is_ocr_ready():
+            raise HTTPException(
+                status_code=503,
+                detail="OCR engine is still loading. Please wait a few seconds and try again.",
+            )
         raise HTTPException(
             status_code=422,
             detail="No readable text detected in the image. Please retake in better lighting/focus.",

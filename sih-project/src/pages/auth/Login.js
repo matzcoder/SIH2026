@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { validateEmail, readRegisteredUsers } from "./validation";
 import { useAuth } from "../../context/AuthContext";
 import "./Login.css";
@@ -178,19 +178,6 @@ function Login() {
             </button>
 
           </form>
-
-
-          <div className="signup-section">
-
-            <span>
-              Don't have an account?
-            </span>
-
-            <Link to="/register">
-              Create an account
-            </Link>
-
-          </div>
 
 
         </div>

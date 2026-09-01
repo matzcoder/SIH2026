@@ -41,44 +41,25 @@ const RULE_DEFINITIONS = {
   },
 };
 
+// Default state: no scan yet — all checks unknown/pending, not pre-passed
 const DEFAULT_SCAN_DATA = {
-  name: "NutriCrunch Wheat Biscuits",
-  brand: "ABC Foods",
-  category: "Packaged Food",
-  status: "compliant",
-  score: 100,
-  barcode: "8901234567890",
-  extracted_data: {
-    mrp: "Rs. 40.00",
-    net_weight: "200 g",
-    unit_sale_price: "Rs. 0.20 per g",
-    calculated_unit_sale_price: "Rs. 0.20 per g",
-    mfg_date: "08/2026",
-    expiry_date: "Best Before 6 Months",
-    manufacturer_address: "Found",
-    consumer_care: "1800-123-4567 / support@abcfoods.com",
-    country_of_origin: "India",
-    fssai_logo: "Detected",
-  },
+  name: "No product scanned yet",
+  brand: "—",
+  category: "—",
+  status: "pending",
+  score: 0,
+  barcode: "—",
+  extracted_data: {},
   checks: {
-    mrp: true,
-    quantity: true,
-    manufacturer: true,
-    packingDate: true,
-    consumerCare: true,
-    countryOrigin: true,
-    fssaiLogo: true,
+    mrp: false,
+    quantity: false,
+    manufacturer: false,
+    packingDate: false,
+    consumerCare: false,
+    countryOrigin: false,
+    fssaiLogo: false,
   },
-  compliance_report: [
-    { rule_id: "LMR_RULE_01", rule: "Maximum Retail Price (MRP)", passed: true, severity: "CRITICAL", message: "MRP is clearly printed on the package." },
-    { rule_id: "LMR_RULE_02", rule: "Net Quantity Declaration", passed: true, severity: "CRITICAL", message: "Net quantity is declared in standard units." },
-    { rule_id: "LMR_RULE_03", rule: "Unit Sale Price (USP)", passed: true, severity: "HIGH", message: "Declared USP matches calculated reference." },
-    { rule_id: "LMR_RULE_04", rule: "Consumer Care Details", passed: true, severity: "MEDIUM", message: "Consumer care helpline/email found." },
-    { rule_id: "LMR_RULE_05", rule: "Manufacturer Details", passed: true, severity: "HIGH", message: "Manufacturer name and address found." },
-    { rule_id: "LMR_RULE_06", rule: "Manufacturing Date", passed: true, severity: "MEDIUM", message: "Manufacturing date declared." },
-    { rule_id: "LMR_RULE_07", rule: "Country of Origin", passed: true, severity: "HIGH", message: "Country of origin declared." },
-    { rule_id: "FSSAI_RULE_01", rule: "FSSAI Graphic Logo Presence", passed: true, severity: "HIGH", message: "FSSAI Graphic Logo is clearly visible on package wrapper." },
-  ],
+  compliance_report: [],
 };
 
 function InspectionDetails() {
@@ -89,14 +70,16 @@ function InspectionDetails() {
       const saved = localStorage.getItem("lastScanResult");
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed && parsed.extracted_data && parsed.extracted_data.fssai_logo !== undefined) {
+        // Only restore if it came from a real backend scan (has compliance_report array)
+        if (parsed && Array.isArray(parsed.compliance_report) && parsed.compliance_report.length > 0) {
           return parsed;
         }
       }
-      return DEFAULT_SCAN_DATA;
-    } catch (e) {
-      return DEFAULT_SCAN_DATA;
-    }
+    } catch (e) {}
+    // Clear any stale/fake data
+    localStorage.removeItem("lastScanResult");
+    localStorage.removeItem("inspectionReview");
+    return DEFAULT_SCAN_DATA;
   });
 
   const [loading, setLoading] = useState(false);
@@ -107,12 +90,20 @@ function InspectionDetails() {
       const saved = localStorage.getItem("lastScanResult");
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed && parsed.checks && parsed.checks.fssaiLogo !== undefined) return parsed.checks;
-      }
-      const savedRev = localStorage.getItem("inspectionReview");
-      if (savedRev) {
-        const parsed = JSON.parse(savedRev);
-        if (parsed && parsed.checks && parsed.checks.fssaiLogo !== undefined) return parsed.checks;
+        if (parsed && Array.isArray(parsed.compliance_report) && parsed.compliance_report.length > 0) {
+          // Always derive from compliance_report — single source of truth
+          const ruleMap = {};
+          parsed.compliance_report.forEach((r) => { ruleMap[r.rule_id] = r.passed; });
+          return {
+            mrp:          ruleMap["LMR_RULE_01"] ?? false,
+            quantity:     ruleMap["LMR_RULE_02"] ?? false,
+            manufacturer: ruleMap["LMR_RULE_05"] ?? false,
+            packingDate:  ruleMap["LMR_RULE_06"] ?? false,
+            consumerCare: ruleMap["LMR_RULE_04"] ?? false,
+            countryOrigin:ruleMap["LMR_RULE_07"] ?? false,
+            fssaiLogo:    ruleMap["FSSAI_RULE_01"] ?? false,
+          };
+        }
       }
     } catch (e) {}
     return DEFAULT_SCAN_DATA.checks;
@@ -148,22 +139,20 @@ function InspectionDetails() {
 
       const data = res.data;
       setScanData(data);
-      
+
       const ruleMap = {};
       if (data.compliance_report) {
-        data.compliance_report.forEach((r) => {
-          ruleMap[r.rule_id] = r.passed;
-        });
+        data.compliance_report.forEach((r) => { ruleMap[r.rule_id] = r.passed; });
       }
 
       const newChecks = {
-        mrp: data.checks?.mrp ?? ruleMap["LMR_RULE_01"] ?? false,
-        quantity: data.checks?.quantity ?? ruleMap["LMR_RULE_02"] ?? false,
-        manufacturer: data.checks?.manufacturer ?? ruleMap["LMR_RULE_05"] ?? false,
-        packingDate: data.checks?.packingDate ?? ruleMap["LMR_RULE_06"] ?? false,
-        consumerCare: data.checks?.consumerCare ?? ruleMap["LMR_RULE_04"] ?? false,
-        countryOrigin: data.checks?.countryOrigin ?? ruleMap["LMR_RULE_07"] ?? false,
-        fssaiLogo: data.checks?.fssaiLogo ?? ruleMap["FSSAI_RULE_01"] ?? (data.extracted_data?.fssai_logo === "Detected"),
+        mrp:           ruleMap["LMR_RULE_01"] ?? false,
+        quantity:      ruleMap["LMR_RULE_02"] ?? false,
+        manufacturer:  ruleMap["LMR_RULE_05"] ?? false,
+        packingDate:   ruleMap["LMR_RULE_06"] ?? false,
+        consumerCare:  ruleMap["LMR_RULE_04"] ?? false,
+        countryOrigin: ruleMap["LMR_RULE_07"] ?? false,
+        fssaiLogo:     ruleMap["FSSAI_RULE_01"] ?? false,
       };
 
       setChecks(newChecks);
@@ -320,7 +309,7 @@ function InspectionDetails() {
 
           <div>
             <span>Date of Expiry / Best Before</span>
-            <strong>{ext?.expiry_date || "Not Found"}</strong>
+            <strong>{ext?.expiry_date || (ext?.mfg_date ? "N/A (Mfg date declared)" : "Not Found")}</strong>
           </div>
 
           <div>

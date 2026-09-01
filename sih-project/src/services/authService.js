@@ -28,20 +28,6 @@ export const loginUser = async (email, password) => {
 
 
 // ================================
-// REGISTER
-// ================================
-
-export const registerUser = async (userData) => {
-  const response = await API.post(
-    "/auth/register",
-    userData
-  );
-
-  return response.data;
-};
-
-
-// ================================
 // LOGOUT
 // ================================
 

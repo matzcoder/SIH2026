@@ -241,7 +241,7 @@ def _rule_fssai_logo(extraction: ExtractionResult) -> ComplianceRuleResult:
         rule="FSSAI Graphic Logo Presence",
         rule_id="FSSAI_RULE_01",
         passed=passed,
-        severity=Severity.HIGH,
+        severity=Severity.CRITICAL,
         message=(
             "FSSAI Graphic Logo is clearly visible on the package wrapper."
             if passed
@@ -280,5 +280,5 @@ def compute_score_and_status(rules_result: List[ComplianceRuleResult]) -> Tuple[
                 critical_failed = True
     score = max(0.0, score)
 
-    status = "compliant" if (not critical_failed and failed_count <= 1 and score >= 80.0) else "non_compliant"
+    status = "compliant" if (not critical_failed and failed_count == 0 and score >= 90.0) else "non_compliant"
     return round(score, 1), status

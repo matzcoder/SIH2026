@@ -11,7 +11,6 @@ import {
 ========================= */
 
 import Login from "../pages/auth/Login";
-import Signin from "../pages/auth/Signin";
 
 
 
@@ -79,10 +78,6 @@ function AppRoutes() {
           element={<Login />}
         />
 
-        <Route
-          path="/register"
-          element={<Signin />}
-        />
 
 
         {/* =========================
