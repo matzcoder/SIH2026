@@ -1,70 +1,114 @@
-# Getting Started with Create React App
+# ⚛️ LM-Vision Frontend — React Application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+> Modern, responsive web interface for the **LM-Vision Legal Metrology Compliance System** (SIH 2026).  
+> Built with **React 19**, **Lucide Icons**, and **Axios**.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 📖 Overview
+
+The `sih-project` folder contains the frontend Single Page Application (SPA). It provides dual role-based dashboards:
+1. **👑 Authority Portal**: High-level market compliance analytics, inspector task assignment, consumer grievances tracking, and dynamic rule management.
+2. **🕵️ Inspector Portal**: Real-time product label scanning, camera capture, live OCR field detection with bounding boxes, inspection checklists, and PDF report downloads.
+
+---
+
+## 🚀 Quick Start for Beginners
+
+### 1. Prerequisites
+- **Node.js** (v18.0.0 or higher recommended): [Download Node.js](https://nodejs.org/)
+- Running **FastAPI Backend** on `http://localhost:5000` (See [Root README](../README.md#step-2-start-the-backend-terminal-1))
+
+### 2. Install Dependencies
+Open your terminal in this directory (`sih-project`):
+```bash
+npm install
+```
+
+### 3. Start the Development Server
+```bash
+npm start
+```
+The app will automatically open in your default browser at **`http://localhost:3000`**.
+
+---
+
+## 🛠️ Available Scripts
+
+In this directory, you can run:
 
 ### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Runs the app in development mode at [http://localhost:3000](http://localhost:3000).  
+The page will automatically reload whenever you edit and save any code file.
 
 ### `npm run build`
+Builds the app for production to the `build` folder.  
+It correctly bundles React in production mode and optimizes the build for the best performance and smallest bundle size.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### `npm test`
+Launches the test runner in interactive watch mode.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 📁 Frontend Directory Structure
 
-### `npm run eject`
+```text
+sih-project/
+├── public/                     # Static files, icons, and HTML template
+│   ├── index.html              # Main HTML entry point
+│   ├── _redirects              # Netlify client-side routing redirects
+│   └── favicon.ico             # App icon
+│
+├── src/
+│   ├── index.js                # React DOM render entry point
+│   ├── App.js                  # Main app router & layout structure
+│   ├── App.css / index.css     # Global styles & design system
+│   │
+│   ├── components/             # Reusable UI widgets
+│   │   ├── Navbar.jsx          # Header navigation bar
+│   │   ├── BoundingBoxOverlay  # Draws detection boxes on scanned images
+│   │   └── ComplianceCard.jsx  # Score badge and rule status card
+│   │
+│   ├── pages/                  # Main page views
+│   │   ├── AuthorityPortal.jsx # Regulatory analytics & management view
+│   │   ├── InspectorPortal.jsx # Scanner, camera, on-field checklist view
+│   │   ├── auth/               # Login & Registration screens
+│   │   ├── authority/          # Sub-pages for authority workflows
+│   │   └── inspector/          # Sub-pages for inspector workflows
+│   │
+│   └── services/               # API Communication
+│       └── api.js              # Axios HTTP client configured for http://localhost:5000/api
+│
+├── package.json                # Project dependencies and build scripts
+└── vercel.json                 # Vercel deployment configuration
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+---
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 🔗 Backend API Connection
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+The frontend connects to the FastAPI backend via Axios. By default, API calls are directed to:
+```text
+http://localhost:5000/api
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+To configure a custom backend URL (for instance, when testing with Ngrok or a remote server), update the `baseURL` in `src/services/` or set the environment variable:
+```env
+REACT_APP_API_BASE_URL=http://localhost:5000/api
+```
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 🔑 Demo Login Accounts
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+| Role | Email | Password |
+| :--- | :--- | :--- |
+| **Authority** | `admin@example.com` | `Admin@123` |
+| **Inspector** | `inspector@example.com` | `Inspector@123` |
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 📚 Learn More
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- For full architecture details and backend instructions, see the [Main Project README](../README.md).
+- To learn more about React, visit the [Official React Documentation](https://react.dev/).

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import RulesConfiguratorSandbox from "../../components/RulesConfiguratorSandbox";
 import "./RulesDetails.css";
 
 function RulesDetails() {
@@ -191,6 +192,8 @@ function RulesDetails() {
         </table>
 
       </div>
+
+      <RulesConfiguratorSandbox rule={rule} />
 
       {/* Actions */}
 

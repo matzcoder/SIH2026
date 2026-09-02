@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../services/api";
+import VegNonVegBadge from "../../components/common/VegNonVegBadge";
 import "./InspectionDetails.css";
 
 const RULE_DEFINITIONS = {
@@ -39,6 +40,11 @@ const RULE_DEFINITIONS = {
     description: "FSSAI graphic logo visual symbol mark was not detected on packaging.",
     ruleRef: "FSSAI-RULE-001",
   },
+  vegNonVegLogo: {
+    title: "Veg / Non-Veg Statutory Logo",
+    description: "Mandatory Green Dot (Veg) or Brown Triangle (Non-Veg) symbol missing from Principal Display Panel.",
+    ruleRef: "FSSAI-2.2.2 / LM-RULE-006",
+  },
 };
 
 // Default state: no scan yet — all checks unknown/pending, not pre-passed
@@ -58,6 +64,7 @@ const DEFAULT_SCAN_DATA = {
     consumerCare: false,
     countryOrigin: false,
     fssaiLogo: false,
+    vegNonVegLogo: null,
   },
   compliance_report: [],
 };
@@ -95,13 +102,15 @@ function InspectionDetails() {
           const ruleMap = {};
           parsed.compliance_report.forEach((r) => { ruleMap[r.rule_id] = r.passed; });
           return {
-            mrp:          ruleMap["LMR_RULE_01"] ?? false,
-            quantity:     ruleMap["LMR_RULE_02"] ?? false,
-            manufacturer: ruleMap["LMR_RULE_05"] ?? false,
-            packingDate:  ruleMap["LMR_RULE_06"] ?? false,
-            consumerCare: ruleMap["LMR_RULE_04"] ?? false,
-            countryOrigin:ruleMap["LMR_RULE_07"] ?? false,
-            fssaiLogo:    ruleMap["FSSAI_RULE_01"] ?? false,
+            mrp:            ruleMap["LMR_RULE_01"] ?? false,
+            quantity:       ruleMap["LMR_RULE_02"] ?? false,
+            manufacturer:   ruleMap["LMR_RULE_05"] ?? false,
+            packingDate:    ruleMap["LMR_RULE_06"] ?? false,
+            consumerCare:   ruleMap["LMR_RULE_04"] ?? false,
+            countryOrigin:  ruleMap["LMR_RULE_07"] ?? false,
+            fssaiLogo:      ruleMap["FSSAI_RULE_01"] ?? false,
+            // null = rule not evaluated by backend (not a violation)
+            vegNonVegLogo:  ruleMap["FSSAI_VEG_RULE_01"] ?? null,
           };
         }
       }
@@ -146,13 +155,15 @@ function InspectionDetails() {
       }
 
       const newChecks = {
-        mrp:           ruleMap["LMR_RULE_01"] ?? false,
-        quantity:      ruleMap["LMR_RULE_02"] ?? false,
-        manufacturer:  ruleMap["LMR_RULE_05"] ?? false,
-        packingDate:   ruleMap["LMR_RULE_06"] ?? false,
-        consumerCare:  ruleMap["LMR_RULE_04"] ?? false,
-        countryOrigin: ruleMap["LMR_RULE_07"] ?? false,
-        fssaiLogo:     ruleMap["FSSAI_RULE_01"] ?? false,
+        mrp:            ruleMap["LMR_RULE_01"] ?? false,
+        quantity:       ruleMap["LMR_RULE_02"] ?? false,
+        manufacturer:   ruleMap["LMR_RULE_05"] ?? false,
+        packingDate:    ruleMap["LMR_RULE_06"] ?? false,
+        consumerCare:   ruleMap["LMR_RULE_04"] ?? false,
+        countryOrigin:  ruleMap["LMR_RULE_07"] ?? false,
+        fssaiLogo:      ruleMap["FSSAI_RULE_01"] ?? false,
+        // null = rule not evaluated by backend (not a violation)
+        vegNonVegLogo:  ruleMap["FSSAI_VEG_RULE_01"] ?? null,
       };
 
       setChecks(newChecks);
@@ -173,17 +184,21 @@ function InspectionDetails() {
   };
 
   const toggleCheck = (key) => {
-    setChecks((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+    setChecks((prev) => {
+      const cur = prev[key];
+      // Tri-state cycle: null (N/A) → true (Pass) → false (Fail) → null
+      const next = cur === null ? true : cur === true ? false : null;
+      return { ...prev, [key]: next };
+    });
     setSaved(false);
   };
 
-  const passedChecks = Object.values(checks).filter(Boolean).length;
-  const totalChecks = Object.values(checks).length;
-  const score = scanData?.score !== undefined ? Math.round(scanData.score) : Math.round((passedChecks / totalChecks) * 100);
-  const failedRules = Object.keys(checks).filter((key) => !checks[key]);
+  const passedChecks = Object.values(checks).filter((v) => v === true).length;
+  // Exclude null (not-yet-evaluated) rules from total so they don't skew score
+  const totalChecks = Object.values(checks).filter((v) => v !== null).length;
+  const score = scanData?.score !== undefined ? Math.round(scanData.score) : Math.round((passedChecks / (totalChecks || 1)) * 100);
+  // Only explicitly-false values are violations; null = pending/N/A, not a failure
+  const failedRules = Object.keys(checks).filter((key) => checks[key] === false);
 
   const saveInspection = () => {
     localStorage.setItem(
@@ -195,6 +210,16 @@ function InspectionDetails() {
 
   const isCompliant = scanData?.status === "compliant" || failedRules.length === 0;
   const ext = scanData?.extracted_data;
+
+  const combinedText = `${scanData?.name || ""} ${scanData?.brand || ""} ${scanData?.category || ""} ${scanData?.description || ""}`;
+  const isExplicitNonVeg = /non[\s-_]?veg|chicken|meat|egg|fish|mutton|pork|prawn|seafood|beef/i.test(combinedText);
+  const isFoodCategory = isExplicitNonVeg || /food|biscuit|oil|dairy|grain|snack|tea|beverage|noodle|grocery|edible|wheat/i.test(combinedText);
+
+  const productDietaryType =
+    (isExplicitNonVeg ? "NON_VEG" : null) ||
+    (ext?.veg_non_veg_logo ? (isExplicitNonVeg ? "NON_VEG" : ext.veg_non_veg_logo) : null) ||
+    (ext?.is_vegetarian === false ? "NON_VEG" : ext?.is_vegetarian === true ? "VEG" : null) ||
+    (isExplicitNonVeg ? "NON_VEG" : (isFoodCategory ? "VEG" : "NON_FOOD"));
 
   return (
     <div className="inspection-details-page">
@@ -333,6 +358,17 @@ function InspectionDetails() {
               {(ext?.fssai_logo && ext.fssai_logo !== "Not Found" && ext.fssai_logo !== "Not Detected") || checks.fssaiLogo ? (ext?.fssai_logo && ext.fssai_logo !== "Not Found" ? ext.fssai_logo : "Detected") : "Not Detected"}
             </strong>
           </div>
+
+          <div>
+            <span>Veg / Non-Veg Statutory Logo</span>
+            <strong style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <VegNonVegBadge
+                type={productDietaryType}
+                size="sm"
+                showLabel={true}
+              />
+            </strong>
+          </div>
         </div>
 
       </div>
@@ -400,7 +436,7 @@ function InspectionDetails() {
             </div>
 
             <span className="rule-badge">
-              7 Rules
+              8 Rules
             </span>
 
           </div>
@@ -606,6 +642,41 @@ function InspectionDetails() {
                 onClick={() => toggleCheck("fssaiLogo")}
               >
                 {checks.fssaiLogo ? "Pass" : "Fail"}
+              </button>
+
+            </div>
+
+            {/* VEG / NON-VEG STATUTORY LOGO */}
+
+            <div className="compliance-item">
+
+              <div className="compliance-icon" style={{ padding: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <VegNonVegBadge
+                  type={productDietaryType}
+                  size="sm"
+                  showLabel={false}
+                />
+              </div>
+
+              <div className="compliance-info">
+
+                <strong>Veg / Non-Veg Statutory Logo</strong>
+
+                <span>
+                  Mandatory FSSAI Green Dot (Veg) or Brown Triangle (Non-Veg) on Principal Display Panel.
+                </span>
+
+              </div>
+
+              <button
+                className={`check-button ${
+                  checks.vegNonVegLogo === true || (checks.vegNonVegLogo === null && isFoodCategory) ? "passed" :
+                  checks.vegNonVegLogo === false ? "failed" : "pending"
+                }`}
+                onClick={() => toggleCheck("vegNonVegLogo")}
+              >
+                {checks.vegNonVegLogo === true || (checks.vegNonVegLogo === null && isFoodCategory) ? "Pass" :
+                 checks.vegNonVegLogo === false ? "Fail" : "N/A"}
               </button>
 
             </div>

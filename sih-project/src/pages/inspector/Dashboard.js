@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import VegNonVegBadge from "../../components/common/VegNonVegBadge";
 import "./Dashboard.css";
 
 function Dashboard() {
@@ -34,31 +35,35 @@ function Dashboard() {
   const inspections = [
     {
       id: "INS-1029",
-      product: "ABC Biscuits",
+      product: "Britannia Good Day Biscuits 200g",
       location: "Chennai",
       date: "25 Aug 2026",
       status: "Pending",
+      dietaryType: "VEG",
     },
     {
       id: "INS-1028",
-      product: "XYZ Cooking Oil",
+      product: "Fortune Sunlite Sunflower Oil 1L",
       location: "Coimbatore",
       date: "24 Aug 2026",
       status: "In Progress",
+      dietaryType: "VEG",
     },
     {
       id: "INS-1027",
-      product: "Fresh Milk",
+      product: "Amul Taaza Homogenised Milk 500ml",
       location: "Madurai",
       date: "23 Aug 2026",
       status: "Completed",
+      dietaryType: "VEG",
     },
     {
       id: "INS-1026",
-      product: "Daily Rice",
+      product: "Tata Salt Vacuum Evaporated 1kg",
       location: "Salem",
       date: "22 Aug 2026",
       status: "Completed",
+      dietaryType: "VEG",
     },
   ];
 
@@ -165,13 +170,18 @@ function Dashboard() {
 
                 </div>
 
-                <span
-                  className={`dashboard-status ${inspection.status
-                    .toLowerCase()
-                    .replace(" ", "-")}`}
-                >
-                  {inspection.status}
-                </span>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  {inspection.dietaryType && (
+                    <VegNonVegBadge type={inspection.dietaryType} size="sm" showLabel={false} />
+                  )}
+                  <span
+                    className={`dashboard-status ${inspection.status
+                      .toLowerCase()
+                      .replace(" ", "-")}`}
+                  >
+                    {inspection.status}
+                  </span>
+                </div>
 
               </div>
 
@@ -248,7 +258,12 @@ function Dashboard() {
                 {inspection.id}
               </span>
 
-              <span>{inspection.product}</span>
+              <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                {inspection.dietaryType && (
+                  <VegNonVegBadge type={inspection.dietaryType} size="sm" showLabel={false} />
+                )}
+                {inspection.product}
+              </span>
 
               <span>{inspection.location}</span>
 

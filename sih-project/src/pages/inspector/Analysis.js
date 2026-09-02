@@ -40,27 +40,32 @@ function Analysis() {
     {
       name: "Incorrect MRP",
       count: 9,
-      percentage: 38,
+      percentage: 30,
+    },
+    {
+      name: "Missing Veg / Non-Veg Logo",
+      count: 7,
+      percentage: 23,
     },
     {
       name: "Missing Net Quantity",
       count: 6,
-      percentage: 25,
+      percentage: 20,
     },
     {
       name: "Manufacturer Details",
       count: 4,
-      percentage: 17,
+      percentage: 14,
     },
     {
       name: "Consumer Care Details",
-      count: 3,
-      percentage: 12,
+      count: 2,
+      percentage: 7,
     },
     {
       name: "Other",
       count: 2,
-      percentage: 8,
+      percentage: 6,
     },
   ];
 

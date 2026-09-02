@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import VegNonVegBadge from "../../components/common/VegNonVegBadge";
 import "./Reports.css";
 
 const RULE_DEFINITIONS = {
@@ -13,7 +14,7 @@ const RULE_DEFINITIONS = {
   },
   quantity: {
     label: "Net Quantity",
-    obsPass: "100 g declared",
+    obsPass: "Declared with standard units",
     obsFail: "Missing or non-SI units",
     title: "Net Quantity Declaration",
     description: "Net quantity was missing or not declared using mandatory standard units.",
@@ -51,6 +52,22 @@ const RULE_DEFINITIONS = {
     description: "Country of origin declaration was missing from the retail package.",
     ruleRef: "LMR-RULE-005",
   },
+  fssaiLogo: {
+    label: "FSSAI Graphic Logo",
+    obsPass: "FSSAI graphic logo detected",
+    obsFail: "FSSAI logo absent",
+    title: "FSSAI Graphic Logo Presence",
+    description: "FSSAI graphic logo visual symbol mark was not detected on packaging.",
+    ruleRef: "FSSAI-RULE-001",
+  },
+  vegNonVegLogo: {
+    label: "Veg / Non-Veg Statutory Logo",
+    obsPass: "FSSAI statutory emblem present",
+    obsFail: "Statutory emblem absent / incorrect",
+    title: "Veg / Non-Veg Statutory Logo",
+    description: "Mandatory FSSAI Green Dot (Veg) or Brown Triangle (Non-Veg) was missing from the Principal Display Panel.",
+    ruleRef: "FSSAI-2.2.2 / LM-RULE-006",
+  },
 };
 
 function Reports() {
@@ -76,24 +93,45 @@ function Reports() {
     }
   }, []);
 
-  const checks = savedScan?.checks || savedReview?.checks || {
-    mrp: false,
-    quantity: false,
-    manufacturer: false,
-    packingDate: false,
-    consumerCare: false,
-    countryOrigin: false,
-  };
+  const checks = React.useMemo(() => {
+    if (savedReview?.checks) return savedReview.checks;
+    if (savedScan?.checks) return savedScan.checks;
+    if (savedScan && Array.isArray(savedScan.compliance_report) && savedScan.compliance_report.length > 0) {
+      const ruleMap = {};
+      savedScan.compliance_report.forEach((r) => { ruleMap[r.rule_id] = r.passed; });
+      return {
+        mrp: ruleMap["LMR_RULE_01"] ?? false,
+        quantity: ruleMap["LMR_RULE_02"] ?? false,
+        manufacturer: ruleMap["LMR_RULE_05"] ?? false,
+        packingDate: ruleMap["LMR_RULE_06"] ?? false,
+        consumerCare: ruleMap["LMR_RULE_04"] ?? false,
+        countryOrigin: ruleMap["LMR_RULE_07"] ?? false,
+        fssaiLogo: ruleMap["FSSAI_RULE_01"] ?? false,
+        vegNonVegLogo: ruleMap["FSSAI_VEG_RULE_01"] ?? false,
+      };
+    }
+    return {
+      mrp: true,
+      quantity: true,
+      manufacturer: true,
+      packingDate: true,
+      consumerCare: true,
+      countryOrigin: true,
+      fssaiLogo: true,
+      vegNonVegLogo: false,
+    };
+  }, [savedScan, savedReview]);
 
   const passedCount = Object.values(checks).filter(Boolean).length;
-  const failedCount = Object.values(checks).length - passedCount;
-  const score = savedScan?.score !== undefined ? Math.round(savedScan.score) : Math.round((passedCount / Object.values(checks).length) * 100);
+  const totalCount = Object.values(checks).length;
+  const failedCount = totalCount - passedCount;
+  const score = savedScan?.score !== undefined ? Math.round(savedScan.score) : Math.round((passedCount / totalCount) * 100);
   const failedRules = Object.keys(checks).filter((key) => !checks[key]);
 
   const report = {
-    id: "INS-1029",
-    product: savedScan?.name || savedScan?.extracted_data?.name || "Scanned Product",
-    brand: savedScan?.brand || "Packaged Brand",
+    id: savedReview?.inspectionId || "INS-1029",
+    product: savedScan?.name || savedScan?.extracted_data?.name || "Packaged Food Commodity",
+    brand: savedScan?.brand || "Verified Brand",
     category: savedScan?.category || "Packaged Food",
     location: "Chennai",
     date: "25 Aug 2026",
@@ -103,6 +141,34 @@ function Reports() {
     failed: failedCount,
     evidence: 6,
   };
+
+  const productDietaryType = React.useMemo(() => {
+    const combined = `${report.product} ${report.brand} ${report.category}`.toLowerCase();
+    const isExplicitNonVeg = /non[\s-_]?veg|chicken|meat|egg|fish|mutton|pork|prawn|seafood|beef/i.test(combined);
+    const isFood = isExplicitNonVeg || /food|biscuit|oil|dairy|grain|snack|tea|beverage|noodle|grocery|edible|wheat/i.test(combined);
+
+    if (isExplicitNonVeg) return "NON_VEG";
+    if (!isFood) return "NON_FOOD";
+
+    // If scan extracted an explicit logo or vegetarian flag
+    if (savedScan?.extracted_data?.veg_non_veg_logo) {
+      return savedScan.extracted_data.veg_non_veg_logo;
+    }
+    if (savedScan?.extracted_data?.is_vegetarian === false) return "NON_VEG";
+    if (savedScan?.extracted_data?.is_vegetarian === true) return "VEG";
+
+    // If statutory check passed
+    if (checks.vegNonVegLogo === true) {
+      return "VEG";
+    }
+
+    // If statutory emblem failed/absent
+    if (checks.vegNonVegLogo === false) {
+      return "UNKNOWN";
+    }
+
+    return "UNKNOWN";
+  }, [report.product, report.brand, report.category, savedScan, checks.vegNonVegLogo]);
 
   const reportText = [
     "Official Inspection Report",
@@ -271,6 +337,17 @@ function Reports() {
             </div>
 
             <div>
+              <span>Dietary Classification</span>
+              <strong style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                <VegNonVegBadge
+                  type={productDietaryType}
+                  size="sm"
+                  showLabel={true}
+                />
+              </strong>
+            </div>
+
+            <div>
               <span>Inspection Location</span>
               <strong>{report.location}</strong>
             </div>
@@ -283,6 +360,13 @@ function Reports() {
             <div>
               <span>Inspector</span>
               <strong>{report.inspector}</strong>
+            </div>
+
+            <div>
+              <span>Compliance Status</span>
+              <strong style={{ color: score === 100 ? "#15803d" : "#b45309" }}>
+                {score === 100 ? "Fully Compliant" : "Review / Action Required"}
+              </strong>
             </div>
 
           </div>
@@ -306,10 +390,19 @@ function Reports() {
             {Object.keys(RULE_DEFINITIONS).map((ruleKey) => {
               const rule = RULE_DEFINITIONS[ruleKey];
               const isPassed = checks[ruleKey];
+              let dynamicPass = rule.obsPass;
+              if (ruleKey === "quantity" && savedScan?.extracted_data?.net_weight) {
+                dynamicPass = `${savedScan.extracted_data.net_weight} declared`;
+              } else if (ruleKey === "mrp" && savedScan?.extracted_data?.mrp) {
+                dynamicPass = `${savedScan.extracted_data.mrp} declared`;
+              } else if (ruleKey === "countryOrigin" && savedScan?.extracted_data?.country_of_origin) {
+                dynamicPass = `Declared (${savedScan.extracted_data.country_of_origin})`;
+              }
+
               return (
                 <div key={ruleKey} className="verification-row">
                   <span>{rule.label}</span>
-                  <span>{isPassed ? rule.obsPass : rule.obsFail}</span>
+                  <span>{isPassed ? dynamicPass : rule.obsFail}</span>
                   <b className={isPassed ? "pass" : "fail"}>{isPassed ? "PASS" : "FAIL"}</b>
                 </div>
               );
@@ -390,10 +483,11 @@ function Reports() {
           <div className="observation-box">
 
             <p>
-              The package was inspected against the applicable
-              packaged commodity requirements. Most mandatory
-              declarations were present and readable. The packing
-              date declaration requires corrective action.
+              {savedReview?.observation || (
+                failedRules.length === 0
+                  ? "The package was inspected against applicable packaged commodity requirements. All mandatory declarations were verified and found fully compliant with Legal Metrology statutory standards."
+                  : `The package was inspected against applicable packaged commodity requirements. Mandatory declarations were reviewed. Corrective action is required for: ${failedRules.map((k) => RULE_DEFINITIONS[k]?.label || k).join(", ")}.`
+              )}
             </p>
 
           </div>
@@ -419,7 +513,7 @@ function Reports() {
             <span>Inspection Decision</span>
 
             <strong>
-              Corrective Action Required
+              {score === 100 ? "Fully Compliant" : "Corrective Action Required"}
             </strong>
 
           </div>

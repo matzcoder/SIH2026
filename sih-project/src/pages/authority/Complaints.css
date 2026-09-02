@@ -1,83 +1,334 @@
+/* =========================================================
+   LEGAL METROLOGY AUTHORITY - COMPLAINTS PAGE STYLES
+   ========================================================= */
+
 .complaints-page {
-  padding: 25px;
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  color: #0f172a;
 }
 
 .complaints-page .page-header {
-  margin-bottom: 25px;
+  margin-bottom: 24px;
 }
 
 .complaints-page .page-header h2 {
   color: #0f172a;
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.02em;
 }
 
-.complaints-table {
+.complaints-page .page-header p {
+  color: #64748b;
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Search Bar */
+.complaints-search-bar {
+  position: relative;
+  margin-bottom: 20px;
+  max-width: 480px;
+}
+
+.complaints-search-bar .search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+}
+
+.complaints-search-bar input {
+  width: 100%;
+  padding: 12px 14px 12px 42px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
   background: white;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  font-size: 14px;
+  box-sizing: border-box;
 }
 
-.complaints-page table {
+.complaints-search-bar input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* Complaints Table Card */
+.complaints-table-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+.complaints-table-card table {
   width: 100%;
   border-collapse: collapse;
-}
-
-.complaints-page thead {
-  background: #f8fafc;
-}
-
-.complaints-page th,
-.complaints-page td {
-  padding: 16px;
   text-align: left;
+  min-width: 780px;
 }
 
-.complaints-page th {
+.complaints-table-card thead {
+  background: #f8fafc;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.complaints-table-card th {
+  padding: 14px 18px;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.complaints-table-card th.actions-header {
+  text-align: right;
+  padding-right: 24px;
+}
+
+.complaints-table-card td {
+  padding: 16px 18px;
+  font-size: 14px;
+  color: #334155;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.complaint-row:hover {
+  background-color: #f8fafc;
+}
+
+.category-text {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.issue-text {
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.user-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   color: #475569;
 }
 
-.complaints-page tr:not(:last-child) {
-  border-bottom: 1px solid #e2e8f0;
-}
-
-/* Status */
-
-.complaints-page .status {
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.complaints-page .pending {
+/* Status Badges */
+.status-pending {
   background: #fef3c7;
   color: #b45309;
 }
 
-.complaints-page .in-review {
+.status-in-review {
   background: #dbeafe;
   color: #1d4ed8;
 }
 
-.complaints-page .resolved {
+.status-resolved {
   background: #dcfce7;
   color: #15803d;
 }
 
-/* Button */
-
-.complaints-page .view-btn {
-  border: none;
-  background: #2563eb;
-  color: white;
-
+.complaint-view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #2563eb;
   padding: 8px 14px;
   border-radius: 8px;
-
   cursor: pointer;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s ease;
 }
 
-.complaints-page .view-btn:hover {
-  background: #1d4ed8;
+.complaint-view-btn:hover {
+  background: #dbeafe;
+  color: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+/* Modal */
+.complaint-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.complaint-modal-dialog {
+  background: white;
+  width: 100%;
+  max-width: 760px;
+  max-height: 90vh;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.complaint-modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: #f8fafc;
+  gap: 16px;
+}
+
+.complaint-modal-header h3 {
+  margin: 6px 0 6px 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.complaint-modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.complaint-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.info-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.info-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.info-item strong {
+  font-size: 14px;
+  color: #0f172a;
+}
+
+.info-sub {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.statement-box {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.statement-box h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #1e293b;
+}
+
+.statement-box p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #475569;
+}
+
+.status-action-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.action-box-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.status-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.status-opt-btn {
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid #cbd5e1;
+  background: white;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.status-opt-btn.active.pending {
+  background: #fef3c7;
+  color: #b45309;
+  border-color: #fde68a;
+}
+
+.status-opt-btn.active.in-review {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+.status-opt-btn.active.resolved {
+  background: #dcfce7;
+  color: #15803d;
+  border-color: #bbf7d0;
+}
+
+.complaint-modal-footer {
+  padding: 16px 24px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }

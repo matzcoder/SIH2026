@@ -58,6 +58,7 @@ def build_extracted_data(extraction: ExtractionResult) -> ExtractedData:
         manufacturer_address="Found" if extraction.manufacturer_address else "Not Found",
         country_of_origin=extraction.country_of_origin.value if extraction.country_of_origin else None,
         is_vegetarian=extraction.is_vegetarian,
+        veg_non_veg_logo="VEG" if extraction.is_vegetarian is True else ("NON_VEG" if extraction.is_vegetarian is False else None),
     )
 
 
@@ -250,6 +251,22 @@ def _rule_fssai_logo(extraction: ExtractionResult) -> ComplianceRuleResult:
     )
 
 
+def _rule_veg_nonveg(extraction: ExtractionResult) -> ComplianceRuleResult:
+    passed = extraction.is_vegetarian is not None or extraction.veg_mark is not None
+    dietary_label = "Vegetarian (Green Dot)" if extraction.is_vegetarian else ("Non-Vegetarian (Brown Triangle)" if extraction.is_vegetarian is False else "Dietary Symbol")
+    return ComplianceRuleResult(
+        rule="Veg / Non-Veg Statutory Logo",
+        rule_id="FSSAI_VEG_RULE_01",
+        passed=passed,
+        severity=Severity.HIGH,
+        message=(
+            f"Statutory {dietary_label} emblem detected on Principal Display Panel per FSSAI 2.2.2."
+            if passed
+            else "Mandatory FSSAI Green Dot (Veg) or Brown Triangle (Non-Veg) symbol could not be detected on the Principal Display Panel. FSSAI Reg. 2.2.2 requires statutory dietary declaration on packaged food."
+        ),
+    )
+
+
 def run_compliance_checks(extraction: ExtractionResult) -> List[ComplianceRuleResult]:
     return [
         _rule_mrp_presence(extraction),
@@ -260,6 +277,7 @@ def run_compliance_checks(extraction: ExtractionResult) -> List[ComplianceRuleRe
         _rule_dates(extraction),
         _rule_country_origin(extraction),
         _rule_fssai_logo(extraction),
+        _rule_veg_nonveg(extraction),
     ]
 
 

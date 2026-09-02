@@ -19,6 +19,7 @@ from models.db_models import (
     Violation,
     Activity,
 )
+from database import InspectionRecord, RuleRecord
 from services.auth_service import hash_password
 
 logger = logging.getLogger(__name__)
@@ -27,7 +28,127 @@ logger = logging.getLogger(__name__)
 def seed_database(db: Session) -> None:
     """Populate database with initial records if empty."""
     try:
-        # Check if already seeded
+        # Check and seed InspectionRecord & RuleRecord if empty
+        if db.query(InspectionRecord).count() == 0:
+            sample_results_good = json.dumps([
+                {"ruleId": "6(1)(e)", "ruleName": "MRP Declaration", "status": "PASS", "confidence": 97},
+                {"ruleId": "6(1)(f)", "ruleName": "Net Quantity", "status": "PASS", "confidence": 95},
+                {"ruleId": "6(1)(a)", "ruleName": "Manufacturer Details", "status": "PASS", "confidence": 96},
+                {"ruleId": "6(1)(d)", "ruleName": "Date of Packing", "status": "PASS", "confidence": 98},
+                {"ruleId": "FSSAI 2.2.2", "ruleName": "Veg/Non-Veg Logo", "status": "PASS", "confidence": 99},
+            ])
+            sample_results_violation = json.dumps([
+                {"ruleId": "6(1)(e)", "ruleName": "MRP Declaration", "status": "PASS", "confidence": 95},
+                {"ruleId": "6(1)(f)", "ruleName": "Net Quantity", "status": "FAIL", "confidence": 88},
+                {"ruleId": "6(1)(n)", "ruleName": "Consumer Care Details", "status": "FAIL", "confidence": 84},
+                {"ruleId": "6(1)(a)", "ruleName": "Manufacturer Details", "status": "PASS", "confidence": 92},
+            ])
+
+            inspection_records = [
+                InspectionRecord(
+                    commodity_name="Britannia Good Day Biscuits",
+                    dietary_type="VEG",
+                    officer_name="P R Matthew (Field Officer)",
+                    district_zone="Chennai South",
+                    compliance_score=85.0,
+                    status="VIOLATION",
+                    violations_count=1,
+                    inspector_notes="Discrepancy noted in net quantity font size on back panel.",
+                    raw_results_json=sample_results_violation,
+                    timestamp=datetime.utcnow(),
+                ),
+                InspectionRecord(
+                    commodity_name="Fortune Sunlite Sunflower Oil",
+                    dietary_type="VEG",
+                    officer_name="Ananya Sharma (Inspector)",
+                    district_zone="Madurai",
+                    compliance_score=100.0,
+                    status="COMPLIANT",
+                    violations_count=0,
+                    inspector_notes="All statutory declarations conform strictly to PCR 2011.",
+                    raw_results_json=sample_results_good,
+                    timestamp=datetime.utcnow(),
+                ),
+                InspectionRecord(
+                    commodity_name="Amul Taaza Homogenised Milk",
+                    dietary_type="VEG",
+                    officer_name="Ramesh Kumar (Field Officer)",
+                    district_zone="Salem",
+                    compliance_score=92.0,
+                    status="COMPLIANT",
+                    violations_count=0,
+                    inspector_notes="Proper standard SI metric units declared.",
+                    raw_results_json=sample_results_good,
+                    timestamp=datetime.utcnow(),
+                ),
+                InspectionRecord(
+                    commodity_name="Tata Salt Vacuum Evaporated",
+                    dietary_type="VEG",
+                    officer_name="P R Matthew (Field Officer)",
+                    district_zone="Chennai Central",
+                    compliance_score=60.0,
+                    status="VIOLATION",
+                    violations_count=2,
+                    inspector_notes="Consumer care contact details smudged; sample collected for compounding.",
+                    raw_results_json=sample_results_violation,
+                    timestamp=datetime.utcnow(),
+                ),
+            ]
+            db.add_all(inspection_records)
+            db.commit()
+
+        if db.query(RuleRecord).count() == 0:
+            rule_records = [
+                RuleRecord(
+                    id="1",
+                    code="6(1)(e)",
+                    name="MRP Declaration",
+                    mandatory=True,
+                    category="ALL",
+                    regex_pattern=r"(?:MRP|M\.R\.P\.?)[\s:]*(?:Rs\.?|₹)?[\s]*([0-9]+(?:\.[0-9]{2})?)",
+                    description="Requires Maximum Retail Price inclusive of all taxes.",
+                ),
+                RuleRecord(
+                    id="2",
+                    code="6(1)(f)",
+                    name="Net Quantity",
+                    mandatory=True,
+                    category="ALL",
+                    regex_pattern=r"(?:Net\s*(?:Qty|Quantity|Wt|Weight)?)[\s:]*([0-9]+(?:\.[0-9]+)?)\s*(g|kg|ml|l|m|cm|units|pcs)",
+                    description="Requires standard metric units without non-standard abbreviations.",
+                ),
+                RuleRecord(
+                    id="3",
+                    code="6(1)(d)",
+                    name="Date of Packing / Expiry",
+                    mandatory=True,
+                    category="ALL",
+                    regex_pattern=r"(?:Mfg|Pkd|Packed|Best Before|Exp)[\s:]*([0-9]{2}/[0-9]{2,4}|[A-Za-z]{3}[\s-][0-9]{2,4})",
+                    description="Requires month and year of packaging or expiry indication.",
+                ),
+                RuleRecord(
+                    id="4",
+                    code="6(1)(a)",
+                    name="Manufacturer Coordinates",
+                    mandatory=True,
+                    category="ALL",
+                    regex_pattern=r"(?:Manufactured|Packed|Imported)\s*(?:by|at)?[\s:]*([A-Za-z0-9\s,\.-]+)",
+                    description="Requires complete postal name and address coordinates.",
+                ),
+                RuleRecord(
+                    id="5",
+                    code="FSSAI 2.2.2 / LM",
+                    name="Veg / Non-Veg Statutory Logo",
+                    mandatory=True,
+                    category="FOOD_ONLY",
+                    regex_pattern=r"(?:veg|vegetarian|non-veg|non-vegetarian|egg\s*contains?)",
+                    description="Mandatory Green Dot or Brown Triangle symbol on Principal Display Panel for all edible packaged commodities.",
+                ),
+            ]
+            db.add_all(rule_records)
+            db.commit()
+
+        # Check if legacy tables are already seeded
         if db.query(User).first():
             return
 
@@ -634,6 +755,131 @@ def seed_database(db: Session) -> None:
         ]
         db.add_all(activities)
         db.commit()
+
+        # 10. Inspection Records (Persistent DB for Live Sync)
+        if db.query(InspectionRecord).count() == 0:
+            sample_results_good = json.dumps([
+                {"ruleId": "6(1)(e)", "ruleName": "MRP Declaration", "status": "PASS", "confidence": 97},
+                {"ruleId": "6(1)(f)", "ruleName": "Net Quantity", "status": "PASS", "confidence": 95},
+                {"ruleId": "6(1)(a)", "ruleName": "Manufacturer Details", "status": "PASS", "confidence": 96},
+                {"ruleId": "6(1)(d)", "ruleName": "Date of Packing", "status": "PASS", "confidence": 98},
+                {"ruleId": "FSSAI 2.2.2", "ruleName": "Veg/Non-Veg Logo", "status": "PASS", "confidence": 99},
+            ])
+            sample_results_violation = json.dumps([
+                {"ruleId": "6(1)(e)", "ruleName": "MRP Declaration", "status": "PASS", "confidence": 95},
+                {"ruleId": "6(1)(f)", "ruleName": "Net Quantity", "status": "FAIL", "confidence": 88},
+                {"ruleId": "6(1)(n)", "ruleName": "Consumer Care Details", "status": "FAIL", "confidence": 84},
+                {"ruleId": "6(1)(a)", "ruleName": "Manufacturer Details", "status": "PASS", "confidence": 92},
+            ])
+
+            inspection_records = [
+                InspectionRecord(
+                    id=1029,
+                    commodity_name="Britannia Good Day Biscuits",
+                    dietary_type="VEG",
+                    officer_name="P R Matthew (Field Officer)",
+                    district_zone="Chennai South",
+                    compliance_score=85.0,
+                    status="VIOLATION",
+                    violations_count=1,
+                    inspector_notes="Discrepancy noted in net quantity font size on back panel.",
+                    raw_results_json=sample_results_violation,
+                    timestamp=datetime.utcnow(),
+                ),
+                InspectionRecord(
+                    id=1028,
+                    commodity_name="Fortune Sunlite Sunflower Oil",
+                    dietary_type="VEG",
+                    officer_name="Ananya Sharma (Inspector)",
+                    district_zone="Madurai",
+                    compliance_score=100.0,
+                    status="COMPLIANT",
+                    violations_count=0,
+                    inspector_notes="All statutory declarations conform strictly to PCR 2011.",
+                    raw_results_json=sample_results_good,
+                    timestamp=datetime.utcnow(),
+                ),
+                InspectionRecord(
+                    id=1027,
+                    commodity_name="Amul Taaza Homogenised Milk",
+                    dietary_type="VEG",
+                    officer_name="Ramesh Kumar (Field Officer)",
+                    district_zone="Salem",
+                    compliance_score=92.0,
+                    status="COMPLIANT",
+                    violations_count=0,
+                    inspector_notes="Proper standard SI metric units declared.",
+                    raw_results_json=sample_results_good,
+                    timestamp=datetime.utcnow(),
+                ),
+                InspectionRecord(
+                    id=1026,
+                    commodity_name="Tata Salt Vacuum Evaporated",
+                    dietary_type="VEG",
+                    officer_name="P R Matthew (Field Officer)",
+                    district_zone="Chennai Central",
+                    compliance_score=60.0,
+                    status="VIOLATION",
+                    violations_count=2,
+                    inspector_notes="Consumer care contact details smudged; sample collected for compounding.",
+                    raw_results_json=sample_results_violation,
+                    timestamp=datetime.utcnow(),
+                ),
+            ]
+            db.add_all(inspection_records)
+            db.commit()
+
+        # 11. Statutory Rule Records
+        if db.query(RuleRecord).count() == 0:
+            rule_records = [
+                RuleRecord(
+                    id="1",
+                    code="6(1)(e)",
+                    name="MRP Declaration",
+                    mandatory=True,
+                    category="ALL",
+                    regex_pattern=r"(?:MRP|M\.R\.P\.?)[\s:]*(?:Rs\.?|₹)?[\s]*([0-9]+(?:\.[0-9]{2})?)",
+                    description="Requires Maximum Retail Price inclusive of all taxes.",
+                ),
+                RuleRecord(
+                    id="2",
+                    code="6(1)(f)",
+                    name="Net Quantity",
+                    mandatory=True,
+                    category="ALL",
+                    regex_pattern=r"(?:Net\s*(?:Qty|Quantity|Wt|Weight)?)[\s:]*([0-9]+(?:\.[0-9]+)?)\s*(g|kg|ml|l|m|cm|units|pcs)",
+                    description="Requires standard metric units without non-standard abbreviations.",
+                ),
+                RuleRecord(
+                    id="3",
+                    code="6(1)(d)",
+                    name="Date of Packing / Expiry",
+                    mandatory=True,
+                    category="ALL",
+                    regex_pattern=r"(?:Mfg|Pkd|Packed|Best Before|Exp)[\s:]*([0-9]{2}/[0-9]{2,4}|[A-Za-z]{3}[\s-][0-9]{2,4})",
+                    description="Requires month and year of packaging or expiry indication.",
+                ),
+                RuleRecord(
+                    id="4",
+                    code="6(1)(a)",
+                    name="Manufacturer Coordinates",
+                    mandatory=True,
+                    category="ALL",
+                    regex_pattern=r"(?:Manufactured|Packed|Imported)\s*(?:by|at)?[\s:]*([A-Za-z0-9\s,\.-]+)",
+                    description="Requires complete postal name and address coordinates.",
+                ),
+                RuleRecord(
+                    id="5",
+                    code="FSSAI 2.2.2 / LM",
+                    name="Veg / Non-Veg Statutory Logo",
+                    mandatory=True,
+                    category="FOOD_ONLY",
+                    regex_pattern=r"(?:veg|vegetarian|non-veg|non-vegetarian|egg\s*contains?)",
+                    description="Mandatory Green Dot or Brown Triangle symbol on Principal Display Panel for all edible packaged commodities.",
+                ),
+            ]
+            db.add_all(rule_records)
+            db.commit()
 
         logger.info("Database seeding successfully completed.")
     except Exception as exc:

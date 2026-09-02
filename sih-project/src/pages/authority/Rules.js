@@ -54,6 +54,15 @@ function Rules() {
       status: "Active",
       updated: "10 Aug 2026",
     },
+    {
+      id: "RULE-006",
+      name: "Veg / Non-Veg Statutory Logo",
+      category: "Food Safety",
+      version: "v1.0",
+      severity: "High",
+      status: "Active",
+      updated: "02 Sep 2026",
+    },
   ];
   let storedRules = [];
   try {
@@ -107,12 +116,12 @@ function Rules() {
 
         <div className="summary-card">
           <span>Total Rules</span>
-          <strong>124</strong>
+          <strong>125</strong>
         </div>
 
         <div className="summary-card">
           <span>Active Rules</span>
-          <strong>118</strong>
+          <strong>119</strong>
         </div>
 
         <div className="summary-card">
@@ -145,6 +154,7 @@ function Rules() {
           <option>Manufacturer</option>
           <option>Consumer</option>
           <option>Product</option>
+          <option>Food Safety</option>
         </select>
 
         <select value={status} onChange={(event) => setStatus(event.target.value)}>

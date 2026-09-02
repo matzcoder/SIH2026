@@ -44,6 +44,9 @@ class ExtractedData(BaseModel):
     is_vegetarian: Optional[bool] = Field(
         default=None, description="True = veg mark detected, False = non-veg mark detected, None = undetermined"
     )
+    veg_non_veg_logo: Optional[str] = Field(
+        default=None, description="VEG / NON_VEG / NON_FOOD / None"
+    )
 
 
 class BoundingBox(BaseModel):

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import VegNonVegBadge from "../../components/common/VegNonVegBadge";
 import "./History.css";
 
 function History() {
@@ -9,53 +10,58 @@ function History() {
   const inspections = [
     {
       id: "INS-1027",
-      product: "Fresh Milk",
+      product: "Amul Taaza Homogenised Milk 500ml",
       category: "Dairy",
       location: "Madurai",
       date: "23 Aug 2026",
       compliance: "88%",
       violations: 1,
       status: "Compliant",
+      dietaryType: "VEG",
     },
     {
       id: "INS-1026",
-      product: "Daily Rice",
+      product: "Tata Salt Vacuum Evaporated 1kg",
       category: "Food Grains",
       location: "Salem",
       date: "22 Aug 2026",
       compliance: "96%",
       violations: 0,
       status: "Compliant",
+      dietaryType: "VEG",
     },
     {
       id: "INS-1025",
-      product: "XYZ Cooking Oil",
-      category: "Edible Oil",
+      product: "Chicken Masala Instant Noodles 70g",
+      category: "Packaged Food",
       location: "Coimbatore",
       date: "20 Aug 2026",
       compliance: "62%",
       violations: 3,
       status: "Violation",
+      dietaryType: "NON_VEG",
     },
     {
       id: "INS-1024",
-      product: "ABC Tea Powder",
+      product: "Tata Tea Gold 250g",
       category: "Beverages",
       location: "Chennai",
       date: "18 Aug 2026",
       compliance: "91%",
       violations: 0,
       status: "Compliant",
+      dietaryType: "VEG",
     },
     {
       id: "INS-1023",
-      product: "Premium Salt",
-      category: "Food",
+      product: "Surf Excel Washing Powder 500g",
+      category: "Household",
       location: "Trichy",
       date: "16 Aug 2026",
       compliance: "74%",
       violations: 2,
       status: "Violation",
+      dietaryType: "NON_FOOD",
     },
   ];
 
@@ -186,7 +192,12 @@ function History() {
                 </span>
 
                 <div className="product-column">
-                  <strong>{inspection.product}</strong>
+                  <strong style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                    {inspection.dietaryType && (
+                      <VegNonVegBadge type={inspection.dietaryType} size="sm" showLabel={false} />
+                    )}
+                    {inspection.product}
+                  </strong>
                   <small>{inspection.category}</small>
                 </div>
 

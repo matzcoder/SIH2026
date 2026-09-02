@@ -1,0 +1,22 @@
+services:
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=sqlite:///./compliance.db
+      - JWT_SECRET_KEY=production-secret-key-change-me
+    volumes:
+      - ./Backend/uploads:/app/uploads
+      - ./Backend/compliance.db:/app/compliance.db
+
+  frontend:
+    build:
+      context: ./sih-project
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend

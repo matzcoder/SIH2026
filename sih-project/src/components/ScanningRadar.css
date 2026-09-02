@@ -1,0 +1,27 @@
+.scanning-radar {
+  position: relative;
+  display: grid;
+  min-height: 320px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid #bae6fd;
+  border-radius: 14px;
+  background: radial-gradient(circle at center, #e0f2fe 0, #f8fafc 48%, #eff6ff 100%);
+}
+
+.radar-orbit,
+.radar-core,
+.radar-sweep { position: absolute; border-radius: 50%; }
+.radar-orbit { border: 1px solid rgba(14, 165, 233, .38); }
+.radar-orbit-one { width: 190px; height: 190px; animation: radarPulse 2.3s ease-out infinite; }
+.radar-orbit-two { width: 124px; height: 124px; border-color: rgba(37, 99, 235, .38); }
+.radar-core { width: 14px; height: 14px; background: #0284c7; box-shadow: 0 0 0 7px rgba(2, 132, 199, .14), 0 0 22px #38bdf8; }
+.radar-sweep { width: 95px; height: 95px; transform-origin: 100% 100%; margin: -95px 0 0 -95px; background: conic-gradient(from 90deg, rgba(14,165,233,.42), transparent 35%); animation: radarSweep 1.75s linear infinite; }
+.radar-copy { z-index: 1; position: absolute; bottom: 34px; display: grid; gap: 6px; text-align: center; color: #0f172a; padding: 0 28px; }
+.radar-copy strong { font-size: 15px; }
+.radar-copy span { font-size: 12px; color: #475569; }
+.radar-copy small { font-size: 10px; color: #0369a1; font-weight: 600; }
+.radar-copy i { display: inline-block; width: 7px; height: 7px; margin-right: 5px; border-radius: 50%; background: #22c55e; animation: radarPulse 1.5s infinite; }
+@keyframes radarSweep { to { transform: rotate(360deg); } }
+@keyframes radarPulse { 50% { opacity: .4; transform: scale(1.08); } }
+@media (prefers-reduced-motion: reduce) { .radar-orbit-one, .radar-sweep, .radar-copy i { animation: none; } }

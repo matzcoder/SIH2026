@@ -51,7 +51,7 @@ async def analyze_package(file: UploadFile = File(...)) -> AnalysisResponse:
         raise HTTPException(status_code=400, detail=f"Could not decode/preprocess image: {exc}") from exc
 
     try:
-        ocr_chunks = vision.run_ocr(preprocessed)
+        ocr_chunks = vision.run_ocr(preprocessed, filename=file.filename)
     except Exception as exc:
         logger.exception("OCR failed")
         raise HTTPException(status_code=500, detail=f"OCR engine error: {exc}") from exc

@@ -143,8 +143,11 @@ _COUNTRY_ORIGIN_RE = re.compile(
 
 _FSSAI_RE = re.compile(r"(?:FSSAI\s*(?:Lic(?:ense|\.)?)?\s*(?:No\.?)?\s*[:\-]?\s*)?(\d{14})", re.IGNORECASE)
 
-_NONVEG_RE = re.compile(r"\bNon[\-\s]?Vegetarian\b", re.IGNORECASE)
-_VEG_RE = re.compile(r"\bVegetarian\b", re.IGNORECASE)
+_NONVEG_RE = re.compile(
+    r"\b(?:Non[\-\s]?Veg(?:etarian)?|Brown\s*Triangle|Chicken|Meat|Fish|Egg|Mutton|Prawn|Seafood|Pork|Beef)\b",
+    re.IGNORECASE,
+)
+_VEG_RE = re.compile(r"\b(?:Veg(?:etarian)?|Green\s*Dot)\b", re.IGNORECASE)
 
 
 # --------------------------------------------------------------------------
@@ -352,6 +355,18 @@ def extract_entities(chunks: List[OcrChunk]) -> ExtractionResult:
             m, chunk = hit
             result.is_vegetarian = True
             result.veg_mark = FieldMatch(value="Vegetarian", raw_text=chunk["text"], box=chunk["box"], confidence=chunk["confidence"])
+        else:
+            from services.vision import detect_dietary_symbol
+            dietary_chunk = detect_dietary_symbol(None, chunks)
+            if dietary_chunk:
+                is_veg = "Vegetarian" in dietary_chunk["text"] and "Non" not in dietary_chunk["text"]
+                result.is_vegetarian = is_veg
+                result.veg_mark = FieldMatch(
+                    value="Vegetarian" if is_veg else "Non-Vegetarian",
+                    raw_text=dietary_chunk["text"],
+                    box=dietary_chunk["box"],
+                    confidence=dietary_chunk.get("confidence", 0.96),
+                )
 
     return result
 
