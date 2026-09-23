@@ -67,15 +67,15 @@ export default function RulesManager({ rules = [], onSaveRule }) {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 text-slate-100">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 text-[#3B2A22]">
       {/* Rule Selection List */}
-      <div className="lg:col-span-4 bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+      <div className="lg:col-span-4 bg-[#F5E6D8] border border-[#E4CBB4] rounded-2xl p-5 shadow-xl space-y-3">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E4CBB4]">
           <div>
-            <h3 className="font-bold text-sm text-slate-100">PCR 2011 Rule Catalog</h3>
-            <p className="text-[11px] text-slate-400">Select a rule to configure or test</p>
+            <h3 className="font-bold text-sm text-[#3B2A22]">PCR 2011 Rule Catalog</h3>
+            <p className="text-[11px] text-[#7A5C48]">Select a rule to configure or test</p>
           </div>
-          <span className="px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800 text-[10px] font-bold">
+          <span className="px-2 py-0.5 rounded-full bg-cyan-950 text-[#C1502D] border border-cyan-800 text-[10px] font-bold">
             {rules.length} Rules
           </span>
         </div>
@@ -89,17 +89,17 @@ export default function RulesManager({ rules = [], onSaveRule }) {
                 onClick={() => handleSelectRule(rule)}
                 className={`p-3 rounded-xl border transition-all cursor-pointer ${
                   isSelected
-                    ? 'bg-slate-800 border-cyan-500 ring-2 ring-cyan-500/20'
-                    : 'bg-slate-950/60 border-slate-800 hover:border-slate-700'
+                    ? 'bg-[#FFF9F2] border-[#C1502D] ring-2 ring-cyan-500/20'
+                    : 'bg-[#FBF3EC]/60 border-[#E4CBB4] hover:border-[#E4CBB4]'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-bold text-slate-200">{rule.name || rule.ruleName}</h4>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">
+                  <h4 className="text-xs font-bold text-[#3B2A22]">{rule.name || rule.ruleName}</h4>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#FFF9F2] text-[#7A5C48] font-mono">
                     Rule {rule.code || rule.ruleCode || rule.id}
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-400 mt-1 line-clamp-1">{rule.description}</p>
+                <p className="text-[11px] text-[#7A5C48] mt-1 line-clamp-1">{rule.description}</p>
                 {rule.mandatory && (
                   <span className="inline-block mt-2 text-[9px] font-semibold text-amber-400 uppercase tracking-wider">
                     Mandatory Declaration
@@ -113,18 +113,18 @@ export default function RulesManager({ rules = [], onSaveRule }) {
 
       {/* Rules Editor & Regex Sandbox */}
       <div className="lg:col-span-8 space-y-6">
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
-          <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div className="bg-[#F5E6D8] border border-[#E4CBB4] rounded-2xl p-6 shadow-xl space-y-5">
+          <div className="flex items-center justify-between pb-4 border-b border-[#E4CBB4]">
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold text-slate-100">
+                <h3 className="text-base font-bold text-[#3B2A22]">
                   {editForm.name || activeRule.name}
                 </h3>
                 <span className="text-xs font-mono px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800">
                   Rule {editForm.code || activeRule.code}
                 </span>
               </div>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-[#7A5C48] mt-0.5">
                 Configure Legal Metrology Statutory Rule Parameters & Regex OCR Extractor
               </p>
             </div>
@@ -133,14 +133,14 @@ export default function RulesManager({ rules = [], onSaveRule }) {
               <button
                 type="button"
                 onClick={handleSaveLocalDraft}
-                className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold border border-slate-700 transition-colors"
+                className="px-3 py-1.5 bg-[#FFF9F2] hover:bg-[#F5E6D8] text-[#3B2A22] rounded-xl text-xs font-semibold border border-[#E4CBB4] transition-colors"
               >
                 Save Sandbox Draft
               </button>
               <button
                 type="button"
                 onClick={handleDeployRule}
-                className="px-4 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-xs font-bold shadow-md shadow-cyan-600/30 transition-all"
+                className="px-4 py-1.5 bg-[#C1502D] hover:bg-[#A63F22] text-white rounded-xl text-xs font-bold shadow-md shadow-[#C1502D]/25 transition-all"
               >
                 Deploy Rule
               </button>
@@ -148,7 +148,7 @@ export default function RulesManager({ rules = [], onSaveRule }) {
           </div>
 
           {statusMessage && (
-            <div className="p-3 bg-cyan-950/70 border border-cyan-500/40 text-cyan-200 text-xs rounded-xl flex justify-between items-center">
+            <div className="p-3 bg-cyan-950/70 border border-[#C1502D]/40 text-[#FFF9F2] text-xs rounded-xl flex justify-between items-center">
               <span>{statusMessage}</span>
               <button onClick={() => setStatusMessage('')} className="font-bold">
                 &times;
@@ -158,76 +158,76 @@ export default function RulesManager({ rules = [], onSaveRule }) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
             <div>
-              <label className="block text-slate-400 mb-1">Rule Name</label>
+              <label className="block text-[#7A5C48] mb-1">Rule Name</label>
               <input
                 type="text"
                 value={editForm.name || ''}
                 onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                className="w-full p-2 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-cyan-400"
+                className="w-full p-2 bg-[#FBF3EC] border border-[#E4CBB4] rounded-xl text-[#3B2A22] focus:outline-none focus:border-cyan-400"
               />
             </div>
             <div>
-              <label className="block text-slate-400 mb-1">Statutory Clause Code</label>
+              <label className="block text-[#7A5C48] mb-1">Statutory Clause Code</label>
               <input
                 type="text"
                 value={editForm.code || ''}
                 onChange={(e) => setEditForm({ ...editForm, code: e.target.value })}
-                className="w-full p-2 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-cyan-400"
+                className="w-full p-2 bg-[#FBF3EC] border border-[#E4CBB4] rounded-xl text-[#3B2A22] focus:outline-none focus:border-cyan-400"
               />
             </div>
           </div>
 
           <div className="text-xs">
-            <label className="block text-slate-400 mb-1">Statutory Rule Description</label>
+            <label className="block text-[#7A5C48] mb-1">Statutory Rule Description</label>
             <textarea
               rows={2}
               value={editForm.description || ''}
               onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-              className="w-full p-2 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-cyan-400 text-xs"
+              className="w-full p-2 bg-[#FBF3EC] border border-[#E4CBB4] rounded-xl text-[#3B2A22] focus:outline-none focus:border-cyan-400 text-xs"
             />
           </div>
 
           {/* Regular Expression Sandbox */}
-          <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-4">
+          <div className="bg-[#FBF3EC] p-4 rounded-xl border border-[#E4CBB4] space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-1.5">
+              <span className="text-xs font-bold text-[#C1502D] uppercase tracking-wider flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
                 Safe Regex Sandbox & Pattern Evaluator
               </span>
-              <span className="text-[10px] text-slate-400">Evaluates locally against test text</span>
+              <span className="text-[10px] text-[#7A5C48]">Evaluates locally against test text</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
               <div className="md:col-span-3">
-                <label className="block text-slate-400 mb-1">OCR Regex Pattern</label>
+                <label className="block text-[#7A5C48] mb-1">OCR Regex Pattern</label>
                 <input
                   type="text"
                   value={editForm.regexPattern || ''}
                   onChange={(e) => setEditForm({ ...editForm, regexPattern: e.target.value })}
                   spellCheck="false"
-                  className="w-full p-2 bg-slate-900 border border-slate-700 font-mono text-cyan-300 rounded-xl focus:outline-none focus:border-cyan-400"
+                  className="w-full p-2 bg-[#F5E6D8] border border-[#E4CBB4] font-mono text-cyan-300 rounded-xl focus:outline-none focus:border-cyan-400"
                 />
               </div>
               <div>
-                <label className="block text-slate-400 mb-1">Flags (e.g. i, m)</label>
+                <label className="block text-[#7A5C48] mb-1">Flags (e.g. i, m)</label>
                 <input
                   type="text"
                   value={sandboxFlags}
                   onChange={(e) => setSandboxFlags(e.target.value)}
                   placeholder="i"
-                  className="w-full p-2 bg-slate-900 border border-slate-700 font-mono text-slate-200 rounded-xl focus:outline-none focus:border-cyan-400"
+                  className="w-full p-2 bg-[#F5E6D8] border border-[#E4CBB4] font-mono text-[#3B2A22] rounded-xl focus:outline-none focus:border-cyan-400"
                 />
               </div>
             </div>
 
             <div className="text-xs">
-              <label className="block text-slate-400 mb-1">Sample Commodity OCR Text</label>
+              <label className="block text-[#7A5C48] mb-1">Sample Commodity OCR Text</label>
               <textarea
                 rows={4}
                 value={sandboxSample}
                 onChange={(e) => setSandboxSample(e.target.value)}
                 spellCheck="false"
-                className="w-full p-2 bg-slate-900 border border-slate-700 font-mono text-slate-300 rounded-xl focus:outline-none focus:border-cyan-400 text-xs"
+                className="w-full p-2 bg-[#F5E6D8] border border-[#E4CBB4] font-mono text-[#7A5C48] rounded-xl focus:outline-none focus:border-cyan-400 text-xs"
               />
             </div>
 

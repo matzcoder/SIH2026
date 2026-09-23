@@ -71,7 +71,7 @@ export default function CameraViewfinder({ onCapture, onClose }) {
       {streamActive && (
         <>
           <div className="absolute inset-8 border-2 border-dashed border-blue-500/70 rounded-xl pointer-events-none flex items-center justify-center">
-            <span className="text-[10px] bg-white/90 px-2.5 py-0.5 rounded-full text-blue-700 font-bold shadow-sm">
+            <span className="text-[10px] bg-[#F5E6D8]/90 px-2.5 py-0.5 rounded-full text-blue-700 font-bold shadow-sm">
               Align Label Here
             </span>
           </div>
@@ -80,13 +80,13 @@ export default function CameraViewfinder({ onCapture, onClose }) {
             <button
               type="button"
               onClick={takeSnapshot}
-              className="w-12 h-12 rounded-full bg-white border-4 border-blue-600 shadow-xl hover:scale-105 active:scale-95 transition-transform"
+              className="w-12 h-12 rounded-full bg-[#F5E6D8] border-4 border-blue-600 shadow-xl hover:scale-105 active:scale-95 transition-transform"
               title="Capture photo"
             />
             <button
               type="button"
               onClick={stopCamera}
-              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-semibold shadow"
+              className="px-3 py-1.5 bg-[#FFF9F2] hover:bg-[#F5E6D8] text-white rounded-lg text-xs font-semibold shadow"
             >
               Close
             </button>

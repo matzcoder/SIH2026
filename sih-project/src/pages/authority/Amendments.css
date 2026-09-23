@@ -6,7 +6,7 @@
   padding: 24px;
   max-width: 1400px;
   margin: 0 auto;
-  color: #0f172a;
+  color: #3B2A22;
 }
 
 .amendments-page .page-header {
@@ -19,7 +19,7 @@
 }
 
 .amendments-page .page-header h2 {
-  color: #0f172a;
+  color: #3B2A22;
   font-size: 26px;
   font-weight: 700;
   margin: 0 0 6px 0;
@@ -27,7 +27,7 @@
 }
 
 .amendments-page .page-header p {
-  color: #64748b;
+  color: #7A5C48;
   margin: 0;
   font-size: 14px;
 }
@@ -37,36 +37,36 @@
   align-items: center;
   gap: 8px;
   border: none;
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  background: linear-gradient(135deg, #C1502D 0%, #A63F22 100%);
   color: white;
   padding: 11px 20px;
   border-radius: 10px;
   cursor: pointer;
   font-weight: 600;
   font-size: 14px;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 4px 12px rgba(193, 80, 45, 0.25);
   transition: all 0.2s ease;
 }
 
 .add-btn:hover {
-  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  background: linear-gradient(135deg, #A63F22 0%, #8E2B24 100%);
   transform: translateY(-1px);
 }
 
 /* Amendment Form Card */
 .amendment-form-card {
-  background: white;
+  background: #F5E6D8;
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 24px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #E4CBB4;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 .amendment-form-card h3 {
   margin: 0 0 16px 0;
   font-size: 17px;
-  color: #0f172a;
+  color: #3B2A22;
 }
 
 .form-grid {
@@ -89,26 +89,26 @@
 .form-group label {
   font-size: 12px;
   font-weight: 600;
-  color: #475569;
+  color: #7A5C48;
 }
 
 .form-group input {
   padding: 10px 14px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #E4CBB4;
   border-radius: 8px;
   font-size: 14px;
-  background: white;
+  background: #F5E6D8;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  border-color: #C1502D;
+  box-shadow: 0 0 0 3px rgba(193, 80, 45, 0.12);
 }
 
 .amendment-form-error {
   margin: 0 0 16px 0;
-  color: #dc2626;
+  color: #A63A32;
   font-size: 13px;
   font-weight: 600;
 }
@@ -121,9 +121,9 @@
 
 .cancel-amendment-btn {
   padding: 10px 16px;
-  border: 1px solid #cbd5e1;
-  background: white;
-  color: #475569;
+  border: 1px solid #E4CBB4;
+  background: #F5E6D8;
+  color: #7A5C48;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
@@ -141,31 +141,31 @@
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: #94a3b8;
+  color: #8A6D57;
 }
 
 .amendments-search-bar input {
   width: 100%;
   padding: 12px 14px 12px 42px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #E4CBB4;
   border-radius: 12px;
-  background: white;
+  background: #F5E6D8;
   font-size: 14px;
   box-sizing: border-box;
 }
 
 .amendments-search-bar input:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  border-color: #C1502D;
+  box-shadow: 0 0 0 3px rgba(193, 80, 45, 0.12);
 }
 
 /* Amendments Table Card */
 .amendments-table-card {
-  background: white;
+  background: #F5E6D8;
   border-radius: 16px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-  border: 1px solid #e2e8f0;
+  border: 1px solid #E4CBB4;
   overflow: hidden;
 }
 
@@ -177,13 +177,13 @@
 }
 
 .amendments-table-card thead {
-  background: #f8fafc;
-  border-bottom: 2px solid #e2e8f0;
+  background: #FBF3EC;
+  border-bottom: 2px solid #E4CBB4;
 }
 
 .amendments-table-card th {
   padding: 14px 18px;
-  color: #475569;
+  color: #7A5C48;
   font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
@@ -199,23 +199,23 @@
 .amendments-table-card td {
   padding: 16px 18px;
   font-size: 14px;
-  color: #334155;
-  border-bottom: 1px solid #f1f5f9;
+  color: #3B2A22;
+  border-bottom: 1px solid #F5E6D8;
   vertical-align: middle;
 }
 
 .amendment-row:hover {
-  background-color: #f8fafc;
+  background-color: #FBF3EC;
 }
 
 .rule-title {
   font-weight: 600;
-  color: #0f172a;
+  color: #3B2A22;
 }
 
 .rule-ref {
   font-size: 12px;
-  color: #94a3b8;
+  color: #8A6D57;
 }
 
 .version-transition {
@@ -233,35 +233,35 @@
 }
 
 .ver-tag.old {
-  background: #f1f5f9;
-  color: #64748b;
+  background: #F5E6D8;
+  color: #7A5C48;
   text-decoration: line-through;
 }
 
 .ver-tag.new {
-  background: #eff6ff;
-  color: #2563eb;
-  border: 1px solid #bfdbfe;
+  background: #F5E6D8;
+  color: #C1502D;
+  border: 1px solid #E4CBB4;
 }
 
 .arrow-icon {
-  color: #94a3b8;
+  color: #8A6D57;
 }
 
 /* Status Badges */
 .status-approved {
-  background: #dcfce7;
-  color: #15803d;
+  background: rgba(122, 132, 80, 0.2);
+  color: #7A8450;
 }
 
 .status-pending {
-  background: #fef3c7;
-  color: #b45309;
+  background: rgba(217, 142, 4, 0.2);
+  color: #B7410E;
 }
 
 .status-rejected {
-  background: #fee2e2;
-  color: #dc2626;
+  background: rgba(166, 58, 50, 0.2);
+  color: #A63A32;
 }
 
 /* Action Buttons */
@@ -299,7 +299,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(15, 23, 42, 0.65);
+  background: rgba(139, 69, 19, 0.65);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
@@ -310,7 +310,7 @@
 }
 
 .amendment-modal-dialog {
-  background: white;
+  background: #F5E6D8;
   width: 100%;
   max-width: 780px;
   max-height: 90vh;
@@ -324,11 +324,11 @@
 
 .amendment-modal-header {
   padding: 20px 24px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #E4CBB4;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  background: #f8fafc;
+  background: #FBF3EC;
   gap: 16px;
 }
 
@@ -336,7 +336,7 @@
   margin: 6px 0 6px 0;
   font-size: 20px;
   font-weight: 700;
-  color: #0f172a;
+  color: #3B2A22;
 }
 
 .amendment-modal-body {
@@ -348,8 +348,8 @@
 }
 
 .version-diff-card {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: #FBF3EC;
+  border: 1px solid #E4CBB4;
   border-radius: 12px;
   padding: 16px;
 }
@@ -360,7 +360,7 @@
   gap: 8px;
   font-size: 13px;
   font-weight: 600;
-  color: #475569;
+  color: #7A5C48;
   margin-bottom: 12px;
 }
 
@@ -373,26 +373,26 @@
 
 .diff-box {
   flex: 1;
-  background: white;
-  border: 1px solid #e2e8f0;
+  background: #F5E6D8;
+  border: 1px solid #E4CBB4;
   border-radius: 10px;
   padding: 12px;
   text-align: center;
 }
 
 .diff-box.from {
-  border-color: #cbd5e1;
+  border-color: #E4CBB4;
 }
 
 .diff-box.to {
-  border-color: #93c5fd;
-  background: #eff6ff;
+  border-color: #E4CBB4;
+  background: #F5E6D8;
 }
 
 .diff-label {
   display: block;
   font-size: 11px;
-  color: #64748b;
+  color: #7A5C48;
   margin-bottom: 4px;
   text-transform: uppercase;
 }
@@ -403,15 +403,15 @@
 }
 
 .diff-box.from strong {
-  color: #64748b;
+  color: #7A5C48;
 }
 
 .diff-box.to strong {
-  color: #2563eb;
+  color: #C1502D;
 }
 
 .diff-arrow {
-  color: #94a3b8;
+  color: #8A6D57;
 }
 
 .changes-list {
@@ -428,7 +428,7 @@
   align-items: flex-start;
   gap: 10px;
   font-size: 14px;
-  color: #334155;
+  color: #3B2A22;
 }
 
 .changes-list li svg {
@@ -438,8 +438,8 @@
 }
 
 .amendment-status-card {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: #FBF3EC;
+  border: 1px solid #E4CBB4;
   border-radius: 12px;
   padding: 16px;
   display: flex;
@@ -462,30 +462,30 @@
   border-radius: 8px;
   font-size: 13px;
   font-weight: 600;
-  border: 1px solid #cbd5e1;
-  background: white;
+  border: 1px solid #E4CBB4;
+  background: #F5E6D8;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .status-opt-btn.approve.active,
 .status-opt-btn.approve:hover {
-  background: #dcfce7;
-  color: #15803d;
+  background: rgba(122, 132, 80, 0.2);
+  color: #7A8450;
   border-color: #86efac;
 }
 
 .status-opt-btn.reject.active,
 .status-opt-btn.reject:hover {
-  background: #fee2e2;
-  color: #dc2626;
+  background: rgba(166, 58, 50, 0.2);
+  color: #A63A32;
   border-color: #fca5a5;
 }
 
 .amendment-modal-footer {
   padding: 16px 24px;
-  background: #f8fafc;
-  border-top: 1px solid #e2e8f0;
+  background: #FBF3EC;
+  border-top: 1px solid #E4CBB4;
   display: flex;
   justify-content: flex-end;
 }

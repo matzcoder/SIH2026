@@ -140,7 +140,6 @@ export default function InspectorPortal() {
       if (res?.data?.results) {
         setScanResults(res.data.results);
       } else if (res?.data?.compliance_report) {
-        // Map backend report format to statutory checklist items
         const report = res.data.compliance_report;
         const boxes = res.data.bounding_boxes || [];
         const extracted = res.data.extracted_data || {};
@@ -199,7 +198,7 @@ export default function InspectorPortal() {
       const payload = {
         commodityName: reportPayload.commodityName || 'Packaged Biscuits / Snack Item',
         dietaryType: detectedDietary,
-        officerName: reportPayload.officerName || 'P R Matthew (Field Officer)',
+        officerName: reportPayload.officerName || 'K. Venkatesh (Field Officer)',
         districtZone: reportPayload.districtZone || 'Chennai South',
         violations: violationsList,
         results: scanResults,
@@ -223,16 +222,16 @@ export default function InspectorPortal() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-[#FBF3EC] text-[#3B2A22] flex flex-col">
       <Navbar role="inspector" />
 
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
         {statusMessage && (
-          <div className="p-3.5 rounded-xl bg-cyan-950/80 border border-cyan-500 text-cyan-200 text-xs flex justify-between items-center shadow-lg">
-            <span>{statusMessage}</span>
+          <div className="p-3.5 rounded-[10px] bg-[#FFF9F2] border border-[#7A8450] text-[#7A8450] text-xs flex justify-between items-center shadow-[0_2px_8px_rgba(139,69,19,0.08)]">
+            <span className="font-semibold">{statusMessage}</span>
             <button
               onClick={() => setStatusMessage('')}
-              className="font-bold text-base px-2 hover:opacity-75"
+              className="font-bold text-base px-2 hover:opacity-75 text-[#7A8450]"
             >
               &times;
             </button>
@@ -240,18 +239,18 @@ export default function InspectorPortal() {
         )}
 
         {/* Upload Banner & Controls */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+        <div className="bg-[#F5E6D8] border border-[#E4CBB4] rounded-[10px] p-6 shadow-[0_2px_8px_rgba(139,69,19,0.08)] space-y-4">
           {/* Top row: title + action buttons */}
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h2 className="text-xl font-black text-slate-100">Live Field Verification & Camera Scanner</h2>
-              <p className="text-xs text-slate-400 mt-1">
+              <h2 className="text-xl font-bold text-[#3B2A22] font-serif">Live Field Verification & Camera Scanner</h2>
+              <p className="text-xs text-[#7A5C48] mt-1">
                 Capture commodity packaging photos (biscuits, oil packets, dairy cartons) for automated PCR 2011 compliance analysis.
               </p>
             </div>
 
             <div className="flex items-center gap-3">
-              <label className="cursor-pointer px-5 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-cyan-600/30 transition-all flex items-center gap-2">
+              <label className="cursor-pointer px-5 py-2.5 bg-[#C1502D] hover:bg-[#A63F22] text-[#FFF9F2] text-xs font-bold rounded-[8px] shadow-md shadow-[#C1502D]/20 transition-all flex items-center gap-2">
                 <span>📷 Take Photo / Upload Label</span>
                 <input
                   type="file"
@@ -264,7 +263,7 @@ export default function InspectorPortal() {
 
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700 transition-all"
+                className="px-5 py-2.5 bg-[#FFF9F2] hover:bg-[#F5E6D8] text-[#3B2A22] text-xs font-semibold rounded-[8px] border border-[#E4CBB4] transition-all"
               >
                 Generate Notice / Report
               </button>
@@ -272,13 +271,13 @@ export default function InspectorPortal() {
           </div>
 
           {/* Dietary Category Filter + detected classification badge */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pb-1">
+          <div className="flex flex-wrap items-center justify-between gap-4 pb-1 pt-2 border-t border-[#E4CBB4]">
             <DietarySelector
               selectedCategory={dietaryCategory}
               onChangeCategory={(cat) => setDietaryCategory(cat)}
             />
             <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-400">Detected Classification:</span>
+              <span className="text-xs text-[#7A5C48]">Detected Classification:</span>
               <VegNonVegBadge
                 type={
                   scanResults.find((r) => r.ruleId === 'FSSAI_VEG_RULE_01' || r.ruleId === 'veg_non_veg_logo')?.dietaryType ||

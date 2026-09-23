@@ -1,76 +1,78 @@
+/* =========================================
+   CREATE RULE - WARM TERRACOTTA THEME
+   Adheres to spec Section 1.1 & Section 4
+========================================= */
+
 .create-rule-page {
-  padding: 25px;
+  padding: 8px 0 24px 0;
 }
 
 .form-card {
-  background: white;
-
+  background: #F5E6D8; /* bg-surface */
   max-width: 800px;
-
-  padding: 30px;
-
-  border-radius: 15px;
-
-  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  padding: 32px;
+  border-radius: 10px; /* 10px radius */
+  border: 1px solid #E4CBB4; /* border */
+  box-shadow: 0 2px 8px rgba(139, 69, 19, 0.08);
 }
 
 .form-card h2 {
-  margin-bottom: 25px;
-  color: #0f172a;
+  margin-bottom: 24px;
+  color: #3B2A22; /* text-primary */
+  font-family: 'Fraunces', 'Outfit', Georgia, serif;
+  font-size: 24px;
+  font-weight: 700;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-
   margin-bottom: 20px;
 }
 
 .form-group label {
   margin-bottom: 8px;
-
   font-weight: 600;
-
-  color: #334155;
+  color: #7A5C48; /* text-secondary */
+  font-size: 13px;
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
-  padding: 12px;
-
-  border: 1px solid #cbd5e1;
-
-  border-radius: 10px;
-
-  font-size: 15px;
-
+  padding: 12px 14px;
+  border: 1px solid #E4CBB4; /* border */
+  border-radius: 8px; /* 8px inputs */
+  background: #FFF9F2; /* bg-surface-raised */
+  color: #3B2A22; /* text-primary */
+  font-size: 14px;
+  font-family: inherit;
   outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
-  border-color: #2563eb;
+  border-color: #B7410E; /* accent */
+  box-shadow: 0 0 0 3px rgba(183, 65, 14, 0.15);
 }
 
 .submit-btn {
   border: none;
-
-  background: #2563eb;
-
-  color: white;
-
-  padding: 12px 20px;
-
-  border-radius: 10px;
-
+  background: #C1502D; /* primary terracotta */
+  color: #FFF9F2; /* warm off-white */
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-family: inherit;
+  font-size: 14px;
   cursor: pointer;
-
-  font-size: 15px;
-  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(193, 80, 45, 0.25);
+  transition: all 0.2s ease;
 }
 
 .submit-btn:hover {
-  background: #1d4ed8;
+  background: #A63F22;
+  transform: translateY(-1px);
 }

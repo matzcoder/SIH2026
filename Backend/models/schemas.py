@@ -193,6 +193,37 @@ class InspectionSubmit(BaseModel):
     remarks: Optional[str] = ""
 
 
+class InspectionRecordSubmit(BaseModel):
+    """Payload sent by field scanner when recording a real-time statutory inspection."""
+    commodityName: Optional[str] = Field(default="Packaged Commodity")
+    product: Optional[str] = Field(default=None)
+    dietaryType: Optional[str] = Field(default="VEG")
+    officerName: Optional[str] = Field(default="Field Inspector")
+    districtZone: Optional[str] = Field(default="General Zone")
+    complianceScore: Optional[float] = Field(default=None)
+    score: Optional[float] = Field(default=None)
+    status: Optional[str] = Field(default=None)
+    violationsCount: Optional[int] = Field(default=0)
+    violations: Optional[List[Any]] = Field(default_factory=list)
+    results: Optional[List[Any]] = Field(default_factory=list)
+    inspectorNotes: Optional[str] = Field(default="")
+    signatureUrl: Optional[str] = Field(default=None)
+    imageUrl: Optional[str] = Field(default="")
+
+
+class DietaryBreakdown(BaseModel):
+    veg: int = 0
+    nonVeg: int = 0
+    nonFood: int = 0
+
+
+class AnalyticsOverviewResponse(BaseModel):
+    totalScans: int
+    complianceRate: float
+    noticesIssued: int
+    dietaryBreakdown: DietaryBreakdown
+
+
 # --------------------------------------------------------------------------
 # Complaint Schemas
 # --------------------------------------------------------------------------

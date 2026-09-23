@@ -33,26 +33,25 @@ def hash_password(password: str) -> str:
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verify a plain password against the stored salted hash (with legacy plain fallback for demo accounts)."""
+    """Verify a plain password against the stored salted hash."""
     if not hashed_password:
         return False
     
-    # Check if format is salt$hex
-    if "$" in hashed_password:
-        try:
-            salt, stored_hash = hashed_password.split("$", 1)
-            hash_obj = hashlib.pbkdf2_hmac(
-                "sha256",
-                plain_password.encode("utf-8"),
-                salt.encode("utf-8"),
-                100000,
-            )
-            return hmac.compare_digest(hash_obj.hex(), stored_hash)
-        except Exception:
-            return False
-
-    # Fallback for plain demo passwords
-    return plain_password == hashed_password
+    # Require salt$hex format — no plain-text fallback
+    if "$" not in hashed_password:
+        return False
+    
+    try:
+        salt, stored_hash = hashed_password.split("$", 1)
+        hash_obj = hashlib.pbkdf2_hmac(
+            "sha256",
+            plain_password.encode("utf-8"),
+            salt.encode("utf-8"),
+            100000,
+        )
+        return hmac.compare_digest(hash_obj.hex(), stored_hash)
+    except Exception:
+        return False
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:

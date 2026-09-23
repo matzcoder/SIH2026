@@ -619,7 +619,7 @@ function ScanProduct() {
       </div>
 
       {statusNotification && (
-        <div className="p-3 mb-4 rounded-xl bg-cyan-950/80 border border-cyan-500 text-cyan-200 text-xs flex justify-between items-center shadow-lg">
+        <div className="p-3 mb-4 rounded-xl bg-cyan-950/80 border border-[#C1502D] text-[#FFF9F2] text-xs flex justify-between items-center shadow-lg">
           <span>{statusNotification}</span>
           <button onClick={() => setStatusNotification("")} className="font-bold text-base px-2">
             &times;
@@ -737,7 +737,7 @@ function ScanProduct() {
                           {isDragging ? (
                             <Sparkles className="core-icon text-cyan-300 animate-spin" />
                           ) : (
-                            <ScanLine className="core-icon text-cyan-400" />
+                            <ScanLine className="core-icon text-[#C1502D]" />
                           )}
                         </div>
                       </div>
@@ -915,7 +915,7 @@ function ScanProduct() {
                     </button>
                     <div className="flex gap-2">
                       <button
-                        className="px-4 py-2 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 rounded-xl text-xs font-semibold shadow-sm transition-all"
+                        className="px-4 py-2 bg-[#F5E6D8] hover:bg-slate-50 border border-slate-300 text-slate-700 rounded-xl text-xs font-semibold shadow-sm transition-all"
                         onClick={() => setIsReportModalOpen(true)}
                       >
                         Generate Notice

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import "./SearchBar.css";
 
 function SearchIcon() {
@@ -40,28 +40,61 @@ function SearchBar({
   onChange,
   onSearch,
   placeholder = "Search products, compliance checks...",
+  debounceMs = 300,
 }) {
   const [internalValue, setInternalValue] = useState("");
+  const debounceTimer = useRef(null);
 
   const searchValue =
     value !== undefined ? value : internalValue;
+
+  // Debounced onChange callback — fires at most once every `debounceMs`
+  const debouncedOnChange = useCallback(
+    (newValue) => {
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current);
+      }
+      debounceTimer.current = setTimeout(() => {
+        onChange?.(newValue);
+      }, debounceMs);
+    },
+    [onChange, debounceMs]
+  );
+
+  // Clean up timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current);
+      }
+    };
+  }, []);
 
   const updateValue = (newValue) => {
     if (value === undefined) {
       setInternalValue(newValue);
     }
 
-    onChange?.(newValue);
+    debouncedOnChange(newValue);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
+    // Cancel any pending debounce and fire immediately on submit
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+    }
     onSearch?.(searchValue);
   };
 
   const handleClear = () => {
-    updateValue("");
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+    }
+    if (value === undefined) {
+      setInternalValue("");
+    }
+    onChange?.("");
     onSearch?.("");
   };
 

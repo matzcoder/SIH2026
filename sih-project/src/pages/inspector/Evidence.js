@@ -160,31 +160,31 @@ function Evidence() {
 
       {/* Extracted Digital Details Card */}
       {scanResult && (
-        <div className="evidence-card" style={{ border: "2px solid #2563eb", backgroundColor: "#f8fafc" }}>
+        <div className="evidence-card" style={{ border: "2px solid #C1502D", backgroundColor: "#FBF3EC" }}>
           <div className="section-heading">
             <div>
-              <h2 style={{ color: "#1e40af" }}>Extracted Digital Details (AI OCR)</h2>
+              <h2 style={{ color: "#8E2B24" }}>Extracted Digital Details (AI OCR)</h2>
               <p>Visual declarations automatically converted into structured digital data.</p>
             </div>
             <span style={{
               padding: "4px 12px",
               borderRadius: "12px",
               fontWeight: 700,
-              backgroundColor: scanResult.status === "compliant" ? "#dcfce7" : "#fee2e2",
-              color: scanResult.status === "compliant" ? "#15803d" : "#b91c1c",
+              backgroundColor: scanResult.status === "compliant" ? "rgba(122, 132, 80, 0.2)" : "rgba(166, 58, 50, 0.2)",
+              color: scanResult.status === "compliant" ? "#7A8450" : "#8E2B24",
             }}>
               {scanResult.status === "compliant" ? "COMPLIANT" : "NON-COMPLIANT"} ({Math.round(scanResult.score)}%)
             </span>
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "14px", marginTop: "12px" }}>
-            <div><span style={{ fontSize: "12px", color: "#64748b" }}>MRP:</span><br /><strong style={{ fontSize: "15px", color: "#0f172a" }}>{scanResult.extracted_data?.mrp || "Not Found"}</strong></div>
-            <div><span style={{ fontSize: "12px", color: "#64748b" }}>Net Quantity:</span><br /><strong style={{ fontSize: "15px", color: "#0f172a" }}>{scanResult.extracted_data?.net_weight || "Not Found"}</strong></div>
-            <div><span style={{ fontSize: "12px", color: "#64748b" }}>Declared USP:</span><br /><strong style={{ fontSize: "15px", color: "#0f172a" }}>{scanResult.extracted_data?.unit_sale_price || "Not Found"}</strong></div>
-            <div><span style={{ fontSize: "12px", color: "#64748b" }}>Mfg / Expiry Date:</span><br /><strong style={{ fontSize: "15px", color: "#0f172a" }}>{scanResult.extracted_data?.mfg_date || scanResult.extracted_data?.expiry_date || "Not Found"}</strong></div>
-            <div><span style={{ fontSize: "12px", color: "#64748b" }}>Manufacturer Address:</span><br /><strong style={{ fontSize: "15px", color: "#0f172a" }}>{scanResult.extracted_data?.manufacturer_address || "Not Found"}</strong></div>
-            <div><span style={{ fontSize: "12px", color: "#64748b" }}>Consumer Care:</span><br /><strong style={{ fontSize: "15px", color: "#0f172a" }}>{scanResult.extracted_data?.consumer_care || "Not Found"}</strong></div>
-            <div><span style={{ fontSize: "12px", color: "#64748b" }}>Country of Origin:</span><br /><strong style={{ fontSize: "15px", color: "#0f172a" }}>{scanResult.extracted_data?.country_of_origin || "Not Found"}</strong></div>
+            <div><span style={{ fontSize: "12px", color: "#7A5C48" }}>MRP:</span><br /><strong style={{ fontSize: "15px", color: "#3B2A22" }}>{scanResult.extracted_data?.mrp || "Not Found"}</strong></div>
+            <div><span style={{ fontSize: "12px", color: "#7A5C48" }}>Net Quantity:</span><br /><strong style={{ fontSize: "15px", color: "#3B2A22" }}>{scanResult.extracted_data?.net_weight || "Not Found"}</strong></div>
+            <div><span style={{ fontSize: "12px", color: "#7A5C48" }}>Declared USP:</span><br /><strong style={{ fontSize: "15px", color: "#3B2A22" }}>{scanResult.extracted_data?.unit_sale_price || "Not Found"}</strong></div>
+            <div><span style={{ fontSize: "12px", color: "#7A5C48" }}>Mfg / Expiry Date:</span><br /><strong style={{ fontSize: "15px", color: "#3B2A22" }}>{scanResult.extracted_data?.mfg_date || scanResult.extracted_data?.expiry_date || "Not Found"}</strong></div>
+            <div><span style={{ fontSize: "12px", color: "#7A5C48" }}>Manufacturer Address:</span><br /><strong style={{ fontSize: "15px", color: "#3B2A22" }}>{scanResult.extracted_data?.manufacturer_address || "Not Found"}</strong></div>
+            <div><span style={{ fontSize: "12px", color: "#7A5C48" }}>Consumer Care:</span><br /><strong style={{ fontSize: "15px", color: "#3B2A22" }}>{scanResult.extracted_data?.consumer_care || "Not Found"}</strong></div>
+            <div><span style={{ fontSize: "12px", color: "#7A5C48" }}>Country of Origin:</span><br /><strong style={{ fontSize: "15px", color: "#3B2A22" }}>{scanResult.extracted_data?.country_of_origin || "Not Found"}</strong></div>
           </div>
         </div>
       )}
@@ -230,7 +230,7 @@ function Evidence() {
 
         </label>
 
-        {ocrError && <p style={{ color: "#dc2626", fontWeight: 600, marginTop: "12px" }}>{ocrError}</p>}
+        {ocrError && <p style={{ color: "#A63A32", fontWeight: 600, marginTop: "12px" }}>{ocrError}</p>}
 
       </div>
 

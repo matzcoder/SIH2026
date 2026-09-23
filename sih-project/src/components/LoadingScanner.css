@@ -1,217 +1,96 @@
+/* =========================================
+   LOADING SCANNER - WARM TERRACOTTA THEME
+   Adheres to spec Section 1.1 & Section 4
+========================================= */
+
 .loading-scanner {
   width: 100%;
   max-width: 520px;
-
   display: flex;
   align-items: center;
   gap: 22px;
-
   padding: 24px;
-
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-
-  font-family: Arial, Helvetica, sans-serif;
-
-  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.06);
+  background: #F5E6D8; /* bg-surface */
+  border: 1px solid #E4CBB4; /* border */
+  border-radius: 10px; /* 10px radius */
+  font-family: inherit;
+  box-shadow: 0 2px 8px rgba(139, 69, 19, 0.08);
+  box-sizing: border-box;
 }
 
 /* Scanner */
-
 .scanner-animation {
   position: relative;
-
   width: 76px;
   height: 90px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   flex-shrink: 0;
-
   overflow: hidden;
-
-  border-radius: 12px;
-
-  background: #eff6ff;
-  border: 1px solid #dbeafe;
+  border-radius: 8px;
+  background: #FFF9F2; /* bg-surface-raised */
+  border: 1px solid #E4CBB4;
 }
 
 .scanner-document {
   position: relative;
-
   width: 44px;
   height: 58px;
-
   padding: 13px 8px;
-
-  border: 2px solid #93c5fd;
+  border: 2px solid #E4CBB4;
   border-radius: 5px;
-
-  background: #ffffff;
+  background: #F5E6D8;
 }
-
-.scanner-document::before {
-  content: "";
-
-  position: absolute;
-  top: -2px;
-  right: -2px;
-
-  width: 13px;
-  height: 13px;
-
-  background: #dbeafe;
-
-  border-left: 2px solid #93c5fd;
-  border-bottom: 2px solid #93c5fd;
-}
-
-/* Document lines */
-
-.document-line {
-  width: 100%;
-  height: 3px;
-
-  margin-bottom: 6px;
-
-  border-radius: 10px;
-
-  background: #bfdbfe;
-}
-
-.line-one {
-  width: 70%;
-}
-
-.line-two {
-  width: 100%;
-}
-
-.line-three {
-  width: 85%;
-}
-
-.line-four {
-  width: 55%;
-}
-
-/* Scanning line */
 
 .scanner-line {
   position: absolute;
-  left: 9px;
-  right: 9px;
-
+  left: 0;
+  right: 0;
   height: 2px;
-
-  background: #2563eb;
-
-  box-shadow: 0 0 8px rgba(37, 99, 235, 0.7);
-
-  animation: scanDocument 1.8s ease-in-out infinite;
+  background: #C1502D; /* terracotta laser */
+  box-shadow: 0 0 8px #C1502D;
+  animation: scanMove 1.8s ease-in-out infinite alternate;
 }
 
 /* Content */
-
-.scanner-content {
-  min-width: 0;
-}
-
-.scanner-content h3 {
-  margin: 0 0 7px;
-
-  color: #111827;
-
-  font-size: 17px;
+.scanner-content h4 {
+  margin: 0 0 4px;
+  color: #3B2A22;
+  font-family: 'Fraunces', 'Outfit', Georgia, serif;
+  font-size: 16px;
   font-weight: 700;
 }
 
 .scanner-content p {
-  margin: 0;
-
-  color: #64748b;
-
+  margin: 0 0 10px;
+  color: #7A5C48;
   font-size: 13px;
-  line-height: 1.5;
 }
 
-/* Dots */
-
-.scanner-dots {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-
-  margin-top: 12px;
+.scanner-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: #FFF9F2;
+  border: 1px solid #E4CBB4;
+  border-radius: 999px;
+  overflow: hidden;
 }
 
-.scanner-dots span {
-  width: 5px;
-  height: 5px;
-
-  border-radius: 50%;
-
-  background: #2563eb;
-
-  animation: loadingDot 1.2s infinite ease-in-out;
+.scanner-progress-fill {
+  height: 100%;
+  background: #C1502D;
+  border-radius: 999px;
+  animation: progressFill 2s ease-in-out infinite;
 }
 
-.scanner-dots span:nth-child(2) {
-  animation-delay: 0.15s;
+@keyframes scanMove {
+  0% { top: 6px; }
+  100% { top: 80px; }
 }
 
-.scanner-dots span:nth-child(3) {
-  animation-delay: 0.3s;
-}
-
-/* Animations */
-
-@keyframes scanDocument {
-  0% {
-    top: 10px;
-    opacity: 0.4;
-  }
-
-  50% {
-    top: 76px;
-    opacity: 1;
-  }
-
-  100% {
-    top: 10px;
-    opacity: 0.4;
-  }
-}
-
-@keyframes loadingDot {
-  0%,
-  60%,
-  100% {
-    transform: translateY(0);
-    opacity: 0.4;
-  }
-
-  30% {
-    transform: translateY(-4px);
-    opacity: 1;
-  }
-}
-
-/* Mobile */
-
-@media (max-width: 480px) {
-  .loading-scanner {
-    flex-direction: column;
-
-    text-align: center;
-
-    padding: 22px;
-  }
-
-  .scanner-dots {
-    justify-content: center;
-  }
+@keyframes progressFill {
+  0% { width: 15%; }
+  50% { width: 75%; }
+  100% { width: 15%; }
 }

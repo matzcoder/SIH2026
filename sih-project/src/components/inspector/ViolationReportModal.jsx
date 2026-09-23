@@ -17,7 +17,7 @@ export default function ViolationReportModal({
     if (isOpen && canvasRef.current) {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext('2d');
-      ctx.strokeStyle = '#2563eb';
+      ctx.strokeStyle = '#C1502D';
       ctx.lineWidth = 2;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
@@ -85,8 +85,8 @@ export default function ViolationReportModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-      <div className="bg-white border border-slate-200 w-full max-w-2xl rounded-2xl shadow-2xl text-slate-900 flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#F5E6D8]/60 backdrop-blur-sm">
+      <div className="bg-[#F5E6D8] border border-slate-200 w-full max-w-2xl rounded-2xl shadow-2xl text-slate-900 flex flex-col max-h-[90vh]">
         <div className="flex items-center justify-between p-5 border-b border-slate-200">
           <div>
             <h3 className="text-lg font-bold text-slate-900">Legal Metrology Inspection Notice</h3>
@@ -94,7 +94,7 @@ export default function ViolationReportModal({
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-700 text-2xl leading-none"
+            className="text-[#7A5C48] hover:text-slate-700 text-2xl leading-none"
           >
             &times;
           </button>
@@ -108,7 +108,7 @@ export default function ViolationReportModal({
                 type="text"
                 value={officerName}
                 onChange={(e) => setOfficerName(e.target.value)}
-                className="w-full bg-white px-2.5 py-1.5 rounded-lg font-medium text-slate-900 border border-slate-300 focus:outline-none focus:border-blue-500"
+                className="w-full bg-[#F5E6D8] px-2.5 py-1.5 rounded-lg font-medium text-slate-900 border border-slate-300 focus:outline-none focus:border-blue-500"
               />
             </div>
 
@@ -118,7 +118,7 @@ export default function ViolationReportModal({
                 type="text"
                 value={districtZone}
                 onChange={(e) => setDistrictZone(e.target.value)}
-                className="w-full bg-white px-2.5 py-1.5 rounded-lg font-medium text-slate-900 border border-slate-300 focus:outline-none focus:border-blue-500"
+                className="w-full bg-[#F5E6D8] px-2.5 py-1.5 rounded-lg font-medium text-slate-900 border border-slate-300 focus:outline-none focus:border-blue-500"
               />
             </div>
 
@@ -181,7 +181,7 @@ export default function ViolationReportModal({
               value={inspectorNotes}
               onChange={(e) => setInspectorNotes(e.target.value)}
               placeholder="e.g. Discrepancy observed on primary display panel. Retail sample collected for verification."
-              className="w-full p-3 bg-white border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500 text-xs shadow-sm"
+              className="w-full p-3 bg-[#F5E6D8] border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500 text-xs shadow-sm"
             />
           </div>
 
@@ -210,7 +210,7 @@ export default function ViolationReportModal({
                 onTouchStart={startDrawing}
                 onTouchMove={draw}
                 onTouchEnd={stopDrawing}
-                className="w-full bg-white rounded-lg border border-slate-200 cursor-crosshair touch-none"
+                className="w-full bg-[#F5E6D8] rounded-lg border border-slate-200 cursor-crosshair touch-none"
               />
             </div>
             <p className="text-[10.5px] text-slate-500 font-medium mt-1">

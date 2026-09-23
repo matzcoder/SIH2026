@@ -102,7 +102,7 @@ export default function ComplianceChecklist({
     complianceScore >= 80
       ? '#10b981'
       : complianceScore >= 50
-      ? '#f59e0b'
+      ? '#D98E04'
       : '#f43f5e';
 
   return (

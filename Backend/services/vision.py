@@ -33,12 +33,30 @@ class BarcodeResult(TypedDict):
 
 
 # --------------------------------------------------------------------------
+# Configuration
+# --------------------------------------------------------------------------
+
+# Maximum dimension (width or height) before downscaling for OCR performance.
+# Resizing to ~1500px reduces pixel count significantly while preserving label text.
+_OCR_MAX_DIMENSION = 1500
+
+
+# --------------------------------------------------------------------------
 # OCR engine: lazy-loaded singleton (EasyOCR model load takes a few seconds)
 # --------------------------------------------------------------------------
 
 _reader: Any = None
 _reader_lock = threading.Lock()
 _easyocr_failed = False
+
+
+def _detect_gpu() -> bool:
+    """Check if a CUDA-capable GPU is available for EasyOCR."""
+    try:
+        import torch  # type: ignore
+        return torch.cuda.is_available()
+    except ImportError:
+        return False
 
 
 def get_ocr_reader() -> Any:
@@ -59,11 +77,12 @@ def get_ocr_reader() -> Any:
                         except Exception:
                             pass
 
-                    logger.info("Loading EasyOCR model (english)...")
-                    _reader = easyocr.Reader(["en"], gpu=False, verbose=False)
+                    use_gpu = _detect_gpu()
+                    logger.info(f"Loading EasyOCR model (english, gpu={use_gpu})...")
+                    _reader = easyocr.Reader(["en"], gpu=use_gpu, verbose=False)
                     logger.info("EasyOCR model loaded successfully.")
                 except Exception as e:
-                    logger.warning(f"EasyOCR is not available ({e}). Using intelligent fallback extractor.")
+                    logger.warning(f"EasyOCR is not available ({e}). OCR will return empty results.")
                     _easyocr_failed = True
                     return None
     return _reader
@@ -93,13 +112,38 @@ def load_image_from_bytes(image_bytes: bytes) -> Image.Image:
     return pil_img.convert("RGB")
 
 
+def _downscale_image(img_array: np.ndarray, max_dim: int = _OCR_MAX_DIMENSION) -> np.ndarray:
+    """
+    Downscale image so its largest dimension is at most `max_dim` pixels.
+    Preserves aspect ratio. Returns the original array if already small enough.
+    """
+    h, w = img_array.shape[:2]
+    if max(h, w) <= max_dim:
+        return img_array
+
+    scale = max_dim / max(h, w)
+    new_w = int(w * scale)
+    new_h = int(h * scale)
+
+    try:
+        import cv2  # type: ignore
+        return cv2.resize(img_array, (new_w, new_h), interpolation=cv2.INTER_AREA)
+    except ImportError:
+        # Fallback to PIL if OpenCV is not available
+        pil_img = Image.fromarray(img_array)
+        pil_img = pil_img.resize((new_w, new_h), Image.LANCZOS)
+        return np.array(pil_img)
+
+
 def preprocess_image(image_bytes: bytes) -> np.ndarray:
     """
     Decode upload bytes into an RGB NumPy array honoring EXIF orientation.
+    Downscales to a max dimension of 1500px for faster OCR processing.
     Returns RGB image suitable for neural network OCR models.
     """
     pil_img = load_image_from_bytes(image_bytes)
-    return np.array(pil_img)
+    img_array = np.array(pil_img)
+    return _downscale_image(img_array)
 
 
 # --------------------------------------------------------------------------
@@ -111,200 +155,47 @@ def run_ocr(preprocessed_image: np.ndarray, filename: Optional[str] = None) -> L
     """
     Run EasyOCR over the image and normalize results to
     [ymin, xmin, ymax, xmax] pixel-coordinate bounding boxes.
+
+    Returns an empty list if EasyOCR is not available — no hardcoded fallbacks.
     """
     reader = get_ocr_reader()
-    if reader is not None:
-        try:
-            # 1. Primary pass: RGB image
-            raw_results = reader.readtext(preprocessed_image, detail=1, paragraph=False)
+    if reader is None:
+        logger.warning("OCR engine not available. Returning empty results.")
+        return []
 
-            # 2. Secondary pass: Grayscale if RGB returned no text
-            if not raw_results and len(preprocessed_image.shape) == 3:
-                try:
-                    import cv2  # type: ignore
-                    gray = cv2.cvtColor(preprocessed_image, cv2.COLOR_RGB2GRAY)
-                    raw_results = reader.readtext(gray, detail=1, paragraph=False)
-                except Exception:
-                    pass
+    try:
+        # 1. Primary pass: RGB image
+        raw_results = reader.readtext(preprocessed_image, detail=1, paragraph=False)
 
-            chunks: List[OcrChunk] = []
-            for polygon, text, confidence in raw_results:
-                xs = [p[0] for p in polygon]
-                ys = [p[1] for p in polygon]
-                box = [int(min(ys)), int(min(xs)), int(max(ys)), int(max(xs))]
-                clean_text = text.strip()
-                if not clean_text:
-                    continue
-                chunks.append(OcrChunk(text=clean_text, box=box, confidence=float(confidence)))
-            if chunks:
-                logo_chunk = detect_fssai_logo(preprocessed_image, chunks, filename)
-                if logo_chunk and not any(c["text"] == "FSSAI Graphic Logo" for c in chunks):
-                    chunks.append(logo_chunk)
-                return chunks
-        except Exception as exc:
-            logger.warning(f"EasyOCR run failed: {exc}. Falling back to dynamic pattern detection.")
+        # 2. Secondary pass: Grayscale if RGB returned no text
+        if not raw_results and len(preprocessed_image.shape) == 3:
+            try:
+                import cv2  # type: ignore
+                gray = cv2.cvtColor(preprocessed_image, cv2.COLOR_RGB2GRAY)
+                raw_results = reader.readtext(gray, detail=1, paragraph=False)
+            except Exception:
+                pass
 
-    # EasyOCR is not available — use filename-based fallback for known sample images only.
-    if preprocessed_image is not None and hasattr(preprocessed_image, "shape"):
-        h, w = preprocessed_image.shape[:2]
-    else:
-        h, w = 750, 1000
-    fname = (filename or "").lower()
+        chunks: List[OcrChunk] = []
+        for polygon, text, confidence in raw_results:
+            xs = [p[0] for p in polygon]
+            ys = [p[1] for p in polygon]
+            box = [int(min(ys)), int(min(xs)), int(max(ys)), int(max(xs))]
+            clean_text = text.strip()
+            if not clean_text:
+                continue
+            chunks.append(OcrChunk(text=clean_text, box=box, confidence=float(confidence)))
 
-    # ----------------------------------------------------------------
-    # Filename-based fallback: accurate per-sample data matching what
-    # each PIL-generated label image actually contains.
-    # Only triggers for the known sample_data/ filenames.
-    # ----------------------------------------------------------------
+        if chunks:
+            logo_chunk = detect_fssai_logo(preprocessed_image, chunks, filename)
+            if logo_chunk and not any(c["text"] == "FSSAI Graphic Logo" for c in chunks):
+                chunks.append(logo_chunk)
 
-    if "food-safety-standards-authority-india" in fname or "2323173005" in fname or "fssai_compliant" in fname:
-        return [
-            OcrChunk(text="Brand Name: ABC Foods", box=[int(h*0.12), int(w*0.05), int(h*0.20), int(w*0.7)], confidence=0.98),
-            OcrChunk(text="Net Quantity: 200 g", box=[int(h*0.20), int(w*0.05), int(h*0.28), int(w*0.5)], confidence=0.97),
-            OcrChunk(text="M.R.P. (Incl. of all taxes): Rs. 40.00", box=[int(h*0.28), int(w*0.05), int(h*0.35), int(w*0.75)], confidence=0.98),
-            OcrChunk(text="Month & Year of Pkg: 08/2026", box=[int(h*0.35), int(w*0.05), int(h*0.42), int(w*0.65)], confidence=0.97),
-            OcrChunk(text="Mfg by: ABC Foods Pvt Ltd, Plot 42, Industrial Estate, Chennai - 600032", box=[int(h*0.42), int(w*0.05), int(h*0.50), int(w*0.95)], confidence=0.96),
-            OcrChunk(text="Consumer Care Helpline: 1800-123-4567 / support@abcfoods.com", box=[int(h*0.50), int(w*0.05), int(h*0.57), int(w*0.95)], confidence=0.97),
-            OcrChunk(text="Country of Origin: India", box=[int(h*0.57), int(w*0.05), int(h*0.64), int(w*0.6)], confidence=0.98),
-            OcrChunk(text="FSSAI Lic. No. 10019043002765", box=[int(h*0.64), int(w*0.05), int(h*0.71), int(w*0.75)], confidence=0.98),
-            OcrChunk(text="fssai Graphic Logo", box=[int(h*0.75), int(w*0.65), int(h*0.85), int(w*0.95)], confidence=0.99),
-            OcrChunk(text="Vegetarian (Green Dot)", box=[int(h*0.75), int(w*0.40), int(h*0.85), int(w*0.62)], confidence=0.98),
-        ]
+        return chunks
 
-    if "sample_biscuit_label" in fname:
-        return [
-            OcrChunk(text="Brand Name: ABC Foods", box=[int(h*0.15), int(w*0.05), int(h*0.22), int(w*0.7)], confidence=0.97),
-            OcrChunk(text="Net Quantity: 200 g", box=[int(h*0.22), int(w*0.05), int(h*0.29), int(w*0.5)], confidence=0.96),
-            OcrChunk(text="M.R.P. (Incl. of all taxes): Rs. 40.00", box=[int(h*0.29), int(w*0.05), int(h*0.36), int(w*0.75)], confidence=0.97),
-            OcrChunk(text="Month & Year of Pkg: 08/2026", box=[int(h*0.36), int(w*0.05), int(h*0.43), int(w*0.65)], confidence=0.96),
-            OcrChunk(text="Mfg by: ABC Foods Pvt Ltd, Plot 42, Industrial Estate, Chennai - 600032", box=[int(h*0.43), int(w*0.05), int(h*0.50), int(w*0.95)], confidence=0.95),
-            OcrChunk(text="Consumer Care Helpline: 1800-123-4567 / support@abcfoods.com", box=[int(h*0.50), int(w*0.05), int(h*0.57), int(w*0.95)], confidence=0.96),
-            OcrChunk(text="Country of Origin: India", box=[int(h*0.57), int(w*0.05), int(h*0.64), int(w*0.6)], confidence=0.97),
-            OcrChunk(text="fssai Graphic Logo", box=[int(h*0.75), int(w*0.65), int(h*0.85), int(w*0.95)], confidence=0.97),
-            OcrChunk(text="Vegetarian (Green Dot)", box=[int(h*0.75), int(w*0.40), int(h*0.85), int(w*0.62)], confidence=0.98),
-        ]
-
-    if "sample_cooking_oil_label" in fname:
-        return [
-            OcrChunk(text="Brand Name: XYZ Agro", box=[int(h*0.15), int(w*0.05), int(h*0.22), int(w*0.6)], confidence=0.97),
-            OcrChunk(text="Net Quantity: 1000 ml", box=[int(h*0.22), int(w*0.05), int(h*0.29), int(w*0.55)], confidence=0.96),
-            OcrChunk(text="Declared Unit Sale Price: Rs. 0.18 per ml", box=[int(h*0.29), int(w*0.05), int(h*0.36), int(w*0.75)], confidence=0.95),
-            OcrChunk(text="M.R.P. (Incl. of all taxes): Rs. 180.00", box=[int(h*0.36), int(w*0.05), int(h*0.43), int(w*0.75)], confidence=0.97),
-            OcrChunk(text="Month & Year of Pkg: 07/2026", box=[int(h*0.43), int(w*0.05), int(h*0.50), int(w*0.65)], confidence=0.96),
-            OcrChunk(text="Mfg by: XYZ Agro Foods Ltd, Sector 5, Coimbatore - 641001", box=[int(h*0.50), int(w*0.05), int(h*0.57), int(w*0.95)], confidence=0.95),
-            OcrChunk(text="Consumer Care Helpline: 1800-987-6543 / care@xyzagro.in", box=[int(h*0.57), int(w*0.05), int(h*0.64), int(w*0.95)], confidence=0.96),
-            OcrChunk(text="Country of Origin: India", box=[int(h*0.64), int(w*0.05), int(h*0.71), int(w*0.6)], confidence=0.97),
-            OcrChunk(text="fssai Graphic Logo", box=[int(h*0.75), int(w*0.65), int(h*0.85), int(w*0.95)], confidence=0.97),
-            OcrChunk(text="Vegetarian (Green Dot)", box=[int(h*0.75), int(w*0.40), int(h*0.85), int(w*0.62)], confidence=0.98),
-        ]
-
-    if "sample_chicken_noodles" in fname or "chicken_noodles" in fname:
-        return [
-            OcrChunk(text="Brand Name: Maggi (Nestle India Ltd)", box=[int(h*0.15), int(w*0.05), int(h*0.22), int(w*0.7)], confidence=0.97),
-            OcrChunk(text="Net Quantity: 70 g", box=[int(h*0.22), int(w*0.05), int(h*0.29), int(w*0.5)], confidence=0.96),
-            OcrChunk(text="M.R.P. (Incl. of all taxes): Rs. 15.00", box=[int(h*0.29), int(w*0.05), int(h*0.36), int(w*0.75)], confidence=0.97),
-            OcrChunk(text="Month & Year of Pkg: 09/2026", box=[int(h*0.36), int(w*0.05), int(h*0.43), int(w*0.65)], confidence=0.96),
-            OcrChunk(text="Mfg by: Nestle India Ltd, Industrial Area Phase-1, Moga - 142001", box=[int(h*0.43), int(w*0.05), int(h*0.50), int(w*0.95)], confidence=0.95),
-            OcrChunk(text="Consumer Care Helpline: 1800-103-0626 / consumerservices@in.nestle.com", box=[int(h*0.50), int(w*0.05), int(h*0.57), int(w*0.95)], confidence=0.96),
-            OcrChunk(text="Country of Origin: India", box=[int(h*0.57), int(w*0.05), int(h*0.64), int(w*0.6)], confidence=0.97),
-            OcrChunk(text="fssai Graphic Logo", box=[int(h*0.75), int(w*0.65), int(h*0.85), int(w*0.95)], confidence=0.97),
-            OcrChunk(text="Non-Vegetarian (Brown Triangle)", box=[int(h*0.75), int(w*0.40), int(h*0.85), int(w*0.62)], confidence=0.98),
-        ]
-
-    if "sample_smartwatch_label" in fname:
-        # Electronics — no FSSAI logo (not applicable), no consumer care email/phone pattern matching
-        return [
-            OcrChunk(text="Brand Name: FitPulse", box=[int(h*0.15), int(w*0.05), int(h*0.22), int(w*0.6)], confidence=0.97),
-            OcrChunk(text="Net Quantity: 100 g", box=[int(h*0.22), int(w*0.05), int(h*0.29), int(w*0.5)], confidence=0.96),
-            OcrChunk(text="M.R.P. (Incl. of all taxes): Rs. 2999.00", box=[int(h*0.29), int(w*0.05), int(h*0.36), int(w*0.75)], confidence=0.97),
-            OcrChunk(text="Month & Year of Pkg: 08/2026", box=[int(h*0.36), int(w*0.05), int(h*0.43), int(w*0.65)], confidence=0.96),
-            OcrChunk(text="Mfg by: FitPulse Electronics India Pvt Ltd, Tech Park, Bengaluru - 560100", box=[int(h*0.43), int(w*0.05), int(h*0.50), int(w*0.95)], confidence=0.95),
-            OcrChunk(text="Consumer Care: customercare@fitpulse.in", box=[int(h*0.50), int(w*0.05), int(h*0.57), int(w*0.85)], confidence=0.94),
-            OcrChunk(text="Country of Origin: India", box=[int(h*0.57), int(w*0.05), int(h*0.64), int(w*0.6)], confidence=0.97),
-        ]
-
-    if "noncompliant_missing_mrp_date" in fname or "missing_mrp_date" in fname:
-        # Missing MRP and date — should fail LMR_RULE_01 (CRITICAL) and LMR_RULE_06
-        return [
-            OcrChunk(text="Brand Name: FreshSnack", box=[int(h*0.15), int(w*0.05), int(h*0.22), int(w*0.6)], confidence=0.96),
-            OcrChunk(text="Net Quantity: 50 g", box=[int(h*0.22), int(w*0.05), int(h*0.29), int(w*0.5)], confidence=0.95),
-            OcrChunk(text="Mfg by: FreshSnack Foods Ltd, Industrial Park, Hyderabad", box=[int(h*0.36), int(w*0.05), int(h*0.43), int(w*0.95)], confidence=0.94),
-            OcrChunk(text="Consumer Care Helpline: 1800-444-5555 / care@freshsnack.com", box=[int(h*0.43), int(w*0.05), int(h*0.50), int(w*0.95)], confidence=0.95),
-            OcrChunk(text="Country of Origin: India", box=[int(h*0.50), int(w*0.05), int(h*0.57), int(w*0.6)], confidence=0.96),
-        ]
-
-    if "noncompliant_missing_fssai_logo" in fname or "missing_fssai_logo" in fname:
-        # All declarations present but NO FSSAI logo — should fail FSSAI_RULE_01
-        return [
-            OcrChunk(text="Brand Name: TastyBites", box=[int(h*0.15), int(w*0.05), int(h*0.22), int(w*0.6)], confidence=0.96),
-            OcrChunk(text="Net Quantity: 150 g", box=[int(h*0.22), int(w*0.05), int(h*0.29), int(w*0.5)], confidence=0.95),
-            OcrChunk(text="M.R.P. (Incl. of all taxes): Rs. 35.00", box=[int(h*0.29), int(w*0.05), int(h*0.36), int(w*0.7)], confidence=0.96),
-            OcrChunk(text="Month & Year of Pkg: 08/2026", box=[int(h*0.36), int(w*0.05), int(h*0.43), int(w*0.65)], confidence=0.95),
-            OcrChunk(text="Mfg by: TastyBites India Ltd, Industrial Zone, Pune", box=[int(h*0.43), int(w*0.05), int(h*0.50), int(w*0.9)], confidence=0.94),
-            OcrChunk(text="Consumer Care Helpline: 1800-222-3333 / care@tastybites.com", box=[int(h*0.50), int(w*0.05), int(h*0.57), int(w*0.95)], confidence=0.95),
-            OcrChunk(text="Country of Origin: India", box=[int(h*0.57), int(w*0.05), int(h*0.64), int(w*0.6)], confidence=0.96),
-            OcrChunk(text="Vegetarian (Green Dot)", box=[int(h*0.75), int(w*0.40), int(h*0.85), int(w*0.62)], confidence=0.98),
-            # No FSSAI logo chunk — intentionally absent
-        ]
-
-    if "noncompliant_wrong_usp" in fname or "wrong_usp" in fname:
-        # Wrong USP and missing consumer care — should fail LMR_RULE_03 and LMR_RULE_04
-        return [
-            OcrChunk(text="Brand Name: RoyalGrains", box=[int(h*0.15), int(w*0.05), int(h*0.22), int(w*0.6)], confidence=0.96),
-            OcrChunk(text="Net Quantity: 2 kg", box=[int(h*0.22), int(w*0.05), int(h*0.29), int(w*0.5)], confidence=0.95),
-            OcrChunk(text="M.R.P. (Incl. of all taxes): Rs. 200.00", box=[int(h*0.29), int(w*0.05), int(h*0.36), int(w*0.7)], confidence=0.96),
-            OcrChunk(text="Declared Unit Sale Price: Rs. 0.85 per g", box=[int(h*0.36), int(w*0.05), int(h*0.43), int(w*0.75)], confidence=0.94),
-            OcrChunk(text="Month & Year of Pkg: 06/2026", box=[int(h*0.43), int(w*0.05), int(h*0.50), int(w*0.65)], confidence=0.95),
-            OcrChunk(text="Mfg by: RoyalGrains India Pvt Ltd, Karnal, Haryana", box=[int(h*0.50), int(w*0.05), int(h*0.57), int(w*0.9)], confidence=0.94),
-            OcrChunk(text="Country of Origin: India", box=[int(h*0.57), int(w*0.05), int(h*0.64), int(w*0.6)], confidence=0.96),
-            OcrChunk(text="fssai Graphic Logo", box=[int(h*0.75), int(w*0.65), int(h*0.85), int(w*0.95)], confidence=0.97),
-            OcrChunk(text="Vegetarian (Green Dot)", box=[int(h*0.75), int(w*0.40), int(h*0.85), int(w*0.62)], confidence=0.98),
-            # No consumer care line — intentionally absent
-        ]
-
-    if "noncompliant_no_mfg_address" in fname or "no_mfg_address" in fname:
-        # Missing manufacturer address — should fail LMR_RULE_05
-        return [
-            OcrChunk(text="Brand Name: SoundBlast", box=[int(h*0.15), int(w*0.05), int(h*0.22), int(w*0.6)], confidence=0.96),
-            OcrChunk(text="Net Quantity: 50 g", box=[int(h*0.22), int(w*0.05), int(h*0.29), int(w*0.5)], confidence=0.95),
-            OcrChunk(text="M.R.P. (Incl. of all taxes): Rs. 1499.00", box=[int(h*0.29), int(w*0.05), int(h*0.36), int(w*0.7)], confidence=0.96),
-            OcrChunk(text="Month & Year of Pkg: 08/2026", box=[int(h*0.43), int(w*0.05), int(h*0.50), int(w*0.65)], confidence=0.95),
-            OcrChunk(text="Consumer Care: support@soundblast.com", box=[int(h*0.50), int(w*0.05), int(h*0.57), int(w*0.85)], confidence=0.94),
-            OcrChunk(text="Country of Origin: China", box=[int(h*0.57), int(w*0.05), int(h*0.64), int(w*0.6)], confidence=0.96),
-            # No manufacturer address chunk — intentionally absent
-        ]
-
-    if "missing_veg_logo" in fname or "noncompliant_missing_veg" in fname or "missing_veg" in fname:
-        # Missing dietary statutory emblem — should fail FSSAI_VEG_RULE_01
-        return [
-            OcrChunk(text="Brand Name: TastyBites Premium", box=[int(h*0.15), int(w*0.05), int(h*0.22), int(w*0.6)], confidence=0.96),
-            OcrChunk(text="Net Quantity: 100 g", box=[int(h*0.22), int(w*0.05), int(h*0.29), int(w*0.5)], confidence=0.95),
-            OcrChunk(text="M.R.P. (Incl. of all taxes): Rs. 20.00", box=[int(h*0.29), int(w*0.05), int(h*0.36), int(w*0.7)], confidence=0.96),
-            OcrChunk(text="Month & Year of Pkg: 09/2026", box=[int(h*0.36), int(w*0.05), int(h*0.43), int(w*0.65)], confidence=0.95),
-            OcrChunk(text="Mfg by: TastyBites India Ltd, Industrial Zone, Pune - 411017", box=[int(h*0.43), int(w*0.05), int(h*0.50), int(w*0.9)], confidence=0.94),
-            OcrChunk(text="Consumer Care Helpline: 1800-222-3333 / care@tastybites.com", box=[int(h*0.50), int(w*0.05), int(h*0.57), int(w*0.95)], confidence=0.95),
-            OcrChunk(text="Country of Origin: India", box=[int(h*0.57), int(w*0.05), int(h*0.64), int(w*0.6)], confidence=0.96),
-            OcrChunk(text="fssai Graphic Logo", box=[int(h*0.75), int(w*0.65), int(h*0.85), int(w*0.95)], confidence=0.97),
-            # Intentionally missing veg/non-veg logo chunk
-        ]
-
-    # Determine dietary emblem from visual image pixels or defaults
-    dietary_chunk = detect_dietary_symbol(preprocessed_image, [], filename)
-    dietary_text = dietary_chunk["text"] if dietary_chunk else "Vegetarian (Green Dot)"
-    dietary_box = dietary_chunk["box"] if dietary_chunk else [int(h*0.75), int(w*0.40), int(h*0.85), int(w*0.62)]
-
-    # Default fallback when EasyOCR is not loaded or for generic package uploads
-    return [
-        OcrChunk(text="Brand Name: ABC Foods", box=[int(h*0.15), int(w*0.05), int(h*0.22), int(w*0.7)], confidence=0.97),
-        OcrChunk(text="Net Quantity: 200 g", box=[int(h*0.22), int(w*0.05), int(h*0.29), int(w*0.5)], confidence=0.96),
-        OcrChunk(text="M.R.P. (Incl. of all taxes): Rs. 40.00", box=[int(h*0.29), int(w*0.05), int(h*0.36), int(w*0.75)], confidence=0.97),
-        OcrChunk(text="Month & Year of Pkg: 08/2026", box=[int(h*0.36), int(w*0.05), int(h*0.43), int(w*0.65)], confidence=0.96),
-        OcrChunk(text="Mfg by: ABC Foods Pvt Ltd, Plot 42, Industrial Estate, Chennai - 600032", box=[int(h*0.43), int(w*0.05), int(h*0.50), int(w*0.95)], confidence=0.95),
-        OcrChunk(text="Consumer Care Helpline: 1800-123-4567 / support@abcfoods.com", box=[int(h*0.50), int(w*0.05), int(h*0.57), int(w*0.95)], confidence=0.96),
-        OcrChunk(text="Country of Origin: India", box=[int(h*0.57), int(w*0.05), int(h*0.64), int(w*0.6)], confidence=0.97),
-        OcrChunk(text="fssai Graphic Logo", box=[int(h*0.75), int(w*0.65), int(h*0.85), int(w*0.95)], confidence=0.97),
-        OcrChunk(text=dietary_text, box=dietary_box, confidence=0.98),
-    ]
+    except Exception as exc:
+        logger.warning(f"EasyOCR run failed: {exc}.")
+        return []
 
 
 def detect_fssai_logo(
@@ -312,12 +203,8 @@ def detect_fssai_logo(
 ) -> Optional[OcrChunk]:
     """
     Detect visual FSSAI Graphic Logo on product packaging.
-    Uses OCR chunk keyword matching, OpenCV contour analysis, and packaging heuristics.
+    Uses OCR chunk keyword matching and OpenCV contour analysis.
     """
-    fname = (filename or "").lower()
-    if "missing_fssai_logo" in fname or "no_fssai" in fname:
-        return None
-
     _FSSAI_KEYWORDS = [
         "fssai", "fssal", "fssi", "fsai", "issai", "ssai", "lic",
         "license", "licence", "graphic logo", "logo", "food safety",
@@ -367,12 +254,8 @@ def detect_dietary_symbol(
 ) -> Optional[OcrChunk]:
     """
     Detect statutory FSSAI Vegetarian (Green Dot) or Non-Vegetarian (Brown Triangle) Emblem
-    using OCR chunks, OpenCV color segmentation, and contour geometry.
+    using OCR chunks and OpenCV color segmentation.
     """
-    fname = (filename or "").lower()
-    if "missing_veg" in fname or "no_veg" in fname:
-        return None
-
     # 1. Check OCR chunks for explicit dietary keywords
     for chunk in chunks:
         t = chunk["text"].lower()
@@ -445,10 +328,7 @@ def decode_barcodes(preprocessed_image: np.ndarray) -> List[BarcodeResult]:
             except Exception:
                 continue
             results.append(BarcodeResult(type=symbol.type, data=data))
-        if results:
-            return results
-    except Exception:
-        pass
-
-    # Default decoded barcode for audit trail
-    return [BarcodeResult(type="EAN13", data="8901234567890")]
+        return results
+    except Exception as exc:
+        logger.warning(f"Barcode decoding failed: {exc}")
+        return []

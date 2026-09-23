@@ -13,6 +13,7 @@ from sqlalchemy import (
     Float,
     Boolean,
     DateTime,
+    Index,
     Text,
 )
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
@@ -37,13 +38,19 @@ class InspectionRecord(Base):
     officer_name = Column(String, default="Field Inspector")
     district_zone = Column(String, default="Chennai South")
     compliance_score = Column(Float, default=0.0)
-    status = Column(String, default="COMPLIANT")  # COMPLIANT or VIOLATION
+    status = Column(String, default="COMPLIANT", index=True)  # COMPLIANT or VIOLATION
     violations_count = Column(Integer, default=0)
     inspector_notes = Column(Text, nullable=True)
     raw_results_json = Column(Text, nullable=True)  # Serialized JSON array of rules & OCR text
     signature_url = Column(Text, nullable=True)  # Base64 digital signature
     image_url = Column(String, nullable=True)
-    timestamp = Column(DateTime, default=datetime.datetime.utcnow)
+    timestamp = Column(DateTime, default=datetime.datetime.utcnow, index=True)
+
+    # Composite indexes for analytics queries
+    __table_args__ = (
+        Index("ix_inspection_status_timestamp", "status", "timestamp"),
+        Index("ix_inspection_dietary_type", "dietary_type"),
+    )
 
 
 class RuleRecord(Base):

@@ -1,0 +1,34 @@
+{
+  "redesign-guard": {
+    "enabled": true,
+    "PostToolUse": [
+      {
+        "matcher": "replace_file_content",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python scripts/recheck_and_correct.py --check"
+          }
+        ]
+      },
+      {
+        "matcher": "multi_replace_file_content",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python scripts/recheck_and_correct.py --check"
+          }
+        ]
+      },
+      {
+        "matcher": "write_to_file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python scripts/recheck_and_correct.py --check"
+          }
+        ]
+      }
+    ]
+  }
+}

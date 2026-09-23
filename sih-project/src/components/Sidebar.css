@@ -1,27 +1,71 @@
 /* =========================================
-   SIDEBAR - LIGHT MODE
+   SIDEBAR - WARM TERRACOTTA & RUST THEME
+   Adheres to spec Section 1.1 & Section 2
 ========================================= */
 
 .sidebar {
-  width: 240px;
+  width: 250px;
   min-height: 100vh;
-
   display: flex;
   flex-direction: column;
-
-  background: #ffffff;
-
-  border-right: 1px solid #e8edf3;
-
-  box-shadow: 4px 0 18px rgba(15, 23, 42, 0.04);
-
-  padding: 22px 14px;
-
+  background-color: #F5E6D8; /* bg-surface */
+  border-right: 1px solid #E4CBB4; /* border */
+  box-shadow: 2px 0 12px rgba(139, 69, 19, 0.06);
+  padding: 20px 14px;
   box-sizing: border-box;
-
-  animation: sidebarSlideIn 0.45s ease-out;
+  animation: sidebarSlideIn 0.35s ease-out;
+  flex-shrink: 0;
 }
 
+/* =========================================
+   BRAND HEADER
+========================================= */
+
+.sidebar-brand-header {
+  padding: 6px 10px 18px 10px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #E4CBB4;
+}
+
+.sidebar-logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar-logo-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: #C1502D; /* primary */
+  color: #FFF9F2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 4px 10px rgba(193, 80, 45, 0.25);
+}
+
+.sidebar-logo-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-title {
+  font-family: 'Fraunces', 'Outfit', Georgia, serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: #3B2A22; /* text-primary */
+  letter-spacing: -0.01em;
+}
+
+.logo-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: #B7410E; /* accent */
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
 
 /* =========================================
    MAIN MENU
@@ -33,18 +77,12 @@
 
 .sidebar-section-title {
   padding: 8px 12px;
-
-  margin-bottom: 8px;
-
-  color: #94a3b8;
-
+  margin-bottom: 6px;
+  color: #7A5C48; /* text-secondary */
   font-size: 10px;
-
   font-weight: 700;
-
   letter-spacing: 0.08em;
 }
-
 
 /* =========================================
    SIDEBAR ITEMS
@@ -53,162 +91,97 @@
 .sidebar-items {
   display: flex;
   flex-direction: column;
-
   gap: 5px;
 }
 
 .sidebar-item {
   position: relative;
-
   width: 100%;
-
   display: flex;
   align-items: center;
-
-  gap: 11px;
-
-  padding: 10px 12px;
-
+  gap: 12px;
+  padding: 11px 14px;
   border: 1px solid transparent;
-
-  border-radius: 8px;
-
+  border-radius: 8px; /* 8px buttons/inputs from spec */
   background: transparent;
-
-  color: #64748b;
-
+  color: #7A5C48; /* text-secondary */
   font-family: inherit;
-
-  font-size: 11px;
-
+  font-size: 13px;
   font-weight: 600;
-
   text-align: left;
-
   cursor: pointer;
-
-  transition:
-    background 0.25s ease,
-    color 0.25s ease,
-    transform 0.25s ease,
-    border-color 0.25s ease,
-    box-shadow 0.25s ease;
+  transition: all 0.2s ease;
 }
-
-
-/* =========================================
-   ICON
-========================================= */
 
 .sidebar-item svg {
-  width: 17px;
-  height: 17px;
-
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
-
   stroke: currentColor;
-
   stroke-width: 1.8;
-
-  transition:
-    transform 0.25s ease,
-    color 0.25s ease;
+  transition: transform 0.2s ease;
 }
 
-
-/* =========================================
-   HOVER
-========================================= */
-
+/* Hover */
 .sidebar-item:hover {
-  background: #f5f8fc;
-
-  color: #2563eb;
-
-  border-color: #e7eef8;
-
-  transform: translateX(3px);
+  background: rgba(193, 80, 45, 0.08); /* light terracotta tint */
+  color: #3B2A22; /* text-primary */
+  border-color: #E4CBB4;
+  transform: translateX(2px);
 }
 
 .sidebar-item:hover svg {
-  transform: scale(1.08);
+  transform: scale(1.06);
 }
 
-
-/* =========================================
-   ACTIVE ITEM
-========================================= */
-
+/* Active item: Terracotta background + rust left-border accent */
 .sidebar-item.active {
-  background: #eff6ff;
-
-  color: #2563eb;
-
-  border-color: #dbeafe;
-
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+  background: #C1502D; /* primary */
+  color: #FFF9F2; /* warm off-white, not pure white */
+  border-color: #A63F22;
+  box-shadow: 0 4px 12px rgba(193, 80, 45, 0.25);
 }
 
 .sidebar-item.active::before {
   content: "";
-
   position: absolute;
-
   left: -14px;
-
   top: 50%;
-
-  width: 3px;
-
-  height: 22px;
-
+  width: 4px;
+  height: 24px;
   transform: translateY(-50%);
-
-  background: #2563eb;
-
+  background: #B7410E; /* rust left-border accent */
   border-radius: 0 4px 4px 0;
-
-  animation: activeBar 0.3s ease-out;
+  animation: activeBar 0.25s ease-out;
 }
 
 .sidebar-item.active svg {
-  transform: scale(1.05);
+  stroke: #FFF9F2;
 }
 
-
 /* =========================================
-   BOTTOM SECTION
+   BOTTOM SECTION & LOGOUT
 ========================================= */
 
 .sidebar-bottom {
   margin-top: auto;
-
-  padding-top: 18px;
-
-  border-top: 1px solid #edf1f5;
+  padding-top: 14px;
+  border-top: 1px solid #E4CBB4;
 }
 
-
-/* =========================================
-   LOGOUT
-========================================= */
-
-.sidebar-item:last-child {
-  color: #64748b;
+.logout-item {
+  color: #7A5C48;
 }
 
-.sidebar-item:last-child:hover {
-  color: #dc2626;
-
-  background: #fef2f2;
-
-  border-color: #fee2e2;
+.logout-item:hover {
+  color: #A63A32; /* error brick red */
+  background: rgba(166, 58, 50, 0.12);
+  border-color: rgba(166, 58, 50, 0.25);
 }
 
-.sidebar-item:last-child:hover svg {
-  animation: logoutShake 0.4s ease;
+.logout-item:hover svg {
+  transform: translateX(-2px);
 }
-
 
 /* =========================================
    ANIMATIONS
@@ -217,70 +190,32 @@
 @keyframes sidebarSlideIn {
   from {
     opacity: 0;
-
-    transform: translateX(-18px);
+    transform: translateX(-16px);
   }
-
   to {
     opacity: 1;
-
     transform: translateX(0);
   }
 }
-
 
 @keyframes activeBar {
   from {
     height: 0;
-
     opacity: 0;
   }
-
   to {
-    height: 22px;
-
+    height: 24px;
     opacity: 1;
   }
 }
 
-
-@keyframes logoutShake {
-  0% {
-    transform: translateX(0);
-  }
-
-  25% {
-    transform: translateX(3px);
-  }
-
-  50% {
-    transform: translateX(-2px);
-  }
-
-  75% {
-    transform: translateX(2px);
-  }
-
-  100% {
-    transform: translateX(0);
-  }
-}
-
-
-/* =========================================
-   RESPONSIVE
-========================================= */
-
 @media (max-width: 768px) {
   .sidebar {
-    width: 210px;
-
-    padding: 18px 10px;
+    width: 220px;
+    padding: 16px 10px;
   }
-
   .sidebar-item {
-    font-size: 10px;
-
+    font-size: 12px;
     padding: 9px 10px;
   }
 }

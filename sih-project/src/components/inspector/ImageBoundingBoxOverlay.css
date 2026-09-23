@@ -1,14 +1,15 @@
 /* ==========================================================================
    IMAGE BOUNDING BOX OVERLAY - LIGHT THEMED OCR INSPECTION CANVAS
+   Warm Terracotta & Rust Specification Compliant
    ========================================================================== */
 
 .overlay-container {
   position: relative;
   width: 100%;
   border-radius: 18px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+  background: #FFF9F2;
+  border: 1px solid #E4CBB4;
+  box-shadow: 0 4px 20px -2px rgba(139, 69, 19, 0.08);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -20,8 +21,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 16px;
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
+  background: #FBF3EC;
+  border-bottom: 1px solid #E4CBB4;
   z-index: 15;
 }
 
@@ -35,9 +36,9 @@
   font-size: 10.5px;
   font-weight: 700;
   font-family: 'JetBrains Mono', monospace;
-  color: #0284c7;
-  background: #e0f2fe;
-  border: 1px solid #bae6fd;
+  color: #C1502D;
+  background: #F5E6D8;
+  border: 1px solid #E4CBB4;
   padding: 3px 9px;
   border-radius: 999px;
   display: inline-flex;
@@ -49,8 +50,8 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #16a34a;
-  box-shadow: 0 0 6px #16a34a;
+  background: #7A8450;
+  box-shadow: 0 0 6px #7A8450;
   animation: pulseDot 1.8s infinite;
 }
 
@@ -62,7 +63,7 @@
 .hud-detections-counter {
   font-size: 11px;
   font-weight: 600;
-  color: #64748b;
+  color: #7A5C48;
 }
 
 /* ── HUD Toolbar Controls ── */
@@ -73,9 +74,9 @@
 }
 
 .overlay-tool-btn {
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
-  color: #475569;
+  background: #FFF9F2;
+  border: 1px solid #E4CBB4;
+  color: #7A5C48;
   width: 28px;
   height: 28px;
   border-radius: 7px;
@@ -87,49 +88,66 @@
 }
 
 .overlay-tool-btn:hover {
-  background: #f0f9ff;
-  border-color: #38bdf8;
-  color: #0284c7;
+  background: #F5E6D8;
+  border-color: #C1502D;
+  color: #C1502D;
 }
 
 /* ── Canvas Viewport ── */
 .overlay-viewport {
   position: relative;
   width: 100%;
-  min-height: 380px;
-  max-height: 540px;
+  min-height: 420px;
+  max-height: 600px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background-color: #f8fafc;
-  background-image: radial-gradient(rgba(148, 163, 184, 0.25) 1px, transparent 1px);
+  background-color: #FBF3EC;
+  background-image: radial-gradient(rgba(122, 92, 72, 0.18) 1.2px, transparent 1.2px);
   background-size: 20px 20px;
   user-select: none;
+  padding: 16px;
+  box-sizing: border-box;
 }
 
 .overlay-image-wrapper {
   position: relative;
-  display: inline-block;
-  max-width: 100%;
-  max-height: 100%;
+  width: 100%;
+  max-width: 720px;
+  min-height: 380px;
+  aspect-ratio: 4 / 3;
+  margin: 0 auto;
   transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center center;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px -4px rgba(139, 69, 19, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FAF2EA;
 }
 
 .overlay-main-image {
   display: block;
   width: 100%;
-  max-height: 480px;
+  height: 100%;
   object-fit: contain;
-  border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+}
+
+.overlay-mockup-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: 12px;
 }
 
 /* ── High-Tech Bounding Box Annotations ── */
 .bbox-rect {
   position: absolute;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 6px;
   box-sizing: border-box;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 10;
@@ -137,27 +155,27 @@
 
 /* Status variants */
 .bbox-rect.pass {
-  border: 2px solid #16a34a;
-  background: rgba(34, 197, 94, 0.18);
-  box-shadow: 0 0 8px rgba(34, 197, 94, 0.25);
+  border: 2px solid #7A8450;
+  background: rgba(122, 132, 80, 0.15);
+  box-shadow: 0 0 8px rgba(122, 132, 80, 0.25);
 }
 
 .bbox-rect.fail {
-  border: 2px solid #e11d48;
-  background: rgba(225, 29, 72, 0.18);
-  box-shadow: 0 0 8px rgba(225, 29, 72, 0.25);
+  border: 2px solid #A63A32;
+  background: rgba(166, 58, 50, 0.15);
+  box-shadow: 0 0 8px rgba(166, 58, 50, 0.25);
 }
 
 .bbox-rect.warning {
-  border: 2px solid #d97706;
-  background: rgba(217, 119, 6, 0.18);
-  box-shadow: 0 0 8px rgba(217, 119, 6, 0.25);
+  border: 2px solid #D98E04;
+  background: rgba(217, 142, 4, 0.15);
+  box-shadow: 0 0 8px rgba(217, 142, 4, 0.25);
 }
 
 .bbox-rect.is-active {
-  border-color: #0284c7 !important;
-  background: rgba(14, 165, 233, 0.22) !important;
-  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.35), 0 0 16px rgba(14, 165, 233, 0.4) !important;
+  border-color: #C1502D !important;
+  background: rgba(193, 80, 45, 0.2) !important;
+  box-shadow: 0 0 0 2px rgba(193, 80, 45, 0.4), 0 4px 16px rgba(139, 69, 19, 0.25) !important;
   z-index: 25;
   transform: scale(1.02);
 }
@@ -170,60 +188,66 @@
 /* ── Pinned Label Badge ── */
 .bbox-pinned-badge {
   position: absolute;
-  top: 2px;
+  top: 3px;
   left: 3px;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 1.5px 6px;
-  border-radius: 4px;
-  font-size: 9px;
+  gap: 5px;
+  padding: 2px 7px;
+  border-radius: 5px;
+  font-size: 9.5px;
   font-weight: 700;
-  color: #ffffff;
+  color: #FFF9F2;
   white-space: nowrap;
   pointer-events: none;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 6px rgba(139, 69, 19, 0.25);
   z-index: 15;
   letter-spacing: 0.2px;
   opacity: 0.95;
   transition: all 0.18s ease;
-  max-width: 90%;
+  max-width: 92%;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .bbox-rect.is-active .bbox-pinned-badge,
 .bbox-rect:hover .bbox-pinned-badge {
-  top: -24px;
+  top: -26px;
   left: 0;
   opacity: 1;
-  transform: scale(1.05);
+  transform: scale(1.02);
   z-index: 40;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 4px 14px rgba(139, 69, 19, 0.35);
   max-width: none;
   overflow: visible;
 }
 
+.bbox-rect.near-top.is-active .bbox-pinned-badge,
+.bbox-rect.near-top:hover .bbox-pinned-badge {
+  top: auto;
+  bottom: -26px;
+}
+
 .bbox-pinned-badge.pass {
-  background: #15803d;
-  border: 1px solid #16a34a;
+  background: #7A8450;
+  border: 1px solid #7A8450;
 }
 
 .bbox-pinned-badge.fail {
-  background: #be123c;
-  border: 1px solid #e11d48;
+  background: #A63A32;
+  border: 1px solid #A63A32;
 }
 
 .bbox-pinned-badge.warning {
-  background: #b45309;
-  border: 1px solid #d97706;
+  background: #B7410E;
+  border: 1px solid #D98E04;
 }
 
 .bbox-badge-val {
   font-family: 'JetBrains Mono', monospace;
   font-weight: 600;
-  background: rgba(0, 0, 0, 0.25);
-  padding: 0 4px;
+  background: rgba(59, 42, 34, 0.35);
+  padding: 1px 5px;
   border-radius: 3px;
 }
 
@@ -232,7 +256,7 @@
   position: absolute;
   width: 6px;
   height: 6px;
-  border-color: #0284c7;
+  border-color: #C1502D;
   border-style: solid;
   pointer-events: none;
 }
@@ -245,19 +269,19 @@
 /* ── Hint Bar at Bottom ── */
 .overlay-hint-bar {
   padding: 9px 16px;
-  background: #ffffff;
-  border-top: 1px solid #e2e8f0;
+  background: #FFF9F2;
+  border-top: 1px solid #E4CBB4;
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-size: 11.5px;
-  color: #64748b;
+  color: #7A5C48;
 }
 
 .hint-interactive {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: #0284c7;
+  color: #C1502D;
   font-weight: 600;
 }

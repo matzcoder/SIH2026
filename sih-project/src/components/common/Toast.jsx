@@ -15,7 +15,7 @@ export default function Toast({ message, type = 'success', onClose, duration = 4
     success: 'bg-emerald-950/90 border-emerald-500 text-emerald-200',
     error: 'bg-rose-950/90 border-rose-500 text-rose-200',
     warning: 'bg-amber-950/90 border-amber-500 text-amber-200',
-    info: 'bg-cyan-950/90 border-cyan-500 text-cyan-200',
+    info: 'bg-cyan-950/90 border-[#C1502D] text-[#FFF9F2]',
   };
 
   return (

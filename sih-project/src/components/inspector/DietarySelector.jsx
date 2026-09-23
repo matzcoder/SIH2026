@@ -18,7 +18,7 @@ export default function DietarySelector({ selectedCategory = 'ALL', onChangeCate
   ];
 
   return (
-    <div className="flex items-center gap-2 bg-white p-1.5 rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+    <div className="flex items-center gap-2 bg-[#F5E6D8] p-1.5 rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
       <span className="text-xs text-slate-500 font-semibold pl-2 pr-1 hidden sm:inline">
         Category:
       </span>

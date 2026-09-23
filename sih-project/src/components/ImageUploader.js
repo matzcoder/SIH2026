@@ -21,6 +21,69 @@ function UploadIcon() {
   );
 }
 
+/**
+ * Compress an image file using Canvas API before upload.
+ * Downscales to maxDim pixels on longest side and re-encodes as JPEG.
+ * Returns a new File object with significantly reduced size.
+ */
+function compressImage(file, { maxDim = 1600, quality = 0.85 } = {}) {
+  return new Promise((resolve) => {
+    // Skip non-image or already small files
+    if (!file.type.startsWith("image/") || file.size < 200 * 1024) {
+      resolve(file);
+      return;
+    }
+
+    const img = new window.Image();
+    const url = URL.createObjectURL(file);
+
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+
+      let { width, height } = img;
+
+      // Only downscale, never upscale
+      if (Math.max(width, height) > maxDim) {
+        const scale = maxDim / Math.max(width, height);
+        width = Math.round(width * scale);
+        height = Math.round(height * scale);
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, width, height);
+
+      canvas.toBlob(
+        (blob) => {
+          if (blob && blob.size < file.size) {
+            // Use compressed version
+            const compressedFile = new File(
+              [blob],
+              file.name.replace(/\.\w+$/, ".jpg"),
+              { type: "image/jpeg", lastModified: Date.now() }
+            );
+            resolve(compressedFile);
+          } else {
+            // Original was already smaller — keep it
+            resolve(file);
+          }
+        },
+        "image/jpeg",
+        quality
+      );
+    };
+
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      resolve(file); // fallback to original on error
+    };
+
+    img.src = url;
+  });
+}
+
 function ImageUploader({
   onUpload,
   maxSizeMB = 5,
@@ -31,8 +94,9 @@ function ImageUploader({
   const [file, setFile] = useState(null);
   const [error, setError] = useState("");
   const [isDragging, setIsDragging] = useState(false);
+  const [isCompressing, setIsCompressing] = useState(false);
 
-  const handleFile = (selectedFile) => {
+  const handleFile = async (selectedFile) => {
     setError("");
 
     if (!selectedFile) {
@@ -51,13 +115,23 @@ function ImageUploader({
       return;
     }
 
-    setFile(selectedFile);
+    // Compress image client-side before upload
+    setIsCompressing(true);
+    let processedFile;
+    try {
+      processedFile = await compressImage(selectedFile);
+    } catch {
+      processedFile = selectedFile;
+    }
+    setIsCompressing(false);
 
-    const imageUrl = URL.createObjectURL(selectedFile);
+    setFile(processedFile);
+
+    const imageUrl = URL.createObjectURL(processedFile);
     setPreview(imageUrl);
 
     if (onUpload) {
-      onUpload(selectedFile);
+      onUpload(processedFile);
     }
   };
 

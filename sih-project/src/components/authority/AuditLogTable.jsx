@@ -52,11 +52,11 @@ export default function AuditLogTable({ logs: propLogs, onRefresh: propOnRefresh
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl text-slate-100 space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800">
+    <div className="bg-[#F5E6D8] border border-[#E4CBB4] rounded-2xl p-6 shadow-xl text-[#3B2A22] space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#E4CBB4]">
         <div>
-          <h3 className="text-base font-bold text-slate-100">Inspection & Verification Audit Trail</h3>
-          <p className="text-xs text-slate-400">
+          <h3 className="text-base font-bold text-[#3B2A22]">Inspection & Verification Audit Trail</h3>
+          <p className="text-xs text-[#7A5C48]">
             Immutable log of statutory verifications, OCR analyses, and persistent database records
           </p>
         </div>
@@ -67,12 +67,12 @@ export default function AuditLogTable({ logs: propLogs, onRefresh: propOnRefresh
             placeholder="Search logs..."
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-cyan-400"
+            className="px-3 py-1.5 bg-[#FBF3EC] border border-[#E4CBB4] rounded-xl text-xs text-[#3B2A22] focus:outline-none focus:border-cyan-400"
           />
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-cyan-400"
+            className="px-3 py-1.5 bg-[#FBF3EC] border border-[#E4CBB4] rounded-xl text-xs text-[#3B2A22] focus:outline-none focus:border-cyan-400"
           >
             <option value="ALL">All Statuses</option>
             <option value="COMPLIANT">Compliant</option>
@@ -81,7 +81,7 @@ export default function AuditLogTable({ logs: propLogs, onRefresh: propOnRefresh
           {onRefresh && (
             <button
               onClick={onRefresh}
-              className="px-3 py-1.5 bg-cyan-900/60 hover:bg-cyan-800 border border-cyan-600/50 text-cyan-200 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 shadow-sm"
+              className="px-3 py-1.5 bg-cyan-900/60 hover:bg-cyan-800 border border-cyan-600/50 text-[#FFF9F2] rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 shadow-sm"
               title="Sync with SQLite database"
             >
               <span>↻</span> Refresh Live Data
@@ -92,7 +92,7 @@ export default function AuditLogTable({ logs: propLogs, onRefresh: propOnRefresh
 
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
-          <thead className="bg-slate-950/70 text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-800">
+          <thead className="bg-[#FBF3EC]/70 text-[#7A5C48] uppercase tracking-wider font-semibold border-b border-[#E4CBB4]">
             <tr>
               <th className="py-3 px-4">ID</th>
               <th className="py-3 px-4">Commodity</th>
@@ -111,13 +111,13 @@ export default function AuditLogTable({ logs: propLogs, onRefresh: propOnRefresh
                   (log.violationsCount === 0 && (log.status || '').toUpperCase() !== 'VIOLATION');
 
                 return (
-                  <tr key={log.id || idx} className="hover:bg-slate-800/40 transition-colors">
-                    <td className="py-3 px-4 font-mono text-cyan-400 font-bold">
+                  <tr key={log.id || idx} className="hover:bg-[#FFF9F2]/40 transition-colors">
+                    <td className="py-3 px-4 font-mono text-[#C1502D] font-bold">
                       #{log.id || 1000 + idx}
                     </td>
-                    <td className="py-3 px-4 font-semibold text-slate-200">
+                    <td className="py-3 px-4 font-semibold text-[#3B2A22]">
                       <div>{log.commodityName || log.product || log.productName || 'Packaged Commodity'}</div>
-                      <div className="text-[10px] text-slate-400 font-normal">
+                      <div className="text-[10px] text-[#7A5C48] font-normal">
                         {log.officerName || log.inspector || 'Field Inspector'}
                       </div>
                     </td>
@@ -128,11 +128,11 @@ export default function AuditLogTable({ logs: propLogs, onRefresh: propOnRefresh
                         showLabel={true}
                       />
                     </td>
-                    <td className="py-3 px-4 text-slate-300">
+                    <td className="py-3 px-4 text-[#7A5C48]">
                       {log.districtZone || log.location || 'Chennai South'}
                     </td>
-                    <td className="py-3 px-4 font-bold text-slate-100">
-                      <span className={isCompliant ? 'text-emerald-400' : 'text-rose-400'}>
+                    <td className="py-3 px-4 font-bold text-[#3B2A22]">
+                      <span className={isCompliant ? 'text-[#7A8450]' : 'text-[#A63A32]'}>
                         {formatScore(log)}
                       </span>
                     </td>
@@ -140,15 +140,15 @@ export default function AuditLogTable({ logs: propLogs, onRefresh: propOnRefresh
                       <span
                         className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1 ${
                           isCompliant
-                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
-                            : 'bg-rose-500/10 text-rose-400 border border-rose-500/30'
+                            ? 'bg-[#7A8450]/10 text-[#7A8450] border border-emerald-500/30'
+                            : 'bg-rose-500/10 text-[#A63A32] border border-rose-500/30'
                         }`}
                       >
-                        <span className={`w-1.5 h-1.5 rounded-full ${isCompliant ? 'bg-emerald-400' : 'bg-rose-400'}`} />
+                        <span className={`w-1.5 h-1.5 rounded-full ${isCompliant ? 'bg-[#7A8450]' : 'bg-rose-400'}`} />
                         {isCompliant ? 'COMPLIANT' : 'VIOLATION'}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-slate-400 font-mono">
+                    <td className="py-3 px-4 text-[#7A5C48] font-mono">
                       {formatTimestamp(log.timestamp, log.date)}
                     </td>
                   </tr>

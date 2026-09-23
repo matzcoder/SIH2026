@@ -81,98 +81,98 @@ export default function AuthorityPortal() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-[#FBF3EC] text-[#3B2A22] flex flex-col">
       <Navbar role="authority" />
 
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
         {saveToast && (
-          <div className="p-3.5 rounded-xl bg-emerald-950/80 border border-emerald-500 text-emerald-200 text-xs shadow-lg flex justify-between items-center">
-            <span>✓ {saveToast}</span>
-            <button onClick={() => setSaveToast('')} className="font-bold text-base px-2">
+          <div className="p-3.5 rounded-[10px] bg-[#FFF9F2] border border-[#7A8450] text-[#7A8450] text-xs shadow-[0_4px_12px_rgba(139,69,19,0.1)] flex justify-between items-center">
+            <span className="font-semibold">✓ {saveToast}</span>
+            <button onClick={() => setSaveToast('')} className="font-bold text-base px-2 text-[#7A8450]">
               &times;
             </button>
           </div>
         )}
 
         {/* Tab Navigation & Live Sync Indicator */}
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-3">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#E4CBB4] pb-3">
           <div className="flex items-center gap-2">
             <button
               onClick={() => setActiveTab('rules')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+              className={`px-4 py-2 rounded-[8px] text-xs font-bold transition-all ${
                 activeTab === 'rules'
-                  ? 'bg-cyan-600 text-white shadow-md shadow-cyan-600/30'
-                  : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                  ? 'bg-[#C1502D] text-[#FFF9F2] shadow-md shadow-[#C1502D]/20'
+                  : 'bg-[#FFF9F2] text-[#7A5C48] hover:text-[#3B2A22] border border-[#E4CBB4]'
               }`}
             >
               Rules Configurator & Sandbox
             </button>
             <button
               onClick={() => setActiveTab('analytics')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+              className={`px-4 py-2 rounded-[8px] text-xs font-bold transition-all ${
                 activeTab === 'analytics'
-                  ? 'bg-cyan-600 text-white shadow-md shadow-cyan-600/30'
-                  : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                  ? 'bg-[#C1502D] text-[#FFF9F2] shadow-md shadow-[#C1502D]/20'
+                  : 'bg-[#FFF9F2] text-[#7A5C48] hover:text-[#3B2A22] border border-[#E4CBB4]'
               }`}
             >
               Governance Analytics
             </button>
             <button
               onClick={() => setActiveTab('logs')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+              className={`px-4 py-2 rounded-[8px] text-xs font-bold transition-all ${
                 activeTab === 'logs'
-                  ? 'bg-cyan-600 text-white shadow-md shadow-cyan-600/30'
-                  : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                  ? 'bg-[#C1502D] text-[#FFF9F2] shadow-md shadow-[#C1502D]/20'
+                  : 'bg-[#FFF9F2] text-[#7A5C48] hover:text-[#3B2A22] border border-[#E4CBB4]'
               }`}
             >
               Audit Log Trail ({inspections.length})
             </button>
           </div>
 
-          <div className="flex items-center gap-2 text-xs">
+          <div className="flex items-center gap-2 text-xs bg-[#FFF9F2] border border-[#E4CBB4] px-3 py-1.5 rounded-full">
             <span className="flex h-2 w-2 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#7A8450] opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#7A8450]"></span>
             </span>
-            <span className="text-slate-400 text-[11px]">
-              SQLite Live Sync: <strong className="text-emerald-400">{inspections.length}</strong> records
+            <span className="text-[#7A5C48] text-[11px]">
+              SQLite Live Sync: <strong className="text-[#3B2A22]">{inspections.length}</strong> records
             </span>
             <button
               onClick={refreshData}
               disabled={loading}
-              className="ml-2 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-[11px] border border-slate-700 disabled:opacity-50"
+              className="ml-2 px-2.5 py-1 bg-[#C1502D] hover:bg-[#A63F22] text-[#FFF9F2] rounded-[6px] text-[11px] font-semibold disabled:opacity-50 transition-colors"
             >
               {loading ? 'Syncing...' : '↻ Sync'}
             </button>
           </div>
         </div>
 
-        {/* Live KPI Metric Cards from SQLite Database */}
+        {/* Live KPI Metric Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl">
-            <span className="text-xs text-slate-400 font-semibold uppercase">Total Field Scans</span>
-            <div className="text-2xl font-black text-white mt-1">{dynamicMetrics.totalScans}</div>
-            <span className="text-[11px] text-cyan-400 mt-1 block">↑ 18% this month</span>
+          <div className="bg-[#F5E6D8] border border-[#E4CBB4] p-5 rounded-[10px] shadow-[0_2px_8px_rgba(139,69,19,0.08)]">
+            <span className="text-xs text-[#7A5C48] font-semibold uppercase">Total Field Scans</span>
+            <div className="text-2xl font-black text-[#3B2A22] mt-1">{dynamicMetrics.totalScans}</div>
+            <span className="text-[11px] text-[#B7410E] mt-1 block font-medium">↑ 18% this month</span>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl">
-            <span className="text-xs text-slate-400 font-semibold uppercase">Overall Compliance</span>
-            <div className="text-2xl font-black text-emerald-400 mt-1">
+          <div className="bg-[#F5E6D8] border border-[#E4CBB4] p-5 rounded-[10px] shadow-[0_2px_8px_rgba(139,69,19,0.08)]">
+            <span className="text-xs text-[#7A5C48] font-semibold uppercase">Overall Compliance</span>
+            <div className="text-2xl font-black text-[#7A8450] mt-1">
               {dynamicMetrics.overallCompliance}
             </div>
-            <span className="text-[11px] text-slate-400 mt-1 block">Across 14 Districts</span>
+            <span className="text-[11px] text-[#7A5C48] mt-1 block">Across 14 Districts</span>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl">
-            <span className="text-xs text-slate-400 font-semibold uppercase">Notices Issued</span>
-            <div className="text-2xl font-black text-rose-400 mt-1">{dynamicMetrics.noticesIssued}</div>
-            <span className="text-[11px] text-rose-400 mt-1 block">Requires Compounding/Fines</span>
+          <div className="bg-[#F5E6D8] border border-[#E4CBB4] p-5 rounded-[10px] shadow-[0_2px_8px_rgba(139,69,19,0.08)]">
+            <span className="text-xs text-[#7A5C48] font-semibold uppercase">Notices Issued</span>
+            <div className="text-2xl font-black text-[#A63A32] mt-1">{dynamicMetrics.noticesIssued}</div>
+            <span className="text-[11px] text-[#A63A32] mt-1 block font-medium">Requires Compounding/Fines</span>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl">
-            <span className="text-xs text-slate-400 font-semibold uppercase">Active Rules Enforced</span>
-            <div className="text-2xl font-black text-cyan-400 mt-1">{rules.length}</div>
-            <span className="text-[11px] text-slate-400 mt-1 block">PCR 2011 Active Standard</span>
+          <div className="bg-[#F5E6D8] border border-[#E4CBB4] p-5 rounded-[10px] shadow-[0_2px_8px_rgba(139,69,19,0.08)]">
+            <span className="text-xs text-[#7A5C48] font-semibold uppercase">Active Rules Enforced</span>
+            <div className="text-2xl font-black text-[#C1502D] mt-1">{rules.length}</div>
+            <span className="text-[11px] text-[#7A5C48] mt-1 block">PCR 2011 Active Standard</span>
           </div>
         </div>
 

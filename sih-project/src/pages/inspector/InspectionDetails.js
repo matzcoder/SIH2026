@@ -259,8 +259,8 @@ function InspectionDetails() {
 
           <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
             <label style={{
-              backgroundColor: "#2563eb",
-              color: "#ffffff",
+              backgroundColor: "#C1502D",
+              color: "#FFF9F2",
               padding: "8px 16px",
               borderRadius: "6px",
               fontWeight: 600,
@@ -275,15 +275,15 @@ function InspectionDetails() {
               padding: "6px 14px",
               borderRadius: "20px",
               fontWeight: 700,
-              backgroundColor: isCompliant ? "#dcfce7" : "#fee2e2",
-              color: isCompliant ? "#15803d" : "#b91c1c",
+              backgroundColor: isCompliant ? "rgba(122, 132, 80, 0.2)" : "rgba(166, 58, 50, 0.2)",
+              color: isCompliant ? "#7A8450" : "#8E2B24",
             }}>
               {isCompliant ? "Compliant" : "Non-Compliant"}
             </span>
           </div>
         </div>
 
-        {error && <p style={{ color: "#dc2626", fontWeight: 600, marginTop: "8px" }}>{error}</p>}
+        {error && <p style={{ color: "#A63A32", fontWeight: 600, marginTop: "8px" }}>{error}</p>}
 
         <div className="product-details-grid" style={{ marginTop: "16px" }}>
 
@@ -354,7 +354,7 @@ function InspectionDetails() {
 
           <div>
             <span>FSSAI Graphic Logo</span>
-            <strong style={{ color: (ext?.fssai_logo && ext.fssai_logo !== "Not Found" && ext.fssai_logo !== "Not Detected") || checks.fssaiLogo ? "#16a34a" : "#dc2626" }}>
+            <strong style={{ color: (ext?.fssai_logo && ext.fssai_logo !== "Not Found" && ext.fssai_logo !== "Not Detected") || checks.fssaiLogo ? "#7A8450" : "#A63A32" }}>
               {(ext?.fssai_logo && ext.fssai_logo !== "Not Found" && ext.fssai_logo !== "Not Detected") || checks.fssaiLogo ? (ext?.fssai_logo && ext.fssai_logo !== "Not Found" ? ext.fssai_logo : "Detected") : "Not Detected"}
             </strong>
           </div>
@@ -381,7 +381,7 @@ function InspectionDetails() {
               <h2>AI Rule Compliance Findings</h2>
               <p>Automated Legal Metrology Act & Rules compliance audit.</p>
             </div>
-            <span style={{ fontWeight: 700, fontSize: "18px", color: isCompliant ? "#16a34a" : "#dc2626" }}>
+            <span style={{ fontWeight: 700, fontSize: "18px", color: isCompliant ? "#7A8450" : "#A63A32" }}>
               Overall Score: {Math.round(scanData.score)}%
             </span>
           </div>
@@ -391,25 +391,25 @@ function InspectionDetails() {
               <div key={idx} style={{
                 padding: "14px 18px",
                 borderRadius: "8px",
-                border: `1px solid ${rule.passed ? "#bbf7d0" : "#fca5a5"}`,
-                backgroundColor: rule.passed ? "#f0fdf4" : "#fef2f2",
+                border: `1px solid ${rule.passed ? "rgba(122, 132, 80, 0.4)" : "#fca5a5"}`,
+                backgroundColor: rule.passed ? "rgba(122, 132, 80, 0.15)" : "rgba(166, 58, 50, 0.12)",
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
               }}>
                 <div>
-                  <strong style={{ color: rule.passed ? "#166534" : "#991b1b", fontSize: "15px" }}>
+                  <strong style={{ color: rule.passed ? "#5F673D" : "#991b1b", fontSize: "15px" }}>
                     [{rule.rule_id}] {rule.rule}
                   </strong>
-                  <p style={{ margin: "4px 0 0 0", color: "#374151", fontSize: "14px" }}>{rule.message}</p>
+                  <p style={{ margin: "4px 0 0 0", color: "#5A3E31", fontSize: "14px" }}>{rule.message}</p>
                 </div>
                 <span style={{
                   padding: "4px 12px",
                   borderRadius: "12px",
                   fontWeight: 700,
                   fontSize: "13px",
-                  backgroundColor: rule.passed ? "#22c55e" : "#ef4444",
-                  color: "#ffffff",
+                  backgroundColor: rule.passed ? "#7A8450" : "#A63A32",
+                  color: "#FFF9F2",
                 }}>
                   {rule.passed ? "PASS" : "FAIL"}
                 </span>

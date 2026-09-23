@@ -55,9 +55,9 @@ export default function VegNonVegBadge({ type = 'VEG', size = 'md', showLabel = 
             width: `${cfg.boxPx}px`,
             height: `${cfg.boxPx}px`,
             minWidth: `${cfg.boxPx}px`,
-            borderRadius: '2px',
-            border: `${cfg.borderWidth} solid #16a34a`,
-            backgroundColor: '#ffffff',
+            borderRadius: '3px',
+            border: `${cfg.borderWidth} solid #7A8450`, /* spec success olive */
+            backgroundColor: '#FFF9F2', /* warm off-white surface-raised */
             boxSizing: 'border-box',
           }}
         >
@@ -67,7 +67,7 @@ export default function VegNonVegBadge({ type = 'VEG', size = 'md', showLabel = 
               width: `${cfg.innerPx}px`,
               height: `${cfg.innerPx}px`,
               borderRadius: '50%',
-              backgroundColor: '#16a34a',
+              backgroundColor: '#7A8450',
             }}
           />
         </span>
@@ -76,7 +76,7 @@ export default function VegNonVegBadge({ type = 'VEG', size = 'md', showLabel = 
             style={{
               fontSize: cfg.fontSize,
               fontWeight: 700,
-              color: '#16a34a',
+              color: '#7A8450',
               letterSpacing: '0.01em',
             }}
           >
@@ -108,9 +108,9 @@ export default function VegNonVegBadge({ type = 'VEG', size = 'md', showLabel = 
             width: `${cfg.boxPx}px`,
             height: `${cfg.boxPx}px`,
             minWidth: `${cfg.boxPx}px`,
-            borderRadius: '2px',
-            border: `${cfg.borderWidth} solid #78350f`,
-            backgroundColor: '#ffffff',
+            borderRadius: '3px',
+            border: `${cfg.borderWidth} solid #B7410E`, /* spec rust/brown accent */
+            backgroundColor: '#FFF9F2', /* warm off-white surface-raised */
             boxSizing: 'border-box',
           }}
         >
@@ -119,7 +119,7 @@ export default function VegNonVegBadge({ type = 'VEG', size = 'md', showLabel = 
               display: 'block',
               width: `${cfg.innerPx}px`,
               height: `${cfg.innerPx}px`,
-              backgroundColor: '#78350f',
+              backgroundColor: '#B7410E',
               clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)',
             }}
           />
@@ -129,7 +129,7 @@ export default function VegNonVegBadge({ type = 'VEG', size = 'md', showLabel = 
             style={{
               fontSize: cfg.fontSize,
               fontWeight: 700,
-              color: '#78350f',
+              color: '#B7410E',
               letterSpacing: '0.01em',
             }}
           >
@@ -161,13 +161,13 @@ export default function VegNonVegBadge({ type = 'VEG', size = 'md', showLabel = 
             width: `${cfg.boxPx}px`,
             height: `${cfg.boxPx}px`,
             minWidth: `${cfg.boxPx}px`,
-            borderRadius: '2px',
-            border: '1.5px solid #94a3b8',
-            backgroundColor: '#f1f5f9',
+            borderRadius: '3px',
+            border: '1.5px solid #E4CBB4',
+            backgroundColor: '#F5E6D8',
             boxSizing: 'border-box',
             fontSize: '9px',
             fontWeight: 700,
-            color: '#64748b',
+            color: '#7A5C48',
           }}
         >
           NF
@@ -177,7 +177,7 @@ export default function VegNonVegBadge({ type = 'VEG', size = 'md', showLabel = 
             style={{
               fontSize: cfg.fontSize,
               fontWeight: 600,
-              color: '#64748b',
+              color: '#7A5C48',
             }}
           >
             Non-Food Exempt
@@ -207,13 +207,13 @@ export default function VegNonVegBadge({ type = 'VEG', size = 'md', showLabel = 
           width: `${cfg.boxPx}px`,
           height: `${cfg.boxPx}px`,
           minWidth: `${cfg.boxPx}px`,
-          borderRadius: '2px',
-          border: '1.5px dashed #f59e0b',
-          backgroundColor: '#fffbeb',
+          borderRadius: '3px',
+          border: '1.5px dashed #D98E04',
+          backgroundColor: '#FFF9F2',
           boxSizing: 'border-box',
           fontSize: '10px',
           fontWeight: 700,
-          color: '#d97706',
+          color: '#D98E04',
         }}
       >
         ?
@@ -223,7 +223,7 @@ export default function VegNonVegBadge({ type = 'VEG', size = 'md', showLabel = 
           style={{
             fontSize: cfg.fontSize,
             fontWeight: 600,
-            color: '#d97706',
+            color: '#D98E04',
           }}
         >
           Unspecified

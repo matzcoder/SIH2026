@@ -1,6 +1,6 @@
 .inspector-analysis {
   padding: 25px;
-  background: #f8fafc;
+  background: #FBF3EC;
   min-height: 100vh;
 }
 
@@ -15,21 +15,21 @@
 
 .analysis-header h1 {
   margin: 0 0 6px;
-  color: #0f172a;
+  color: #3B2A22;
   font-size: 27px;
 }
 
 .analysis-header p {
   margin: 0;
-  color: #64748b;
+  color: #7A5C48;
 }
 
 .period-select {
   padding: 11px 15px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #E4CBB4;
   border-radius: 9px;
-  background: white;
-  color: #334155;
+  background: #F5E6D8;
+  color: #3B2A22;
   outline: none;
 }
 
@@ -43,12 +43,12 @@
 }
 
 .analysis-card {
-  background: white;
+  background: #F5E6D8;
   padding: 22px;
   border-radius: 14px;
 
   box-shadow:
-    0 3px 12px rgba(15, 23, 42, 0.06);
+    0 3px 12px rgba(139, 69, 19, 0.06);
 }
 
 .analysis-card-top {
@@ -56,7 +56,7 @@
   justify-content: space-between;
   align-items: center;
 
-  color: #64748b;
+  color: #7A5C48;
   font-size: 14px;
 }
 
@@ -70,8 +70,8 @@
 
   border-radius: 9px;
 
-  background: #eff6ff;
-  color: #2563eb;
+  background: #F5E6D8;
+  color: #C1502D;
 
   font-weight: bold;
 }
@@ -81,13 +81,13 @@
 
   font-size: 30px;
 
-  color: #0f172a;
+  color: #3B2A22;
 }
 
 .analysis-card p {
   margin: 0;
 
-  color: #64748b;
+  color: #7A5C48;
 
   font-size: 13px;
 }
@@ -107,14 +107,14 @@
 /* Panels */
 
 .analysis-panel {
-  background: white;
+  background: #F5E6D8;
 
   padding: 24px;
 
   border-radius: 15px;
 
   box-shadow:
-    0 3px 12px rgba(15, 23, 42, 0.06);
+    0 3px 12px rgba(139, 69, 19, 0.06);
 }
 
 .panel-header {
@@ -129,21 +129,21 @@
 .panel-header h3 {
   margin: 0 0 5px;
 
-  color: #0f172a;
+  color: #3B2A22;
 }
 
 .panel-header p {
   margin: 0;
 
-  color: #64748b;
+  color: #7A5C48;
 
   font-size: 13px;
 }
 
 .trend {
-  background: #dcfce7;
+  background: rgba(122, 132, 80, 0.2);
 
-  color: #15803d;
+  color: #7A8450;
 
   padding: 6px 10px;
 
@@ -169,7 +169,7 @@
 
   padding: 20px 10px 0;
 
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #E4CBB4;
 }
 
 .bar-wrapper {
@@ -189,7 +189,7 @@
 }
 
 .bar-wrapper span {
-  color: #64748b;
+  color: #7A5C48;
 
   font-size: 12px;
 
@@ -203,7 +203,7 @@
 
   min-height: 80px;
 
-  background: #2563eb;
+  background: #C1502D;
 
   border-radius: 7px 7px 0 0;
 
@@ -215,7 +215,7 @@
 }
 
 .bar-value {
-  color: #475569;
+  color: #7A5C48;
 
   font-size: 11px;
 
@@ -241,11 +241,11 @@
 
   font-size: 13px;
 
-  color: #475569;
+  color: #7A5C48;
 }
 
 .violation-info strong {
-  color: #0f172a;
+  color: #3B2A22;
 }
 
 .progress-background {
@@ -253,7 +253,7 @@
 
   height: 8px;
 
-  background: #e2e8f0;
+  background: #E4CBB4;
 
   border-radius: 10px;
 
@@ -263,7 +263,7 @@
 .progress-bar {
   height: 100%;
 
-  background: #2563eb;
+  background: #C1502D;
 
   border-radius: 10px;
 }
@@ -288,17 +288,17 @@
 
   padding: 15px 10px;
 
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #E4CBB4;
 
-  color: #475569;
+  color: #7A5C48;
 
   font-size: 14px;
 }
 
 .table-heading {
-  background: #f8fafc;
+  background: #FBF3EC;
 
-  color: #64748b;
+  color: #7A5C48;
 
   font-size: 12px;
 
@@ -318,18 +318,18 @@
 }
 
 .compliant {
-  background: #dcfce7;
-  color: #15803d;
+  background: rgba(122, 132, 80, 0.2);
+  color: #7A8450;
 }
 
 .violation {
-  background: #fee2e2;
-  color: #dc2626;
+  background: rgba(166, 58, 50, 0.2);
+  color: #A63A32;
 }
 
 .review {
-  background: #fef3c7;
-  color: #b45309;
+  background: rgba(217, 142, 4, 0.2);
+  color: #B7410E;
 }
 
 /* Responsive */

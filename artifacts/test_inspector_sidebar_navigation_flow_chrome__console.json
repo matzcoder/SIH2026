@@ -1,0 +1,74 @@
+[
+  {
+    "level": "INFO",
+    "message": "http://localhost:3000/static/js/bundle.js 39731:49 \"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools\" \"font-weight:bold\"",
+    "source": "console-api",
+    "timestamp": 1789452301807
+  },
+  {
+    "level": "WARNING",
+    "message": "http://localhost:3000/static/js/bundle.js 23521:12 \"Network / Ngrok Error:\" \"Network Error\"",
+    "source": "console-api",
+    "timestamp": 1789452301936
+  },
+  {
+    "level": "WARNING",
+    "message": "http://localhost:3000/static/js/bundle.js 5874:14 \"Backend offline, loading cached data from local storage:\" AxiosError: Network Error\n    at XMLHttpRequest.handleError (http://localhost:3000/static/js/bundle.js:62159:19)\n    at Axios.request (http://localhost:3000/static/js/bundle.js:62615:43)\n    at async Promise.all (index 0)\n    at async http://localhost:3000/static/js/bundle.js:5865:46",
+    "source": "console-api",
+    "timestamp": 1789452301937
+  },
+  {
+    "level": "SEVERE",
+    "message": "http://localhost:5000/api/inspections - Failed to load resource: net::ERR_CONNECTION_REFUSED",
+    "source": "network",
+    "timestamp": 1789452301937
+  },
+  {
+    "level": "WARNING",
+    "message": "http://localhost:3000/static/js/bundle.js 23521:12 \"Network / Ngrok Error:\" \"Network Error\"",
+    "source": "console-api",
+    "timestamp": 1789452301937
+  },
+  {
+    "level": "SEVERE",
+    "message": "http://localhost:5000/api/analytics/overview - Failed to load resource: net::ERR_CONNECTION_REFUSED",
+    "source": "network",
+    "timestamp": 1789452301937
+  },
+  {
+    "level": "WARNING",
+    "message": "http://localhost:3000/static/js/bundle.js 23521:12 \"Network / Ngrok Error:\" \"Network Error\"",
+    "source": "console-api",
+    "timestamp": 1789452301937
+  },
+  {
+    "level": "WARNING",
+    "message": "http://localhost:3000/static/js/bundle.js 5874:14 \"Backend offline, loading cached data from local storage:\" AxiosError: Network Error\n    at XMLHttpRequest.handleError (http://localhost:3000/static/js/bundle.js:62159:19)\n    at Axios.request (http://localhost:3000/static/js/bundle.js:62615:43)\n    at async Promise.all (index 0)\n    at async http://localhost:3000/static/js/bundle.js:5865:46",
+    "source": "console-api",
+    "timestamp": 1789452301938
+  },
+  {
+    "level": "SEVERE",
+    "message": "http://localhost:5000/api/inspections - Failed to load resource: net::ERR_CONNECTION_REFUSED",
+    "source": "network",
+    "timestamp": 1789452301938
+  },
+  {
+    "level": "WARNING",
+    "message": "http://localhost:3000/static/js/bundle.js 23521:12 \"Network / Ngrok Error:\" \"Network Error\"",
+    "source": "console-api",
+    "timestamp": 1789452301938
+  },
+  {
+    "level": "SEVERE",
+    "message": "http://localhost:5000/api/analytics/overview - Failed to load resource: net::ERR_CONNECTION_REFUSED",
+    "source": "network",
+    "timestamp": 1789452301938
+  },
+  {
+    "level": "DEBUG",
+    "message": "http://localhost:3000/login - [DOM] Input elements should have autocomplete attributes (suggested: \"current-password\"): (More info: https://goo.gl/9p2vKq) %o",
+    "source": "recommendation",
+    "timestamp": 1789452301987
+  }
+]

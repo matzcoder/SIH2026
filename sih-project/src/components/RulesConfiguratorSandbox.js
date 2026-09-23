@@ -50,21 +50,21 @@ export default function RulesConfiguratorSandbox({ rule }) {
   };
 
   return (
-    <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl text-slate-100 space-y-4 my-6">
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800">
+    <section className="bg-[#F5E6D8] border border-[#E4CBB4] rounded-2xl p-6 shadow-xl text-[#3B2A22] space-y-4 my-6">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[#E4CBB4]">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-400">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#C1502D]">
             SAFE TESTING SPACE
           </span>
-          <h3 className="text-base font-bold text-slate-100">Rules Configurator Sandbox</h3>
-          <p className="text-xs text-slate-400">
+          <h3 className="text-base font-bold text-[#3B2A22]">Rules Configurator Sandbox</h3>
+          <p className="text-xs text-[#7A5C48]">
             Validate detection pattern against sample OCR text before proposing an amendment.
           </p>
         </div>
         <button
           type="button"
           onClick={saveDraft}
-          className="px-3 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-xs font-semibold shadow transition-colors"
+          className="px-3 py-1.5 bg-[#C1502D] hover:bg-[#A63F22] text-white rounded-xl text-xs font-semibold shadow transition-colors"
         >
           Save test draft
         </button>
@@ -72,7 +72,7 @@ export default function RulesConfiguratorSandbox({ rule }) {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
         <div className="md:col-span-3">
-          <label className="block text-slate-400 mb-1 font-medium">
+          <label className="block text-[#7A5C48] mb-1 font-medium">
             Detection regular expression
           </label>
           <input
@@ -83,12 +83,12 @@ export default function RulesConfiguratorSandbox({ rule }) {
               setMessage('');
             }}
             spellCheck="false"
-            className="w-full p-2 bg-slate-950 border border-slate-700 font-mono text-cyan-300 rounded-xl focus:outline-none focus:border-cyan-400"
+            className="w-full p-2 bg-[#FBF3EC] border border-[#E4CBB4] font-mono text-cyan-300 rounded-xl focus:outline-none focus:border-cyan-400"
           />
         </div>
 
         <div>
-          <label className="block text-slate-400 mb-1 font-medium">Flags</label>
+          <label className="block text-[#7A5C48] mb-1 font-medium">Flags</label>
           <input
             type="text"
             value={flags}
@@ -97,13 +97,13 @@ export default function RulesConfiguratorSandbox({ rule }) {
               setMessage('');
             }}
             placeholder="i"
-            className="w-full p-2 bg-slate-950 border border-slate-700 font-mono text-slate-200 rounded-xl focus:outline-none focus:border-cyan-400"
+            className="w-full p-2 bg-[#FBF3EC] border border-[#E4CBB4] font-mono text-[#3B2A22] rounded-xl focus:outline-none focus:border-cyan-400"
           />
         </div>
       </div>
 
       <div className="text-xs">
-        <label className="block text-slate-400 mb-1 font-medium">Sample OCR label text</label>
+        <label className="block text-[#7A5C48] mb-1 font-medium">Sample OCR label text</label>
         <textarea
           rows={4}
           value={sample}
@@ -112,7 +112,7 @@ export default function RulesConfiguratorSandbox({ rule }) {
             setMessage('');
           }}
           spellCheck="false"
-          className="w-full p-2 bg-slate-950 border border-slate-700 font-mono text-slate-300 rounded-xl focus:outline-none focus:border-cyan-400 text-xs"
+          className="w-full p-2 bg-[#FBF3EC] border border-[#E4CBB4] font-mono text-[#7A5C48] rounded-xl focus:outline-none focus:border-cyan-400 text-xs"
         />
       </div>
 
@@ -125,7 +125,7 @@ export default function RulesConfiguratorSandbox({ rule }) {
             : 'bg-amber-950/40 border-amber-800 text-amber-300'
         }`}
       >
-        <span className="block text-[10px] uppercase font-bold text-slate-400 mb-1">
+        <span className="block text-[10px] uppercase font-bold text-[#7A5C48] mb-1">
           Test Evaluation Result
         </span>
         {result.error ? (
@@ -152,7 +152,7 @@ export default function RulesConfiguratorSandbox({ rule }) {
       </div>
 
       {message && (
-        <p className="text-xs text-cyan-400 bg-cyan-950/60 p-2.5 rounded-lg border border-cyan-800">
+        <p className="text-xs text-[#C1502D] bg-cyan-950/60 p-2.5 rounded-lg border border-cyan-800">
           {message}
         </p>
       )}

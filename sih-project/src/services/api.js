@@ -67,8 +67,38 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
-      console.warn("API Response Error:", error.response.status, error.response.data);
+      const { status, data } = error.response;
+
+      // 401 Unauthorized — token expired or invalid, redirect to login
+      if (status === 401) {
+        console.warn("Session expired or invalid. Redirecting to login.");
+        localStorage.removeItem("token");
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("user");
+        // Only redirect if not already on login page
+        if (!window.location.pathname.includes("/login")) {
+          window.location.href = "/login";
+        }
+      }
+
+      // 403 Forbidden — insufficient permissions
+      if (status === 403) {
+        console.warn("Access denied:", data?.detail || "Insufficient permissions.");
+      }
+
+      // 5xx Server errors
+      if (status >= 500) {
+        console.error("Server error:", status, data?.detail || data);
+      }
+
+      // Attach a user-friendly message to the error
+      error.userMessage =
+        data?.detail || data?.message || `Request failed (${status})`;
+    } else if (error.code === "ECONNABORTED") {
+      error.userMessage = "Request timed out. Please try again.";
+      console.warn("Request timeout:", error.message);
     } else {
+      error.userMessage = "Network error. Check your connection.";
       console.warn("Network / Ngrok Error:", error.message);
     }
     return Promise.reject(error);

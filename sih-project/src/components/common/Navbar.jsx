@@ -19,7 +19,7 @@ export default function Navbar({ role = 'inspector' }) {
   };
 
   return (
-    <header className="bg-slate-900 border-b border-slate-800 text-slate-100 sticky top-0 z-40 shadow-lg">
+    <header className="bg-[#F5E6D8] border-b border-[#E4CBB4] text-[#3B2A22] sticky top-0 z-40 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <Link to="/" className="flex items-center gap-3 group">
@@ -29,11 +29,11 @@ export default function Navbar({ role = 'inspector' }) {
             <div>
               <div className="font-extrabold text-sm tracking-wide text-white flex items-center gap-1.5">
                 LM-VISION
-                <span className="text-[10px] uppercase px-1.5 py-0.2 rounded bg-cyan-950 text-cyan-400 border border-cyan-800 font-semibold">
+                <span className="text-[10px] uppercase px-1.5 py-0.2 rounded bg-cyan-950 text-[#C1502D] border border-cyan-800 font-semibold">
                   PCR 2011
                 </span>
               </div>
-              <p className="text-[10px] text-slate-400 -mt-0.5">Legal Metrology AI Compliance</p>
+              <p className="text-[10px] text-[#7A5C48] -mt-0.5">Legal Metrology AI Compliance</p>
             </div>
           </Link>
 
@@ -42,8 +42,8 @@ export default function Navbar({ role = 'inspector' }) {
               to="/inspector/portal"
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                 location.pathname.includes('/inspector')
-                  ? 'bg-slate-800 text-cyan-400 font-semibold'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-[#FFF9F2] text-[#C1502D] font-semibold'
+                  : 'text-[#7A5C48] hover:text-[#3B2A22]'
               }`}
             >
               Field Inspector
@@ -52,8 +52,8 @@ export default function Navbar({ role = 'inspector' }) {
               to="/authority/portal"
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                 location.pathname.includes('/authority')
-                  ? 'bg-slate-800 text-cyan-400 font-semibold'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-[#FFF9F2] text-[#C1502D] font-semibold'
+                  : 'text-[#7A5C48] hover:text-[#3B2A22]'
               }`}
             >
               Regulatory Authority
@@ -64,14 +64,14 @@ export default function Navbar({ role = 'inspector' }) {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowConfig(!showConfig)}
-            className="text-[11px] px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-800 border border-slate-700 text-slate-300 transition-colors flex items-center gap-1.5"
+            className="text-[11px] px-2.5 py-1 rounded-lg bg-[#FFF9F2]/80 hover:bg-[#FFF9F2] border border-[#E4CBB4] text-[#7A5C48] transition-colors flex items-center gap-1.5"
             title="Configure Backend API URL"
           >
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span className="w-2 h-2 rounded-full bg-[#7A8450] animate-pulse"></span>
             <span>API Host</span>
           </button>
 
-          <div className="h-4 w-px bg-slate-800"></div>
+          <div className="h-4 w-px bg-[#FFF9F2]"></div>
 
           <button
             onClick={() => {
@@ -79,7 +79,7 @@ export default function Navbar({ role = 'inspector' }) {
               localStorage.removeItem('authToken');
               navigate('/login');
             }}
-            className="text-xs px-3 py-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-950/30 transition-colors"
+            className="text-xs px-3 py-1.5 rounded-lg text-[#7A5C48] hover:text-[#A63A32] hover:bg-rose-950/30 transition-colors"
           >
             Sign Out
           </button>
@@ -87,18 +87,18 @@ export default function Navbar({ role = 'inspector' }) {
       </div>
 
       {showConfig && (
-        <div className="border-t border-slate-800 bg-slate-950 p-4">
+        <div className="border-t border-[#E4CBB4] bg-[#FBF3EC] p-4">
           <form onSubmit={handleSaveApiUrl} className="max-w-xl mx-auto flex items-center gap-2">
             <input
               type="text"
               placeholder="e.g. https://your-ngrok-url.ngrok-free.app/api or http://localhost:5000/api"
               value={apiUrl}
               onChange={(e) => setApiUrl(e.target.value)}
-              className="flex-1 px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs text-slate-100 focus:outline-none focus:border-cyan-400"
+              className="flex-1 px-3 py-1.5 bg-[#F5E6D8] border border-[#E4CBB4] rounded-lg text-xs text-[#3B2A22] focus:outline-none focus:border-cyan-400"
             />
             <button
               type="submit"
-              className="px-3 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-xs font-semibold"
+              className="px-3 py-1.5 bg-[#C1502D] hover:bg-[#A63F22] text-white rounded-lg text-xs font-semibold"
             >
               Set API URL
             </button>
@@ -109,7 +109,7 @@ export default function Navbar({ role = 'inspector' }) {
                 setApiUrl('');
                 window.location.reload();
               }}
-              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs"
+              className="px-3 py-1.5 bg-[#FFF9F2] hover:bg-[#F5E6D8] text-[#7A5C48] rounded-lg text-xs"
             >
               Reset
             </button>

@@ -22,13 +22,14 @@ from fastapi import (
 from sqlalchemy.orm import Session
 
 from config import EVIDENCE_DIR
-from database import get_db
+from database import get_db, InspectionRecord
 from models.db_models import Inspection, Evidence, Activity, User
 from models.schemas import (
     InspectionCreate,
     InspectionUpdate,
     InspectionStatusUpdate,
     InspectionSubmit,
+    InspectionRecordSubmit,
 )
 from services.auth_service import get_current_user_optional
 
@@ -101,6 +102,74 @@ def get_inspection_analytics(db: Session = Depends(get_db)) -> dict[str, Any]:
     }
 
 
+@router.post("/submit")
+def submit_field_inspection(
+    payload: InspectionRecordSubmit,
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user_optional),
+) -> dict[str, Any]:
+    """Record a field inspection and commit to the database with validation."""
+    violations = payload.violations or []
+    results = payload.results or []
+
+    passed_count = sum(1 for r in results if isinstance(r, dict) and r.get("status") == "PASS")
+    total_count = len(results) if results else 1
+    computed_score = round((passed_count / total_count) * 100, 1)
+    score = payload.complianceScore if payload.complianceScore is not None else (
+        payload.score if payload.score is not None else computed_score
+    )
+
+    stat = payload.status or ("VIOLATION" if len(violations) > 0 else "COMPLIANT")
+
+    record = InspectionRecord(
+        commodity_name=payload.commodityName or payload.product or "Packaged Commodity",
+        dietary_type=payload.dietaryType or "VEG",
+        officer_name=payload.officerName or (current_user.name if current_user else "Field Inspector"),
+        district_zone=payload.districtZone or "General Zone",
+        compliance_score=score,
+        status=stat,
+        violations_count=len(violations) if violations else (payload.violationsCount or 0),
+        inspector_notes=payload.inspectorNotes or "",
+        raw_results_json=json.dumps(results),
+        signature_url=payload.signatureUrl,
+        image_url=payload.imageUrl or "",
+    )
+    db.add(record)
+    db.commit()
+    db.refresh(record)
+
+    return {"status": "success", "id": record.id, "score": score}
+
+
+@router.get("/records")
+def get_inspection_records(db: Session = Depends(get_db)) -> List[dict[str, Any]]:
+    """Retrieve all saved field inspection records."""
+    records = db.query(InspectionRecord).order_by(InspectionRecord.timestamp.desc()).all()
+    output = []
+    for r in records:
+        output.append({
+            "id": r.id,
+            "commodityName": r.commodity_name,
+            "product": r.commodity_name,
+            "dietaryType": r.dietary_type,
+            "officerName": r.officer_name,
+            "inspector": r.officer_name,
+            "districtZone": r.district_zone,
+            "location": r.district_zone,
+            "complianceScore": r.compliance_score,
+            "score": f"{int(r.compliance_score)}%",
+            "status": r.status,
+            "violationsCount": r.violations_count,
+            "inspectorNotes": r.inspector_notes,
+            "remarks": r.inspector_notes,
+            "results": json.loads(r.raw_results_json) if r.raw_results_json else [],
+            "timestamp": r.timestamp.isoformat() if r.timestamp else "",
+            "date": r.timestamp.strftime("%d %b %Y") if r.timestamp else "",
+            "imageUrl": r.image_url,
+        })
+    return output
+
+
 @router.get("", include_in_schema=False)
 @router.get("/")
 def get_inspections(
@@ -109,7 +178,53 @@ def get_inspections(
     search: Optional[str] = Query(None),
     db: Session = Depends(get_db),
 ) -> List[dict[str, Any]]:
-    """Get all inspections with optional status or search filter."""
+    """Get inspections with optional status or search filter, supporting both records and assignments."""
+    if view == "assignments":
+        query = db.query(Inspection)
+        if status:
+            query = query.filter(Inspection.status.ilike(status))
+        if search:
+            query = query.filter(
+                (Inspection.product.ilike(f"%{search}%"))
+                | (Inspection.id.ilike(f"%{search}%"))
+                | (Inspection.location.ilike(f"%{search}%"))
+            )
+        inspections = query.order_by(Inspection.created_at.desc()).all()
+        return [i.to_dict() for i in inspections]
+
+    # Default to returning inspection records for compliance dashboard
+    records_count = db.query(InspectionRecord).count()
+    if records_count > 0 or view == "records":
+        records_query = db.query(InspectionRecord)
+        if status:
+            records_query = records_query.filter(InspectionRecord.status.ilike(status))
+        if search:
+            records_query = records_query.filter(InspectionRecord.commodity_name.ilike(f"%{search}%"))
+        records = records_query.order_by(InspectionRecord.timestamp.desc()).all()
+        output = []
+        for r in records:
+            output.append({
+                "id": r.id,
+                "commodityName": r.commodity_name,
+                "product": r.commodity_name,
+                "dietaryType": r.dietary_type,
+                "officerName": r.officer_name,
+                "inspector": r.officer_name,
+                "districtZone": r.district_zone,
+                "location": r.district_zone,
+                "complianceScore": r.compliance_score,
+                "score": f"{int(r.compliance_score)}%",
+                "status": r.status,
+                "violationsCount": r.violations_count,
+                "inspectorNotes": r.inspector_notes,
+                "remarks": r.inspector_notes,
+                "results": json.loads(r.raw_results_json) if r.raw_results_json else [],
+                "timestamp": r.timestamp.isoformat() if r.timestamp else "",
+                "date": r.timestamp.strftime("%d %b %Y") if r.timestamp else "",
+                "imageUrl": r.image_url,
+            })
+        return output
+
     query = db.query(Inspection)
     if status:
         query = query.filter(Inspection.status.ilike(status))

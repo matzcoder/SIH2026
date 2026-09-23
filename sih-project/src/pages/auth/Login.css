@@ -1,139 +1,108 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* =========================================
+   LOGIN PAGE - WARM TERRACOTTA & RUST THEME
+   Adheres to spec Section 1.1 & Section 3
+========================================= */
 
 .login-page {
   min-height: 100vh;
-
   display: flex;
-
-  background: #f8fafc;
+  background-color: #FBF3EC; /* bg-base */
 }
 
 /* =========================
-   LEFT
+   LEFT HERO
 ========================= */
 
 .login-left {
   width: 50%;
-
   min-height: 100vh;
-
   display: flex;
-
   justify-content: center;
-
   align-items: center;
-
-  background: linear-gradient(
-    135deg,
-    #2563eb,
-    #1e3a8a
-  );
-
-  color: white;
+  background: linear-gradient(135deg, #C1502D 0%, #B7410E 50%, #8A6D57 100%);
+  color: #FFF9F2; /* warm off-white text */
+  padding: 40px;
 }
 
 .brand-section {
-  width: 420px;
-
+  max-width: 440px;
   text-align: center;
 }
 
 .brand-icon {
-  width: 80px;
-  height: 80px;
-
-  margin: 0 auto 25px;
-
+  width: 84px;
+  height: 84px;
+  margin: 0 auto 24px;
   display: flex;
-
   justify-content: center;
   align-items: center;
-
-  background: white;
-
-  color: #2563eb;
-
-  border-radius: 22px;
-
-  font-size: 45px;
-
+  background-color: #FFF9F2; /* warm surface raised */
+  color: #C1502D; /* terracotta */
+  border-radius: 20px;
+  font-size: 42px;
   font-weight: bold;
-
-  box-shadow:
-    0 15px 35px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 16px 36px rgba(59, 42, 34, 0.25);
 }
 
 .brand-section h1 {
-  font-size: 42px;
-
-  margin-bottom: 15px;
+  font-family: 'Fraunces', 'Outfit', Georgia, serif;
+  font-size: 44px;
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+  color: #FFF9F2;
 }
 
 .brand-section p {
   font-size: 17px;
-
   line-height: 1.6;
-
-  opacity: 0.9;
+  color: #F5E6D8;
+  opacity: 0.95;
 }
 
-
 /* =========================
-   RIGHT
+   RIGHT CONTAINER
 ========================= */
 
 .login-right {
   width: 50%;
-
   min-height: 100vh;
-
   display: flex;
-
   justify-content: center;
-
   align-items: center;
-
-  padding: 30px;
+  padding: 36px;
+  background-color: #FBF3EC; /* bg-base */
 }
 
 .login-box {
-  width: 430px;
-
-  background: white;
-
+  width: 100%;
+  max-width: 440px;
+  background-color: #F5E6D8; /* bg-surface */
+  border: 1px solid #E4CBB4; /* border */
+  border-radius: 10px; /* 10px radius from spec */
   padding: 40px;
-
-  border-radius: 20px;
-
-  box-shadow:
-    0 15px 40px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 8px 24px rgba(139, 69, 19, 0.10);
+  box-sizing: border-box;
 }
 
 .login-title {
-  margin-bottom: 30px;
+  margin-bottom: 28px;
 }
 
 .login-title h2 {
+  font-family: 'Fraunces', 'Outfit', Georgia, serif;
   font-size: 28px;
-
-  color: #0f172a;
-
-  margin-bottom: 8px;
+  font-weight: 700;
+  color: #3B2A22; /* text-primary */
+  margin-bottom: 6px;
 }
 
 .login-title p {
-  color: #64748b;
-
+  color: #7A5C48; /* text-secondary */
   font-size: 14px;
 }
 
-
 /* =========================
-   INPUT
+   FORM ELEMENTS
 ========================= */
 
 .input-group {
@@ -142,170 +111,97 @@
 
 .input-group label {
   display: block;
-
-  margin-bottom: 8px;
-
-  color: #334155;
-
-  font-size: 14px;
-
+  font-size: 13px;
   font-weight: 600;
+  color: #7A5C48; /* text-secondary */
+  margin-bottom: 8px;
 }
 
 .input-group input,
 .input-group select {
   width: 100%;
-
-  padding: 13px 14px;
-
-  border: 1px solid #cbd5e1;
-
-  border-radius: 10px;
-
-  outline: none;
-
+  padding: 12px 14px;
+  border: 1px solid #E4CBB4; /* border */
+  border-radius: 8px; /* 8px button/input radius */
   font-size: 14px;
+  font-family: inherit;
+  color: #3B2A22; /* text-primary */
+  background-color: #FFF9F2; /* bg-surface-raised */
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
 
-  background: white;
-
-  transition: 0.2s;
+.input-group input::placeholder {
+  color: #7A5C48;
+  opacity: 0.6;
 }
 
 .input-group input:focus,
 .input-group select:focus {
-  border-color: #2563eb;
-
-  box-shadow:
-    0 0 0 3px rgba(37, 99, 235, 0.1);
+  border-color: #B7410E; /* accent */
+  box-shadow: 0 0 0 3px rgba(183, 65, 14, 0.15);
 }
 
+.field-error,
+.auth-error {
+  color: #A63A32; /* error brick red */
+  font-size: 12px;
+  margin-top: 6px;
+  font-weight: 600;
+}
+
+.auth-error {
+  background-color: rgba(166, 58, 50, 0.1);
+  border: 1px solid rgba(166, 58, 50, 0.3);
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 18px;
+}
 
 /* =========================
-   BUTTON
+   LOGIN BUTTON
 ========================= */
 
 .login-button {
   width: 100%;
-
+  padding: 13px;
+  background-color: #C1502D; /* primary terracotta */
+  color: #FFF9F2; /* warm off-white text */
   border: none;
-
-  padding: 14px;
-
-  margin-top: 5px;
-
-  border-radius: 10px;
-
-  background: #2563eb;
-
-  color: white;
-
+  border-radius: 8px;
   font-size: 15px;
-
-  font-weight: 600;
-
+  font-weight: 700;
+  font-family: inherit;
   cursor: pointer;
-
-  transition: 0.2s;
+  box-shadow: 0 4px 12px rgba(193, 80, 45, 0.25);
+  transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
 .login-button:hover {
-  background: #1d4ed8;
-
+  background-color: #A63F22; /* primary-hover */
   transform: translateY(-1px);
 }
 
+.login-button:active {
+  transform: translateY(0);
+}
 
 /* =========================
-   REGISTER LINK
+   RESPONSIVE
 ========================= */
 
-.signup-section {
-  margin-top: 25px;
-
-  padding-top: 20px;
-
-  border-top: 1px solid #e2e8f0;
-
-  display: flex;
-
-  justify-content: center;
-
-  gap: 5px;
-
-  font-size: 14px;
-
-  color: #64748b;
-}
-
-.signup-section a {
-  color: #2563eb;
-
-  font-weight: 600;
-
-  text-decoration: none;
-}
-
-.signup-section a:hover {
-  text-decoration: underline;
-}
-
-
-/* =========================
-   MOBILE
-========================= */
-
-@media (max-width: 800px) {
-
+@media (max-width: 900px) {
   .login-page {
     flex-direction: column;
   }
-
-  .login-left {
+  .login-left,
+  .login-right {
     width: 100%;
-
-    min-height: 260px;
-
-    padding: 40px 20px;
+    min-height: auto;
+    padding: 30px 20px;
   }
-
   .brand-section h1 {
     font-size: 32px;
   }
-
-  .brand-icon {
-    width: 60px;
-    height: 60px;
-
-    font-size: 32px;
-  }
-
-  .login-right {
-    width: 100%;
-
-    min-height: auto;
-
-    padding: 30px 20px;
-  }
-
-  .login-box {
-    width: 100%;
-
-    max-width: 430px;
-
-    padding: 30px 25px;
-  }
-}
-
-.auth-error {
-  margin: -6px 0 14px;
-  color: #dc2626;
-  font-size: 12px;
-  line-height: 1.4;
-}
-
-.field-error {
-  margin: 5px 0 0;
-  color: #dc2626;
-  font-size: 11px;
-  line-height: 1.4;
 }

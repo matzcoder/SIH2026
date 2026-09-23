@@ -3,6 +3,7 @@ Product Router (/api/products)
 """
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import uuid
@@ -11,16 +12,52 @@ from typing import Any, List, Optional
 from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
 from sqlalchemy.orm import Session
 
-from config import PRODUCT_DIR
+from config import PRODUCT_DIR, ALLOWED_IMAGE_TYPES, MAX_UPLOAD_SIZE_BYTES
 from database import get_db
 from models.db_models import Product, Violation, Activity, User
 from models.schemas import ProductCompareRequest
 from services import parser, rules, vision
 from services.auth_service import get_current_user_optional
+from services.cache import vision_cache
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/products", tags=["Products"])
+
+
+def _run_vision_pipeline(raw_bytes: bytes, filename: Optional[str]):
+    """Synchronous worker executed in a thread pool to avoid blocking the event loop."""
+    image_hash = vision_cache.compute_hash(raw_bytes)
+    cached = vision_cache.get(image_hash)
+    if cached is not None:
+        logger.info("Serving OCR & barcode analysis from cache (hash=%s)", image_hash[:12])
+        return cached.get("ocr_chunks", []), cached.get("barcodes", [])
+
+    try:
+        preprocessed = vision.preprocess_image(raw_bytes)
+    except Exception as exc:
+        logger.warning(f"Preprocessing warning: {exc}")
+        preprocessed = None
+
+    try:
+        ocr_chunks = vision.run_ocr(preprocessed, filename=filename) if preprocessed is not None else []
+    except Exception as exc:
+        logger.warning(f"OCR warning: {exc}")
+        ocr_chunks = []
+
+    try:
+        barcodes = vision.decode_barcodes(preprocessed) if preprocessed is not None else []
+    except Exception:
+        barcodes = []
+
+    vision_cache.put(image_hash, {"ocr_chunks": ocr_chunks, "barcodes": barcodes})
+    return ocr_chunks, barcodes
+
+
+@router.get("/cache/stats")
+def get_cache_stats() -> dict[str, Any]:
+    """Return vision OCR cache hit/miss statistics."""
+    return vision_cache.stats()
 
 
 @router.post("/scan")
@@ -41,9 +78,23 @@ async def scan_product(
             detail="No image file provided in form-data ('image' or 'file').",
         )
 
+    # Validate file type
+    if upload.content_type and upload.content_type not in ALLOWED_IMAGE_TYPES:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid file type '{upload.content_type}'. Allowed: {', '.join(ALLOWED_IMAGE_TYPES)}",
+        )
+
     image_bytes = await upload.read()
     if not image_bytes:
         raise HTTPException(status_code=400, detail="Uploaded file is empty.")
+
+    # Validate file size
+    if len(image_bytes) > MAX_UPLOAD_SIZE_BYTES:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"File too large ({len(image_bytes) / 1024 / 1024:.1f} MB). Maximum allowed: {MAX_UPLOAD_SIZE_BYTES / 1024 / 1024:.0f} MB",
+        )
 
     # Save uploaded file
     file_ext = upload.filename.split(".")[-1] if upload.filename and "." in upload.filename else "jpg"
@@ -53,23 +104,10 @@ async def scan_product(
         f.write(image_bytes)
     image_url = f"/uploads/products/{unique_filename}"
 
-    # Run vision pipeline
-    try:
-        preprocessed = vision.preprocess_image(image_bytes)
-    except Exception as exc:
-        logger.warning(f"Preprocessing warning: {exc}")
-        preprocessed = None
-
-    try:
-        ocr_chunks = vision.run_ocr(preprocessed, filename=upload.filename) if preprocessed is not None else []
-    except Exception as exc:
-        logger.warning(f"OCR warning: {exc}")
-        ocr_chunks = []
-
-    try:
-        barcodes = vision.decode_barcodes(preprocessed) if preprocessed is not None else []
-    except Exception:
-        barcodes = []
+    # Run vision pipeline asynchronously in a background thread pool
+    ocr_chunks, barcodes = await asyncio.to_thread(
+        _run_vision_pipeline, image_bytes, upload.filename
+    )
 
     detected_barcode = barcodes[0]["data"] if barcodes else "8901234567890"
 

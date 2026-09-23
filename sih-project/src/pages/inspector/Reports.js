@@ -364,7 +364,7 @@ function Reports() {
 
             <div>
               <span>Compliance Status</span>
-              <strong style={{ color: score === 100 ? "#15803d" : "#b45309" }}>
+              <strong style={{ color: score === 100 ? "#7A8450" : "#B7410E" }}>
                 {score === 100 ? "Fully Compliant" : "Review / Action Required"}
               </strong>
             </div>
@@ -435,7 +435,7 @@ function Reports() {
               })}
             </div>
           ) : (
-            <div className="no-violation-box" style={{ padding: "16px", backgroundColor: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: "8px", color: "#166534", fontWeight: 600 }}>
+            <div className="no-violation-box" style={{ padding: "16px", backgroundColor: "rgba(122, 132, 80, 0.15)", border: "1px solid rgba(122, 132, 80, 0.4)", borderRadius: "8px", color: "#5F673D", fontWeight: 600 }}>
               No violations detected. Package fully complies with Legal Metrology statutory requirements.
             </div>
           )}

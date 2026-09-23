@@ -1,6 +1,6 @@
 .history-page {
   padding: 25px;
-  background: #f8fafc;
+  background: #FBF3EC;
   min-height: 100vh;
 }
 
@@ -14,29 +14,29 @@
 }
 
 .history-breadcrumb {
-  color: #64748b;
+  color: #7A5C48;
   font-size: 13px;
   margin-bottom: 8px;
 }
 
 .history-header h1 {
   margin: 0 0 6px;
-  color: #0f172a;
+  color: #3B2A22;
   font-size: 27px;
 }
 
 .history-header p {
   margin: 0;
-  color: #64748b;
+  color: #7A5C48;
   font-size: 14px;
 }
 
 .history-filter {
   padding: 11px 15px;
-  background: white;
-  border: 1px solid #cbd5e1;
+  background: #F5E6D8;
+  border: 1px solid #E4CBB4;
   border-radius: 9px;
-  color: #334155;
+  color: #3B2A22;
   outline: none;
   cursor: pointer;
 }
@@ -51,10 +51,10 @@
 }
 
 .history-stat {
-  background: white;
+  background: #F5E6D8;
   padding: 21px;
   border-radius: 14px;
-  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 3px 12px rgba(139, 69, 19, 0.06);
 
   display: flex;
   flex-direction: column;
@@ -62,27 +62,27 @@
 }
 
 .history-stat span {
-  color: #64748b;
+  color: #7A5C48;
   font-size: 13px;
 }
 
 .history-stat strong {
-  color: #0f172a;
+  color: #3B2A22;
   font-size: 28px;
 }
 
 .history-stat small {
-  color: #94a3b8;
+  color: #8A6D57;
   font-size: 11px;
 }
 
 /* CARD */
 
 .history-card {
-  background: white;
+  background: #F5E6D8;
   padding: 24px;
   border-radius: 15px;
-  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 3px 12px rgba(139, 69, 19, 0.06);
   margin-bottom: 20px;
 }
 
@@ -95,21 +95,21 @@
 
 .history-card-header h2 {
   margin: 0 0 5px;
-  color: #0f172a;
+  color: #3B2A22;
   font-size: 17px;
 }
 
 .history-card-header p {
   margin: 0;
-  color: #64748b;
+  color: #7A5C48;
   font-size: 12px;
 }
 
 .export-btn {
   padding: 9px 14px;
-  background: white;
-  border: 1px solid #bfdbfe;
-  color: #2563eb;
+  background: #F5E6D8;
+  border: 1px solid #E4CBB4;
+  color: #C1502D;
   border-radius: 8px;
   cursor: pointer;
   font-size: 12px;
@@ -117,7 +117,7 @@
 }
 
 .export-btn:hover {
-  background: #eff6ff;
+  background: #F5E6D8;
 }
 
 /* TABLE */
@@ -150,17 +150,17 @@
 
   padding: 14px 10px;
 
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #E4CBB4;
 
-  color: #475569;
+  color: #7A5C48;
 
   font-size: 12px;
 }
 
 .history-heading {
-  background: #f8fafc;
+  background: #FBF3EC;
 
-  color: #64748b;
+  color: #7A5C48;
 
   font-size: 11px;
 
@@ -168,7 +168,7 @@
 }
 
 .history-id {
-  color: #2563eb;
+  color: #C1502D;
   font-weight: 600;
 }
 
@@ -181,24 +181,24 @@
 }
 
 .product-column strong {
-  color: #334155;
+  color: #3B2A22;
   font-size: 12px;
 }
 
 .product-column small {
-  color: #94a3b8;
+  color: #8A6D57;
   font-size: 10px;
 }
 
 /* SCORE */
 
 .good-score {
-  color: #15803d;
+  color: #7A8450;
   font-weight: 700;
 }
 
 .low-score {
-  color: #dc2626;
+  color: #A63A32;
   font-weight: 700;
 }
 
@@ -217,13 +217,13 @@
 }
 
 .history-status.compliant {
-  background: #dcfce7;
-  color: #15803d;
+  background: rgba(122, 132, 80, 0.2);
+  color: #7A8450;
 }
 
 .history-status.violation {
-  background: #fee2e2;
-  color: #dc2626;
+  background: rgba(166, 58, 50, 0.2);
+  color: #A63A32;
 }
 
 /* VIEW BUTTON */
@@ -235,9 +235,9 @@
 
   border-radius: 7px;
 
-  background: #eff6ff;
+  background: #F5E6D8;
 
-  color: #2563eb;
+  color: #C1502D;
 
   cursor: pointer;
 
@@ -247,7 +247,7 @@
 }
 
 .view-btn:hover {
-  background: #dbeafe;
+  background: #F5E6D8;
 }
 
 /* EMPTY */
@@ -259,12 +259,12 @@
 
 .history-empty h3 {
   margin: 0 0 5px;
-  color: #475569;
+  color: #7A5C48;
 }
 
 .history-empty p {
   margin: 0;
-  color: #94a3b8;
+  color: #8A6D57;
   font-size: 13px;
 }
 
@@ -279,7 +279,7 @@
 }
 
 .latest-details > div {
-  background: #f8fafc;
+  background: #FBF3EC;
 
   padding: 16px;
 
@@ -293,13 +293,13 @@
 }
 
 .latest-details span {
-  color: #64748b;
+  color: #7A5C48;
 
   font-size: 11px;
 }
 
 .latest-details strong {
-  color: #0f172a;
+  color: #3B2A22;
 
   font-size: 20px;
 }
@@ -309,13 +309,13 @@
 
   padding: 7px 11px;
 
-  border: 1px solid #bfdbfe;
+  border: 1px solid #E4CBB4;
 
   border-radius: 7px;
 
-  background: white;
+  background: #F5E6D8;
 
-  color: #2563eb;
+  color: #C1502D;
 
   cursor: pointer;
 
@@ -325,7 +325,7 @@
 }
 
 .report-btn:hover {
-  background: #eff6ff;
+  background: #F5E6D8;
 }
 
 /* RESPONSIVE */

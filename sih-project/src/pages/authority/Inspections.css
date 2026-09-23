@@ -6,7 +6,7 @@
   padding: 24px;
   max-width: 1400px;
   margin: 0 auto;
-  color: #0f172a;
+  color: #3B2A22;
 }
 
 .inspection-header {
@@ -19,7 +19,7 @@
 }
 
 .inspection-header h2 {
-  color: #0f172a;
+  color: #3B2A22;
   font-size: 26px;
   font-weight: 700;
   margin: 0 0 6px 0;
@@ -27,7 +27,7 @@
 }
 
 .inspection-header p {
-  color: #64748b;
+  color: #7A5C48;
   margin: 0;
   font-size: 14px;
 }
@@ -37,36 +37,36 @@
   align-items: center;
   gap: 8px;
   border: none;
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  background: linear-gradient(135deg, #C1502D 0%, #A63F22 100%);
   color: white;
   padding: 11px 20px;
   border-radius: 10px;
   cursor: pointer;
   font-weight: 600;
   font-size: 14px;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 4px 12px rgba(193, 80, 45, 0.25);
   transition: all 0.2s ease;
 }
 
 .new-inspection-btn:hover {
-  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  background: linear-gradient(135deg, #A63F22 0%, #8E2B24 100%);
   transform: translateY(-1px);
 }
 
 /* Schedule Inspection Form Card */
 .inspection-form-card {
-  background: white;
+  background: #F5E6D8;
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 24px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #E4CBB4;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 .inspection-form-card h3 {
   margin: 0 0 16px 0;
   font-size: 17px;
-  color: #0f172a;
+  color: #3B2A22;
 }
 
 .form-fields-row {
@@ -85,21 +85,21 @@
 .field-group label {
   font-size: 12px;
   font-weight: 600;
-  color: #475569;
+  color: #7A5C48;
 }
 
 .field-group input {
   padding: 10px 14px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #E4CBB4;
   border-radius: 8px;
   font-size: 14px;
-  background: white;
+  background: #F5E6D8;
 }
 
 .field-group input:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  border-color: #C1502D;
+  box-shadow: 0 0 0 3px rgba(193, 80, 45, 0.12);
 }
 
 .form-actions-row {
@@ -110,9 +110,9 @@
 
 .btn-cancel {
   padding: 10px 16px;
-  border: 1px solid #cbd5e1;
-  background: white;
-  color: #475569;
+  border: 1px solid #E4CBB4;
+  background: #F5E6D8;
+  color: #7A5C48;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
@@ -130,31 +130,31 @@
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: #94a3b8;
+  color: #8A6D57;
 }
 
 .inspection-search-bar input {
   width: 100%;
   padding: 12px 14px 12px 42px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #E4CBB4;
   border-radius: 12px;
-  background: white;
+  background: #F5E6D8;
   font-size: 14px;
   box-sizing: border-box;
 }
 
 .inspection-search-bar input:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  border-color: #C1502D;
+  box-shadow: 0 0 0 3px rgba(193, 80, 45, 0.12);
 }
 
 /* Table Card */
 .inspection-table-card {
-  background: white;
+  background: #F5E6D8;
   border-radius: 16px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-  border: 1px solid #e2e8f0;
+  border: 1px solid #E4CBB4;
   overflow: hidden;
 }
 
@@ -172,13 +172,13 @@
 }
 
 .inspection-table-card thead {
-  background: #f8fafc;
-  border-bottom: 2px solid #e2e8f0;
+  background: #FBF3EC;
+  border-bottom: 2px solid #E4CBB4;
 }
 
 .inspection-table-card th {
   padding: 14px 18px;
-  color: #475569;
+  color: #7A5C48;
   font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
@@ -194,23 +194,23 @@
 .inspection-table-card td {
   padding: 16px 18px;
   font-size: 14px;
-  color: #334155;
-  border-bottom: 1px solid #f1f5f9;
+  color: #3B2A22;
+  border-bottom: 1px solid #F5E6D8;
   vertical-align: middle;
 }
 
 .inspection-row:hover {
-  background-color: #f8fafc;
+  background-color: #FBF3EC;
 }
 
 .product-title {
   font-weight: 600;
-  color: #0f172a;
+  color: #3B2A22;
 }
 
 .product-category {
   font-size: 12px;
-  color: #94a3b8;
+  color: #8A6D57;
 }
 
 .inspector-info,
@@ -218,7 +218,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: #64748b;
+  color: #7A5C48;
   font-size: 13px;
 }
 
@@ -238,12 +238,12 @@
 
 .score-med {
   background: #fffbeb;
-  color: #d97706;
+  color: #D98E04;
 }
 
 .score-low {
-  background: #fee2e2;
-  color: #dc2626;
+  background: rgba(166, 58, 50, 0.2);
+  color: #A63A32;
 }
 
 /* Status Pills */
@@ -256,23 +256,23 @@
 }
 
 .status-completed {
-  background: #dcfce7;
-  color: #15803d;
+  background: rgba(122, 132, 80, 0.2);
+  color: #7A8450;
 }
 
 .status-under-review {
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: #F5E6D8;
+  color: #A63F22;
 }
 
 .status-violation-found {
-  background: #fee2e2;
-  color: #dc2626;
+  background: rgba(166, 58, 50, 0.2);
+  color: #A63A32;
 }
 
 .status-scheduled {
-  background: #f1f5f9;
-  color: #475569;
+  background: #F5E6D8;
+  color: #7A5C48;
 }
 
 /* Action Button */
@@ -286,9 +286,9 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  border: 1px solid #bfdbfe;
-  background: #eff6ff;
-  color: #2563eb;
+  border: 1px solid #E4CBB4;
+  background: #F5E6D8;
+  color: #C1502D;
   padding: 8px 14px;
   border-radius: 8px;
   cursor: pointer;
@@ -298,8 +298,8 @@
 }
 
 .inspection-view-btn:hover {
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: #F5E6D8;
+  color: #A63F22;
   transform: translateY(-1px);
 }
 
@@ -313,7 +313,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(15, 23, 42, 0.65);
+  background: rgba(139, 69, 19, 0.65);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
@@ -324,7 +324,7 @@
 }
 
 .inspection-modal-dialog {
-  background: white;
+  background: #F5E6D8;
   width: 100%;
   max-width: 800px;
   max-height: 90vh;
@@ -338,11 +338,11 @@
 
 .inspection-modal-header {
   padding: 20px 24px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #E4CBB4;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  background: #f8fafc;
+  background: #FBF3EC;
   gap: 16px;
 }
 
@@ -350,7 +350,7 @@
   margin: 6px 0 6px 0;
   font-size: 20px;
   font-weight: 700;
-  color: #0f172a;
+  color: #3B2A22;
 }
 
 .modal-meta-row {
@@ -358,7 +358,7 @@
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  color: #64748b;
+  color: #7A5C48;
   flex-wrap: wrap;
 }
 
@@ -374,15 +374,15 @@
   display: flex;
   align-items: center;
   gap: 20px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: #FBF3EC;
+  border: 1px solid #E4CBB4;
   padding: 16px;
   border-radius: 12px;
 }
 
 .score-num-box {
-  background: white;
-  border: 1px solid #e2e8f0;
+  background: #F5E6D8;
+  border: 1px solid #E4CBB4;
   padding: 12px 18px;
   border-radius: 10px;
   text-align: center;
@@ -391,7 +391,7 @@
 .score-label {
   display: block;
   font-size: 11px;
-  color: #64748b;
+  color: #7A5C48;
   text-transform: uppercase;
   font-weight: 600;
 }
@@ -400,20 +400,20 @@
   display: block;
   font-size: 24px;
   font-weight: 800;
-  color: #2563eb;
+  color: #C1502D;
 }
 
 .score-summary-text strong {
   display: block;
   font-size: 14px;
-  color: #0f172a;
+  color: #3B2A22;
   margin-bottom: 4px;
 }
 
 .score-summary-text p {
   margin: 0;
   font-size: 13px;
-  color: #64748b;
+  color: #7A5C48;
 }
 
 /* Checklist Table inside Modal */
@@ -423,15 +423,15 @@
   gap: 8px;
   margin: 0 0 12px 0;
   font-size: 15px;
-  color: #1e293b;
+  color: #3B2A22;
 }
 
 .details-section h4 svg {
-  color: #2563eb;
+  color: #C1502D;
 }
 
 .checklist-table-wrapper {
-  border: 1px solid #e2e8f0;
+  border: 1px solid #E4CBB4;
   border-radius: 12px;
   overflow: hidden;
 }
@@ -443,12 +443,12 @@
 }
 
 .checklist-table thead {
-  background: #f8fafc;
+  background: #FBF3EC;
 }
 
 .checklist-table th {
   padding: 10px 14px;
-  color: #475569;
+  color: #7A5C48;
   font-weight: 600;
   font-size: 12px;
   text-align: left;
@@ -456,8 +456,8 @@
 
 .checklist-table td {
   padding: 12px 14px;
-  border-bottom: 1px solid #f1f5f9;
-  color: #334155;
+  border-bottom: 1px solid #F5E6D8;
+  color: #3B2A22;
 }
 
 .check-status-tag {
@@ -477,16 +477,16 @@
 
 .check-status-tag.warning {
   background: #fffbeb;
-  color: #d97706;
+  color: #D98E04;
 }
 
 .check-status-tag.fail {
-  background: #fee2e2;
-  color: #dc2626;
+  background: rgba(166, 58, 50, 0.2);
+  color: #A63A32;
 }
 
 .check-detail {
-  color: #64748b;
+  color: #7A5C48;
 }
 
 /* Inspector Sign */
@@ -494,7 +494,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 1px dashed #cbd5e1;
+  border-top: 1px dashed #E4CBB4;
   padding-top: 16px;
   flex-wrap: wrap;
   gap: 12px;
@@ -507,18 +507,18 @@
 
 .sign-label {
   font-size: 11px;
-  color: #64748b;
+  color: #7A5C48;
   text-transform: uppercase;
 }
 
 .sign-info strong {
   font-size: 14px;
-  color: #0f172a;
+  color: #3B2A22;
 }
 
 .sign-info span {
   font-size: 12px;
-  color: #94a3b8;
+  color: #8A6D57;
 }
 
 .sign-stamp {
@@ -536,8 +536,8 @@
 
 .inspection-modal-footer {
   padding: 16px 24px;
-  background: #f8fafc;
-  border-top: 1px solid #e2e8f0;
+  background: #FBF3EC;
+  border-top: 1px solid #E4CBB4;
   display: flex;
   justify-content: flex-end;
   gap: 10px;

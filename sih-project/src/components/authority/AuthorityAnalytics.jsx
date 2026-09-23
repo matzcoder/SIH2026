@@ -38,55 +38,55 @@ export default function AuthorityAnalytics({ metrics }) {
   ];
 
   return (
-    <div className="space-y-6 text-slate-100">
+    <div className="space-y-6 text-[#3B2A22]">
       {/* KPI Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl">
-          <span className="text-xs text-slate-400 font-semibold uppercase">Total Field Scans</span>
+        <div className="bg-[#F5E6D8] border border-[#E4CBB4] p-5 rounded-2xl shadow-xl">
+          <span className="text-xs text-[#7A5C48] font-semibold uppercase">Total Field Scans</span>
           <div className="text-2xl font-black text-white mt-1">{data.totalScans}</div>
-          <span className="text-[11px] text-cyan-400 mt-1 block font-medium">
+          <span className="text-[11px] text-[#C1502D] mt-1 block font-medium">
             ↑ {data.totalScansDelta}
           </span>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl">
-          <span className="text-xs text-slate-400 font-semibold uppercase">Overall Compliance</span>
-          <div className="text-2xl font-black text-emerald-400 mt-1">{data.overallCompliance}</div>
-          <span className="text-[11px] text-slate-400 mt-1 block">{data.complianceDistricts}</span>
+        <div className="bg-[#F5E6D8] border border-[#E4CBB4] p-5 rounded-2xl shadow-xl">
+          <span className="text-xs text-[#7A5C48] font-semibold uppercase">Overall Compliance</span>
+          <div className="text-2xl font-black text-[#7A8450] mt-1">{data.overallCompliance}</div>
+          <span className="text-[11px] text-[#7A5C48] mt-1 block">{data.complianceDistricts}</span>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl">
-          <span className="text-xs text-slate-400 font-semibold uppercase">Notices Issued</span>
-          <div className="text-2xl font-black text-rose-400 mt-1">{data.noticesIssued}</div>
-          <span className="text-[11px] text-rose-400 mt-1 block">{data.noticesSubtext}</span>
+        <div className="bg-[#F5E6D8] border border-[#E4CBB4] p-5 rounded-2xl shadow-xl">
+          <span className="text-xs text-[#7A5C48] font-semibold uppercase">Notices Issued</span>
+          <div className="text-2xl font-black text-[#A63A32] mt-1">{data.noticesIssued}</div>
+          <span className="text-[11px] text-[#A63A32] mt-1 block">{data.noticesSubtext}</span>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl">
-          <span className="text-xs text-slate-400 font-semibold uppercase">Active Rules Enforced</span>
-          <div className="text-2xl font-black text-cyan-400 mt-1">{data.activeRules}</div>
-          <span className="text-[11px] text-slate-400 mt-1 block">{data.activeRulesSubtext}</span>
+        <div className="bg-[#F5E6D8] border border-[#E4CBB4] p-5 rounded-2xl shadow-xl">
+          <span className="text-xs text-[#7A5C48] font-semibold uppercase">Active Rules Enforced</span>
+          <div className="text-2xl font-black text-[#C1502D] mt-1">{data.activeRules}</div>
+          <span className="text-[11px] text-[#7A5C48] mt-1 block">{data.activeRulesSubtext}</span>
         </div>
       </div>
 
       {/* Dietary Classification Live Card */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-        <div className="flex flex-wrap items-center justify-between gap-4 pb-3 border-b border-slate-800">
+      <div className="bg-[#F5E6D8] border border-[#E4CBB4] rounded-2xl p-5 shadow-xl">
+        <div className="flex flex-wrap items-center justify-between gap-4 pb-3 border-b border-[#E4CBB4]">
           <div>
-            <h3 className="text-sm font-bold text-slate-100">FSSAI / PCR 2011 Dietary Classification Summary</h3>
-            <p className="text-xs text-slate-400">Live verified commodity distribution in database</p>
+            <h3 className="text-sm font-bold text-[#3B2A22]">FSSAI / PCR 2011 Dietary Classification Summary</h3>
+            <p className="text-xs text-[#7A5C48]">Live verified commodity distribution in database</p>
           </div>
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800">
+            <div className="flex items-center gap-2 bg-[#FBF3EC] px-3 py-1.5 rounded-xl border border-[#E4CBB4]">
               <VegNonVegBadge type="VEG" size="sm" showLabel={true} />
-              <span className="text-xs font-bold text-slate-200 ml-1">({dietary.veg || 0})</span>
+              <span className="text-xs font-bold text-[#3B2A22] ml-1">({dietary.veg || 0})</span>
             </div>
-            <div className="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800">
+            <div className="flex items-center gap-2 bg-[#FBF3EC] px-3 py-1.5 rounded-xl border border-[#E4CBB4]">
               <VegNonVegBadge type="NON_VEG" size="sm" showLabel={true} />
-              <span className="text-xs font-bold text-slate-200 ml-1">({dietary.nonVeg || 0})</span>
+              <span className="text-xs font-bold text-[#3B2A22] ml-1">({dietary.nonVeg || 0})</span>
             </div>
-            <div className="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800">
+            <div className="flex items-center gap-2 bg-[#FBF3EC] px-3 py-1.5 rounded-xl border border-[#E4CBB4]">
               <VegNonVegBadge type="NON_FOOD" size="sm" showLabel={true} />
-              <span className="text-xs font-bold text-slate-200 ml-1">({dietary.nonFood || 0})</span>
+              <span className="text-xs font-bold text-[#3B2A22] ml-1">({dietary.nonFood || 0})</span>
             </div>
           </div>
         </div>
@@ -95,11 +95,11 @@ export default function AuthorityAnalytics({ metrics }) {
       {/* Analytics Charts & Breakdowns */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Top Non-Compliance Breakdown */}
-        <div className="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div className="lg:col-span-7 bg-[#F5E6D8] border border-[#E4CBB4] rounded-2xl p-6 shadow-xl space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-[#E4CBB4]">
             <div>
-              <h3 className="text-sm font-bold text-slate-100">Top Statutory Non-Compliances</h3>
-              <p className="text-xs text-slate-400">
+              <h3 className="text-sm font-bold text-[#3B2A22]">Top Statutory Non-Compliances</h3>
+              <p className="text-xs text-[#7A5C48]">
                 Frequency distribution under PCR 2011 declarations
               </p>
             </div>
@@ -109,12 +109,12 @@ export default function AuthorityAnalytics({ metrics }) {
             {topViolations.map((v, i) => (
               <div key={i} className="space-y-1">
                 <div className="flex justify-between text-xs">
-                  <span className="text-slate-300 font-medium">{v.rule}</span>
-                  <span className="text-rose-400 font-bold">
+                  <span className="text-[#7A5C48] font-medium">{v.rule}</span>
+                  <span className="text-[#A63A32] font-bold">
                     {v.count} violations ({v.pct}%)
                   </span>
                 </div>
-                <div className="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
+                <div className="w-full bg-[#FBF3EC] rounded-full h-2 overflow-hidden border border-[#E4CBB4]">
                   <div
                     className="bg-gradient-to-r from-rose-500 to-amber-500 h-full rounded-full transition-all duration-500"
                     style={{ width: `${v.pct * 2.2}%` }}
@@ -126,11 +126,11 @@ export default function AuthorityAnalytics({ metrics }) {
         </div>
 
         {/* District Compliance Overview */}
-        <div className="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div className="lg:col-span-5 bg-[#F5E6D8] border border-[#E4CBB4] rounded-2xl p-6 shadow-xl space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-[#E4CBB4]">
             <div>
-              <h3 className="text-sm font-bold text-slate-100">District Enforcement Index</h3>
-              <p className="text-xs text-slate-400">Jurisdiction compliance rates</p>
+              <h3 className="text-sm font-bold text-[#3B2A22]">District Enforcement Index</h3>
+              <p className="text-xs text-[#7A5C48]">Jurisdiction compliance rates</p>
             </div>
           </div>
 
@@ -138,20 +138,20 @@ export default function AuthorityAnalytics({ metrics }) {
             {districtPerformance.map((d, i) => (
               <div
                 key={i}
-                className="p-3 bg-slate-950/70 border border-slate-800 rounded-xl flex items-center justify-between"
+                className="p-3 bg-[#FBF3EC]/70 border border-[#E4CBB4] rounded-xl flex items-center justify-between"
               >
                 <div>
-                  <h4 className="text-xs font-bold text-slate-200">{d.district}</h4>
-                  <span className="text-[10px] text-slate-400">{d.scans} verified inspections</span>
+                  <h4 className="text-xs font-bold text-[#3B2A22]">{d.district}</h4>
+                  <span className="text-[10px] text-[#7A5C48]">{d.scans} verified inspections</span>
                 </div>
                 <div className="text-right">
                   <span
                     className={`text-sm font-black ${
                       d.compliance >= 85
-                        ? 'text-emerald-400'
+                        ? 'text-[#7A8450]'
                         : d.compliance >= 80
                         ? 'text-amber-400'
-                        : 'text-rose-400'
+                        : 'text-[#A63A32]'
                     }`}
                   >
                     {d.compliance}%
